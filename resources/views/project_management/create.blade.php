@@ -54,6 +54,7 @@
                     <div id="task-list">
                         <div class="input-group mb-2">
                             <input type="text" name="tasks[]" class="form-control" placeholder="Nama Tahapan" required>
+                            <input type="date" name="tasks_due_date[]" class="form-control" placeholder="Due Date">
                             <button type="button" class="btn btn-danger remove-task">×</button>
                         </div>
                     </div>
@@ -70,20 +71,47 @@
 
     {{-- JavaScript --}}
     <script>
-        document.getElementById('add-task').addEventListener('click', function() {
+        const addTaskBtn = document.getElementById('add-task');
+        const taskList = document.getElementById('task-list');
+        const form = document.querySelector('form');
+
+        // Menambah input tahapan baru
+        addTaskBtn.addEventListener('click', () => {
             const container = document.createElement('div');
             container.classList.add('input-group', 'mb-2');
             container.innerHTML = `
-            <input type="text" name="tasks[]" class="form-control" placeholder="Nama Tahapan" required>
+            <input type="text" name="tasks[]" class="form-control task-name" placeholder="Nama Tahapan" required>
+            <input type="date" name="tasks_due_date[]" class="form-control" placeholder="Due Date">
             <button type="button" class="btn btn-danger remove-task">×</button>
         `;
-            document.getElementById('task-list').appendChild(container);
+            taskList.appendChild(container);
         });
 
+        // Hapus input tahapan
         document.addEventListener('click', function(e) {
             if (e.target.classList.contains('remove-task')) {
                 e.target.closest('.input-group').remove();
             }
         });
+
+        // Cek duplikat saat submit form
+        form.addEventListener('submit', function(e) {
+            const taskInputs = document.querySelectorAll('.task-name');
+            const taskNames = [];
+
+            for (let input of taskInputs) {
+                const name = input.value.trim().toLowerCase();
+
+                if (taskNames.includes(name)) {
+                    e.preventDefault();
+                    alert(`Tahapan "${input.value}" sudah dimasukkan lebih dari sekali.`);
+                    input.focus();
+                    return false;
+                }
+
+                taskNames.push(name);
+            }
+        });
     </script>
+
 @endsection

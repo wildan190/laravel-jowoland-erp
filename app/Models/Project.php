@@ -28,9 +28,10 @@ class Project extends Model
 
     public function getIsOverdueAttribute()
     {
-        if (!$this->end_date) {
+        if (! $this->end_date) {
             return false;
         }
+
         return now()->gt(\Carbon\Carbon::parse($this->end_date)) && $this->progress_percentage < 100;
     }
 }

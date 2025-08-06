@@ -20,6 +20,16 @@
             </a>
         </div>
 
+        {{-- <div class="d-flex justify-content-between mb-3">
+            <h4>Daftar Proyek</h4>
+            <div>
+                <a href="?filter=running" class="btn btn-outline-warning">Berjalan</a>
+                <a href="?filter=overdue" class="btn btn-outline-danger">Overdue</a>
+                <a href="?filter=done" class="btn btn-outline-success">Selesai</a>
+            </div>
+            <a href="{{ route('projects.create') }}" class="btn btn-warning">+ Tambah Proyek</a>
+        </div> --}}
+
         {{-- Table --}}
         <div class="card shadow-sm">
             <div class="card-body table-responsive">

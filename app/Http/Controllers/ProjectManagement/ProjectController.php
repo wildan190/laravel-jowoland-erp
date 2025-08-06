@@ -15,13 +15,23 @@ use Illuminate\Support\Facades\DB;
 
 class ProjectController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $projects = Project::withCount([
             'tasks as progress' => function ($q) {
                 $q->select(DB::raw('round(100 * sum(is_done)/count(*))'));
             },
         ])->get();
+
+        $query = Project::query();
+        if ($request->filter === 'overdue') {
+            $query->where('is_overdue', true);
+        } elseif ($request->filter === 'done') {
+            $query->whereHas('tasks', fn ($q) => $q->where('is_done', true));
+        } elseif ($request->filter === 'running') {
+            $query->where('is_overdue', false)->where('progress_percentage', '<', 100);
+        }
+        $projects = $query->get();
 
         return view('project_management.index', compact('projects'));
     }
@@ -39,8 +49,11 @@ class ProjectController extends Controller
 
         $project = $createAction->execute($data);
 
-        foreach ($request->input('tasks', []) as $task) {
-            $project->tasks()->create(['task_name' => $task]);
+        foreach ($request->tasks as $i => $name) {
+            $project->tasks()->create([
+                'task_name' => $name,
+                'due_date' => $request->tasks_due_date[$i] ?? null,
+            ]);
         }
 
         return redirect()->route('projects.index')->with('success', 'Project created.');
@@ -58,19 +71,12 @@ class ProjectController extends Controller
         $data = $request->validated();
         $data['start_date'] = $request->start_date;
         $data['end_date'] = $request->end_date;
+        $data['tasks_existing'] = $request->input('tasks_existing', []);
+        $data['tasks_existing_due_date'] = $request->input('tasks_existing_due_date', []);
+        $data['tasks'] = $request->input('tasks', []);
+        $data['tasks_due_date'] = $request->input('tasks_due_date', []);
 
         $updateAction->execute($project, $data);
-
-        foreach ($request->input('tasks_existing', []) as $taskId => $name) {
-            $task = ProjectTask::find($taskId);
-            if ($task) {
-                $task->update(['task_name' => $name]);
-            }
-        }
-
-        foreach ($request->input('tasks', []) as $taskName) {
-            $project->tasks()->create(['task_name' => $taskName]);
-        }
 
         return redirect()->route('projects.index')->with('success', 'Project updated.');
     }
@@ -80,6 +86,21 @@ class ProjectController extends Controller
         $project->load('tasks');
 
         return view('project_management.show', compact('project'));
+    }
+
+    public function calendar(Project $project)
+    {
+        $tasks = $project->tasks()->get(['id', 'task_name', 'due_date', 'created_at']);
+        $events = $tasks->map(
+            fn ($task) => [
+                'id' => $task->id,
+                'title' => $task->task_name,
+                'start' => $task->created_at->toDateString(),
+                'end' => $task->due_date,
+            ],
+        );
+
+        return view('project_management.calendar', compact('project', 'events'));
     }
 
     public function destroy(Project $project, DeleteProjectAction $deleteAction)

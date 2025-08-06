@@ -62,6 +62,8 @@ Route::middleware(['auth'])
             // Route::get('projects/{project}/progress', [ProjectProgressController::class, 'index'])->name('projects.progress.index');
             // Route::post('projects/{project}/progress', [ProjectProgressController::class, 'store'])->name('projects.progress.store');
             Route::post('/task/{task}/status', [ProjectController::class, 'updateTask'])->name('tasks.updateStatus');
+            Route::get('/projects/{project}/calendar', [ProjectController::class, 'calendar'])->name('projects.calendar');
+
         });
     });
 
