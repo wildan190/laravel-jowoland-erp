@@ -130,12 +130,6 @@
                                 <i class="fa fa-plus me-1"></i> Tambah Proyek
                             </a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-white {{ request()->is('projects/*/progress*') ? 'active' : '' }}"
-                                href="{{ route('projects.index') }}">
-                                <i class="fa fa-spinner me-1"></i> Tracking Progress
-                            </a>
-                        </li>
                     </ul>
                 </div>
             </li>
