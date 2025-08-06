@@ -33,7 +33,11 @@ class ProjectController extends Controller
 
     public function store(ProjectRequest $request, CreateProjectAction $createAction)
     {
-        $project = $createAction->execute($request->validated());
+        $data = $request->validated();
+        $data['start_date'] = $request->start_date;
+        $data['end_date'] = $request->end_date;
+
+        $project = $createAction->execute($data);
 
         foreach ($request->input('tasks', []) as $task) {
             $project->tasks()->create(['task_name' => $task]);
@@ -51,7 +55,12 @@ class ProjectController extends Controller
 
     public function update(ProjectRequest $request, Project $project, UpdateProjectAction $updateAction)
     {
-        $updateAction->execute($project, $request->validated());
+        $data = $request->validated();
+        $data['start_date'] = $request->start_date;
+        $data['end_date'] = $request->end_date;
+
+        $updateAction->execute($project, $data);
+
         foreach ($request->input('tasks_existing', []) as $taskId => $name) {
             $task = ProjectTask::find($taskId);
             if ($task) {

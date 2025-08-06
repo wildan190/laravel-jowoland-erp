@@ -29,6 +29,7 @@
                             <th>No.</th>
                             <th>Nama</th>
                             <th>Progress</th>
+                            <th>Status</th>
                             <th class="text-center">Aksi</th>
                         </tr>
                     </thead>
@@ -51,6 +52,15 @@
                                             </div>
                                         </div>
                                     </div>
+                                </td>
+                                <td>
+                                    @if ($project->is_overdue)
+                                        <span class="badge bg-danger">Overdue</span>
+                                    @elseif ($project->progress_percentage == 100)
+                                        <span class="badge bg-success">Selesai</span>
+                                    @else
+                                        <span class="badge bg-warning text-dark">Berjalan</span>
+                                    @endif
                                 </td>
                                 <td class="text-center" style="white-space: nowrap;">
                                     <a href="{{ route('projects.show', $project) }}" class="btn btn-sm btn-info me-1">

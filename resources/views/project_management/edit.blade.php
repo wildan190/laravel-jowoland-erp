@@ -39,6 +39,20 @@
                         <textarea name="description" class="form-control" rows="3">{{ $project->description }}</textarea>
                     </div>
 
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-semibold">Tanggal Mulai</label>
+                            <input type="date" name="start_date" class="form-control" value="{{ $project->start_date }}"
+                                required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-semibold">Tanggal Selesai</label>
+                            <input type="date" name="end_date" class="form-control" value="{{ $project->end_date }}"
+                                required>
+                        </div>
+                    </div>
+
+
                     <hr>
                     <h5 class="text-dark">Checklist Tahapan</h5>
                     <div id="task-list">
