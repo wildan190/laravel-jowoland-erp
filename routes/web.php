@@ -54,14 +54,16 @@ Route::middleware(['auth'])
             Route::get('projects', [ProjectController::class, 'index'])->name('projects.index');
             Route::get('projects/create', [ProjectController::class, 'create'])->name('projects.create');
             Route::post('projects/store', [ProjectController::class, 'store'])->name('projects.store');
+            Route::get('/projects/{project}', [ProjectController::class, 'show'])->name('projects.show');
             Route::get('projects/{project}/edit', [ProjectController::class, 'edit'])->name('projects.edit');
             Route::put('projects/{project}', [ProjectController::class, 'update'])->name('projects.update');
             Route::delete('projects/{project}', [ProjectController::class, 'destroy'])->name('projects.destroy');
 
-            Route::get('projects/{project}/progress', [ProjectProgressController::class, 'index'])->name('projects.progress.index');
-            Route::post('projects/{project}/progress', [ProjectProgressController::class, 'store'])->name('projects.progress.store');
+            // Route::get('projects/{project}/progress', [ProjectProgressController::class, 'index'])->name('projects.progress.index');
+            // Route::post('projects/{project}/progress', [ProjectProgressController::class, 'store'])->name('projects.progress.store');
+            Route::post('/task/{task}/status', [ProjectController::class, 'updateTask'])->name('tasks.updateStatus');
         });
     });
 
 // Default redirect
-Route::get('/', fn() => redirect()->route('login'));
+Route::get('/', fn () => redirect()->route('login'));

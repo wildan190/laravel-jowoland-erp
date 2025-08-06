@@ -4,55 +4,73 @@
 
 @section('content')
     <div class="container">
+        {{-- Breadcrumb --}}
         <nav aria-label="breadcrumb">
-            <ol class="breadcrumb mb-3">
+            <ol class="breadcrumb mb-4">
                 <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Home</a></li>
-                <li class="breadcrumb-item active" aria-current="page">Project Management</li>
+                <li class="breadcrumb-item active" aria-current="page">Daftar Proyek</li>
             </ol>
         </nav>
 
-        <div class="d-flex justify-content-between mb-3">
-            <h4>Daftar Proyek</h4>
-            <a href="{{ route('projects.create') }}" class="btn btn-warning"><i class="fa fa-plus me-1"></i> Tambah Proyek</a>
+        {{-- Title & Button --}}
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h4 class="mb-0">Daftar Proyek</h4>
+            <a href="{{ route('projects.create') }}" class="btn btn-warning">
+                <i class="fa fa-plus me-1"></i> Tambah Proyek
+            </a>
         </div>
 
+        {{-- Table --}}
         <div class="card shadow-sm">
             <div class="card-body table-responsive">
                 <table class="table table-bordered align-middle">
                     <thead class="table-light">
                         <tr>
-                            <th>Nama Proyek</th>
-                            <th>Lokasi</th>
+                            <th>Nama</th>
                             <th>Progress</th>
-                            <th>Aksi</th>
+                            <th class="text-center">Aksi</th>
                         </tr>
                     </thead>
                     <tbody>
                         @forelse ($projects as $project)
                             <tr>
                                 <td>{{ $project->name }}</td>
-                                <td>{{ $project->location }}</td>
-                                <td>
-                                    @php
-                                        $progress = $project->progresses->avg('percentage') ?? 0;
-                                    @endphp
-                                    <div class="progress">
-                                        <div class="progress-bar" role="progressbar" style="width: {{ $progress }}%;" aria-valuenow="{{ $progress }}" aria-valuemin="0" aria-valuemax="100">
-                                            {{ round($progress) }}%
+                                <td style="min-width: 200px;">
+                                    <div class="d-flex align-items-center">
+                                        <div class="progress flex-grow-1" style="height: 18px;">
+                                            <div class="progress-bar 
+                                            {{ $project->progress_percentage < 40
+                                                ? 'bg-danger'
+                                                : ($project->progress_percentage < 70
+                                                    ? 'bg-warning'
+                                                    : 'bg-success') }}"
+                                                role="progressbar" style="width: {{ $project->progress_percentage }}%;">
+                                                {{ $project->progress_percentage }}%
+                                            </div>
                                         </div>
                                     </div>
                                 </td>
-                                <td>
-                                    <a href="{{ route('projects.progress.index', $project) }}" class="btn btn-sm btn-success">Progress</a>
-                                    <a href="{{ route('projects.edit', $project) }}" class="btn btn-sm btn-primary"><i class="fas fa-edit"></i></a>
-                                    <form action="{{ route('projects.destroy', $project) }}" method="POST" class="d-inline delete-form">
-                                        @csrf @method('DELETE')
-                                        <button class="btn btn-sm btn-danger"><i class="fas fa-trash-alt"></i></button>
+                                <td class="text-center" style="white-space: nowrap;">
+                                    <a href="{{ route('projects.show', $project) }}" class="btn btn-sm btn-info me-1">
+                                        <i class="fa fa-eye"></i>
+                                    </a>
+                                    <a href="{{ route('projects.edit', $project) }}" class="btn btn-sm btn-primary me-1">
+                                        <i class="fa fa-edit"></i>
+                                    </a>
+                                    <form action="{{ route('projects.destroy', $project) }}" method="POST"
+                                        class="d-inline delete-form">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button class="btn btn-sm btn-danger">
+                                            <i class="fa fa-trash"></i>
+                                        </button>
                                     </form>
                                 </td>
                             </tr>
                         @empty
-                            <tr><td colspan="4" class="text-center">Belum ada proyek.</td></tr>
+                            <tr>
+                                <td colspan="3" class="text-center text-muted">Belum ada proyek.</td>
+                            </tr>
                         @endforelse
                     </tbody>
                 </table>
@@ -60,15 +78,24 @@
         </div>
     </div>
 
-    @if (session('success'))
-        <script>
-            Swal.fire({
-                icon: 'success',
-                title: 'Berhasil',
-                text: '{{ session('success') }}',
-                timer: 2000,
-                showConfirmButton: true
+    {{-- Delete Confirmation --}}
+    <script>
+        document.querySelectorAll('.delete-form').forEach(form => {
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                Swal.fire({
+                    title: 'Hapus proyek ini?',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#aaa',
+                    confirmButtonText: 'Ya, hapus'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        this.submit();
+                    }
+                });
             });
-        </script>
-    @endif
+        });
+    </script>
 @endsection

@@ -1,16 +1,25 @@
 <?php
 
+// app/Models/Project.php
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Project extends Model
 {
     protected $fillable = ['name', 'location', 'description'];
 
-    public function progresses(): HasMany
+    public function tasks()
     {
-        return $this->hasMany(ProjectProgress::class);
+        return $this->hasMany(ProjectTask::class);
+    }
+
+    public function getProgressPercentageAttribute()
+    {
+        $total = $this->tasks()->count();
+        $done = $this->tasks()->where('is_done', true)->count();
+
+        return $total > 0 ? round(($done / $total) * 100) : 0;
     }
 }
