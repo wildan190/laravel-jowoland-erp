@@ -23,16 +23,6 @@ class ProjectController extends Controller
             },
         ])->get();
 
-        $query = Project::query();
-        if ($request->filter === 'overdue') {
-            $query->where('is_overdue', true);
-        } elseif ($request->filter === 'done') {
-            $query->whereHas('tasks', fn ($q) => $q->where('is_done', true));
-        } elseif ($request->filter === 'running') {
-            $query->where('is_overdue', false)->where('progress_percentage', '<', 100);
-        }
-        $projects = $query->get();
-
         return view('project_management.index', compact('projects'));
     }
 
