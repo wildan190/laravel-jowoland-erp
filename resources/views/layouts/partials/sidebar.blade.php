@@ -45,7 +45,8 @@
 </div>
 
 {{-- Sidebar Desktop --}}
-<div class="d-none d-md-flex flex-column justify-content-between position-fixed top-0 start-0 bg-black text-white vh-100 p-3" style="width: 250px;">
+<div class="d-none d-md-flex flex-column justify-content-between position-fixed top-0 start-0 bg-black text-white vh-100 p-3"
+    style="width: 250px;">
     <div>
         <h4 class="text-warning mb-4">ADMIN</h4>
         <div class="profile-card text-center mb-4">
@@ -66,50 +67,79 @@
         </ul>
         {{-- separate --}}
         <hr class="text-warning">
-<h6 class="text-warning mb-4">MENU</h6>
-<ul class="nav flex-column">
+        <h6 class="text-warning mb-4">MENU</h6>
+        <ul class="nav flex-column" id="mainMenu">
 
-    {{-- Dropdown: CRM --}}
-    <li class="nav-item mb-2">
-        <a class="nav-link text-white dropdown-toggle {{ request()->is('crm/*') }}" 
-           data-bs-toggle="collapse" 
-           href="#crmMenu" 
-           role="button" 
-           aria-expanded="{{ request()->is('crm/*') ? 'true' : 'false' }}" 
-           aria-controls="crmMenu">
-            <i class="fa fa-building me-1"></i> CRM
-        </a>
-        <div class="collapse {{ request()->is('crm/*') ? 'show' : '' }}" id="crmMenu">
-            <ul class="nav flex-column ms-3">
-                <li class="nav-item">
-                    <a class="nav-link text-white {{ request()->routeIs('contacts.index') ? 'active' : '' }}"
-                       href="{{ route('contacts.index') }}">
-                        <i class="fa fa-address-book me-1"></i> Contacts
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link text-white {{ request()->routeIs('deal.index') ? 'active' : '' }}"
-                       href="{{ route('deal.index') }}">
-                        <i class="fa fa-handshake me-1"></i> Deals
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link text-white {{ request()->routeIs('deal.kanban') ? 'active' : '' }}"
-                       href="{{ route('deal.kanban') }}">
-                        <i class="fa fa-columns me-1"></i> Kanban Pipeline
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link text-white {{ request()->routeIs('pipeline.index') ? 'active' : '' }}"
-                       href="{{ route('pipeline.index') }}">
-                        <i class="fa fa-layer-group me-1"></i> Pipeline Stages
-                    </a>
-                </li>
-            </ul>
-        </div>
-    </li>
+            {{-- Dropdown: CRM --}}
+            <li class="nav-item mb-2">
+                <a class="nav-link text-white dropdown-toggle {{ request()->is('crm/*') }}" data-bs-toggle="collapse"
+                    href="#crmMenu" role="button" aria-expanded="{{ request()->is('crm/*') ? 'true' : 'false' }}"
+                    aria-controls="crmMenu">
+                    <i class="fa fa-building me-1"></i> CRM
+                </a>
+                <div class="collapse {{ request()->is('crm/*') ? 'show' : '' }}" id="crmMenu"
+                    data-bs-parent="#mainMenu">
+                    <ul class="nav flex-column ms-3">
+                        <li class="nav-item">
+                            <a class="nav-link text-white {{ request()->routeIs('contacts.index') ? 'active' : '' }}"
+                                href="{{ route('contacts.index') }}">
+                                <i class="fa fa-address-book me-1"></i> Contacts
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-white {{ request()->routeIs('deal.index') ? 'active' : '' }}"
+                                href="{{ route('deal.index') }}">
+                                <i class="fa fa-handshake me-1"></i> Deals
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-white {{ request()->routeIs('deal.kanban') ? 'active' : '' }}"
+                                href="{{ route('deal.kanban') }}">
+                                <i class="fa fa-columns me-1"></i> Kanban Pipeline
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-white {{ request()->routeIs('pipeline.index') ? 'active' : '' }}"
+                                href="{{ route('pipeline.index') }}">
+                                <i class="fa fa-layer-group me-1"></i> Pipeline Stages
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </li>
 
-</ul>
+            {{-- Dropdown: Project Management --}}
+            <li class="nav-item mb-2">
+                <a class="nav-link text-white dropdown-toggle {{ request()->is('projects*') }}"
+                    data-bs-toggle="collapse" href="#projectMenu" role="button"
+                    aria-expanded="{{ request()->is('projects*') ? 'true' : 'false' }}" aria-controls="projectMenu">
+                    <i class="fa fa-project-diagram me-1"></i> Project Management
+                </a>
+                <div class="collapse {{ request()->is('projects*') ? 'show' : '' }}" id="projectMenu"
+                    data-bs-parent="#mainMenu">
+                    <ul class="nav flex-column ms-3">
+                        <li class="nav-item">
+                            <a class="nav-link text-white {{ request()->routeIs('projects.index') ? 'active' : '' }}"
+                                href="{{ route('projects.index') }}">
+                                <i class="fa fa-list me-1"></i> Daftar Proyek
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-white {{ request()->routeIs('projects.create') ? 'active' : '' }}"
+                                href="{{ route('projects.create') }}">
+                                <i class="fa fa-plus me-1"></i> Tambah Proyek
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-white {{ request()->is('projects/*/progress*') ? 'active' : '' }}"
+                                href="{{ route('projects.index') }}">
+                                <i class="fa fa-spinner me-1"></i> Tracking Progress
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </li>
+        </ul>
 
     </div>
     <div class="logout-wrapper mt-3">
