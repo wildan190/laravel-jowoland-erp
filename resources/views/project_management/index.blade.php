@@ -44,10 +44,10 @@
                                 </td>
                                 <td>
                                     <a href="{{ route('projects.progress.index', $project) }}" class="btn btn-sm btn-success">Progress</a>
-                                    <a href="{{ route('projects.edit', $project) }}" class="btn btn-sm btn-primary">Edit</a>
+                                    <a href="{{ route('projects.edit', $project) }}" class="btn btn-sm btn-primary"><i class="fas fa-edit"></i></a>
                                     <form action="{{ route('projects.destroy', $project) }}" method="POST" class="d-inline delete-form">
                                         @csrf @method('DELETE')
-                                        <button class="btn btn-sm btn-danger">Hapus</button>
+                                        <button class="btn btn-sm btn-danger"><i class="fas fa-trash-alt"></i></button>
                                     </form>
                                 </td>
                             </tr>
