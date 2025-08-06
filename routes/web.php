@@ -5,6 +5,8 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\CRM\DealController;
 use App\Http\Controllers\CRM\PipelineStageController;
+use App\Http\Controllers\ProjectManagement\ProjectController;
+use App\Http\Controllers\ProjectManagement\ProjectProgressController;
 use Illuminate\Support\Facades\Route;
 
 // Guest routes
@@ -47,7 +49,19 @@ Route::middleware(['auth'])
         Route::delete('/deal/{deal}', [DealController::class, 'destroy'])->name('deal.destroy');
         Route::get('/deal/kanban', [DealController::class, 'kanban'])->name('deal.kanban');
         Route::post('/deal/{deal}/move', [DealController::class, 'move'])->name('deal.move');
+
+        Route::prefix('project-management')->group(function () {
+            Route::get('projects', [ProjectController::class, 'index'])->name('projects.index');
+            Route::get('projects/create', [ProjectController::class, 'create'])->name('projects.create');
+            Route::post('projects/store', [ProjectController::class, 'store'])->name('projects.store');
+            Route::get('projects/{project}/edit', [ProjectController::class, 'edit'])->name('projects.edit');
+            Route::put('projects/{project}', [ProjectController::class, 'update'])->name('projects.update');
+            Route::delete('projects/{project}', [ProjectController::class, 'destroy'])->name('projects.destroy');
+
+            Route::get('projects/{project}/progress', [ProjectProgressController::class, 'index'])->name('projects.progress.index');
+            Route::post('projects/{project}/progress', [ProjectProgressController::class, 'store'])->name('projects.progress.store');
+        });
     });
 
 // Default redirect
-Route::get('/', fn () => redirect()->route('login'));
+Route::get('/', fn() => redirect()->route('login'));
