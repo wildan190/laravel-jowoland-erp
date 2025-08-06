@@ -26,6 +26,7 @@
                 <table class="table table-bordered align-middle">
                     <thead class="table-light">
                         <tr>
+                            <th>No.</th>
                             <th>Nama</th>
                             <th>Progress</th>
                             <th class="text-center">Aksi</th>
@@ -34,6 +35,7 @@
                     <tbody>
                         @forelse ($projects as $project)
                             <tr>
+                                <td>{{ $loop->iteration }}</td>
                                 <td>{{ $project->name }}</td>
                                 <td style="min-width: 200px;">
                                     <div class="d-flex align-items-center">
