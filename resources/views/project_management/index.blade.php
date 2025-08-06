@@ -4,6 +4,13 @@
 
 @section('content')
     <div class="container">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-3">
+                <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Home</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Project Management</li>
+            </ol>
+        </nav>
+
         <div class="d-flex justify-content-between mb-3">
             <h4>Daftar Proyek</h4>
             <a href="{{ route('projects.create') }}" class="btn btn-warning"><i class="fa fa-plus me-1"></i> Tambah Proyek</a>
@@ -60,7 +67,7 @@
                 title: 'Berhasil',
                 text: '{{ session('success') }}',
                 timer: 2000,
-                showConfirmButton: false
+                showConfirmButton: true
             });
         </script>
     @endif

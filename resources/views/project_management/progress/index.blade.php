@@ -4,6 +4,15 @@
 
 @section('content')
     <div class="container">
+    
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-3">
+                <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Home</a></li>
+                <li class="breadcrumb-item"><a href="{{ route('projects.index') }}">Project Management</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Progress: {{ $project->name }}</li>
+            </ol>
+        </nav>
+
         <h4 class="mb-3">Progress: {{ $project->name }}</h4>
 
         <div class="card mb-4">
@@ -19,7 +28,8 @@
 
                         <div class="col-md-2">
                             <label for="percentage" class="form-label">Progress (%)</label>
-                            <input type="number" name="percentage" id="percentage" class="form-control" min="0" max="100" required>
+                            <input type="number" name="percentage" id="percentage" class="form-control" min="0"
+                                max="100" required>
                         </div>
 
                         <div class="col-md-4">
@@ -62,7 +72,9 @@
                                 <td>{{ $progress->created_at->format('d M Y H:i') }}</td>
                             </tr>
                         @empty
-                            <tr><td colspan="4" class="text-center">Belum ada progress.</td></tr>
+                            <tr>
+                                <td colspan="4" class="text-center">Belum ada progress.</td>
+                            </tr>
                         @endforelse
                     </tbody>
                 </table>

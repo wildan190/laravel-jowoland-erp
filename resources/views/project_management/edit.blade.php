@@ -4,6 +4,15 @@
 
 @section('content')
     <div class="container">
+    
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-3">
+                <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Home</a></li>
+                <li class="breadcrumb-item"><a href="{{ route('projects.index') }}">Project Management</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Edit Proyek</li>
+            </ol>
+        </nav>
+
         <h4 class="mb-3">Edit Proyek</h4>
 
         <div class="card">
@@ -14,12 +23,14 @@
 
                     <div class="mb-3">
                         <label for="name" class="form-label">Nama Proyek</label>
-                        <input type="text" name="name" id="name" class="form-control" required value="{{ old('name', $project->name) }}">
+                        <input type="text" name="name" id="name" class="form-control" required
+                            value="{{ old('name', $project->name) }}">
                     </div>
 
                     <div class="mb-3">
                         <label for="location" class="form-label">Lokasi</label>
-                        <input type="text" name="location" id="location" class="form-control" required value="{{ old('location', $project->location) }}">
+                        <input type="text" name="location" id="location" class="form-control" required
+                            value="{{ old('location', $project->location) }}">
                     </div>
 
                     <div class="mb-3">
