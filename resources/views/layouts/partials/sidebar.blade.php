@@ -48,7 +48,6 @@
 <div class="d-none d-md-flex flex-column justify-content-between position-fixed top-0 start-0 bg-black text-white vh-100 p-3"
     style="width: 250px;">
     <div>
-        <h4 class="text-warning mb-4">ADMIN</h4>
         <div class="profile-card text-center mb-4">
             <div class="avatar rounded-circle bg-warning text-black"
                 style="width: 80px; height: 80px; display: flex; align-items: center; justify-content: center; font-size: 32px;">

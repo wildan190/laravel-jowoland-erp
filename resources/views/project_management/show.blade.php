@@ -27,14 +27,12 @@
                 <h5 class="text-dark">{{ $project->name }}</h5>
                 <p><strong>Lokasi:</strong> {{ $project->location }}</p>
                 <p><strong>Deskripsi:</strong> {{ $project->description }}</p>
-
                 <p><strong>Tanggal Mulai:</strong> {{ \Carbon\Carbon::parse($project->start_date)->format('d M Y') }}</p>
                 <p><strong>Tanggal Selesai:</strong> {{ \Carbon\Carbon::parse($project->end_date)->format('d M Y') }}</p>
 
                 @if ($project->is_overdue)
                     <div class="alert alert-danger">
-                        <i class="fa fa-exclamation-circle me-2"></i> Proyek ini telah melewati tanggal target dan belum
-                        selesai (Overdue).
+                        <i class="fa fa-exclamation-circle me-2"></i> Proyek ini telah melewati tanggal target dan belum selesai (Overdue).
                     </div>
                 @elseif ($project->progress_percentage == 100)
                     <div class="alert alert-success">
@@ -72,10 +70,16 @@
                             <div
                                 class="step-box p-3 rounded shadow-sm {{ $task->is_done ? 'bg-success text-white' : 'bg-light' }}">
                                 <div class="mb-2">
-                                    <input type="checkbox" data-task-id="{{ $task->id }}"
-                                        class="task-check form-check-input" {{ $task->is_done ? 'checked' : '' }}>
+                                    <input type="checkbox"
+                                        data-task-id="{{ $task->id }}"
+                                        class="task-check form-check-input large-checkbox"
+                                        {{ $task->is_done ? 'checked' : '' }}>
                                 </div>
                                 <div class="step-name fw-semibold">{{ $task->task_name }}</div>
+                                <div class="small mt-1 text-muted">
+                                    <i class="fa fa-calendar me-1"></i>
+                                    {{ \Carbon\Carbon::parse($task->due_date)->format('d M Y') }}
+                                </div>
                             </div>
                         </div>
                     @endforeach
@@ -89,59 +93,71 @@
         .step-item .step-box {
             transition: all 0.2s ease;
             border: 1px solid #ddd;
-            min-height: 100px;
+            min-height: 120px;
         }
 
         .step-box.bg-success {
             background-color: #198754 !important;
             color: white;
         }
+
+        .large-checkbox {
+            transform: scale(1.7);
+            cursor: pointer;
+        }
+
+        .step-box:hover {
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            transform: translateY(-2px);
+        }
+
+        .pipeline-steps {
+            padding-bottom: 10px;
+        }
     </style>
 
     {{-- JavaScript --}}
     <script>
         document.querySelectorAll('.task-check').forEach(checkbox => {
-            checkbox.addEventListener('change', function() {
+            checkbox.addEventListener('change', function () {
                 const taskId = this.dataset.taskId;
                 const url = `{{ route('tasks.updateStatus', ':id') }}`.replace(':id', taskId);
 
                 fetch(url, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                        },
-                        body: JSON.stringify({
-                            is_done: this.checked
-                        })
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    body: JSON.stringify({
+                        is_done: this.checked
                     })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success && data.updated_percentage !== undefined) {
-                            const bar = document.getElementById('progress-bar');
-                            const text = document.getElementById('progress-text');
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success && data.updated_percentage !== undefined) {
+                        const bar = document.getElementById('progress-bar');
+                        const text = document.getElementById('progress-text');
 
-                            bar.style.width = data.updated_percentage + '%';
-                            bar.setAttribute('aria-valuenow', data.updated_percentage);
-                            text.textContent = data.updated_percentage + '%';
+                        bar.style.width = data.updated_percentage + '%';
+                        bar.setAttribute('aria-valuenow', data.updated_percentage);
+                        text.textContent = data.updated_percentage + '%';
 
-                            // Update style visual untuk checkbox
-                            if (this.checked) {
-                                this.closest('.step-box').classList.add('bg-success', 'text-white');
-                            } else {
-                                this.closest('.step-box').classList.remove('bg-success', 'text-white');
-                            }
-
-                            // Ubah warna progress bar sesuai % 
-                            if (data.updated_percentage >= 80) {
-                                bar.className = 'progress-bar bg-success';
-                            } else if (data.updated_percentage >= 40) {
-                                bar.className = 'progress-bar bg-warning';
-                            } else {
-                                bar.className = 'progress-bar bg-danger';
-                            }
+                        if (this.checked) {
+                            this.closest('.step-box').classList.add('bg-success', 'text-white');
+                        } else {
+                            this.closest('.step-box').classList.remove('bg-success', 'text-white');
                         }
-                    });
+
+                        if (data.updated_percentage >= 80) {
+                            bar.className = 'progress-bar bg-success';
+                        } else if (data.updated_percentage >= 40) {
+                            bar.className = 'progress-bar bg-warning';
+                        } else {
+                            bar.className = 'progress-bar bg-danger';
+                        }
+                    }
+                });
             });
         });
     </script>
