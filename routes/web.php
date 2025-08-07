@@ -5,6 +5,9 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\CRM\DealController;
 use App\Http\Controllers\CRM\PipelineStageController;
+use App\Http\Controllers\HRM\DivisionController;
+use App\Http\Controllers\HRM\EmployeeController;
+use App\Http\Controllers\HRM\PayrollController;
 use App\Http\Controllers\ProjectManagement\ProjectController;
 use App\Http\Controllers\ProjectManagement\ProjectProgressController;
 use Illuminate\Support\Facades\Route;
@@ -63,7 +66,32 @@ Route::middleware(['auth'])
             // Route::post('projects/{project}/progress', [ProjectProgressController::class, 'store'])->name('projects.progress.store');
             Route::post('/task/{task}/status', [ProjectController::class, 'updateTask'])->name('tasks.updateStatus');
             Route::get('/projects/{project}/calendar', [ProjectController::class, 'calendar'])->name('projects.calendar');
+        });
 
+        Route::prefix('hrm')->group(function () {
+            // === Division Routes ===
+            Route::get('/divisions', [DivisionController::class, 'index'])->name('divisions.index');
+            Route::get('/divisions/create', [DivisionController::class, 'create'])->name('divisions.create');
+            Route::post('/divisions', [DivisionController::class, 'store'])->name('divisions.store');
+            Route::get('/divisions/{division}/edit', [DivisionController::class, 'edit'])->name('divisions.edit');
+            Route::put('/divisions/{division}', [DivisionController::class, 'update'])->name('divisions.update');
+            Route::delete('/divisions/{division}', [DivisionController::class, 'destroy'])->name('divisions.destroy');
+
+            // === Payroll Routes ===
+            Route::get('/payrolls', [PayrollController::class, 'index'])->name('payrolls.index');
+            Route::get('/payrolls/create', [PayrollController::class, 'create'])->name('payrolls.create');
+            Route::post('/payrolls', [PayrollController::class, 'store'])->name('payrolls.store');
+            Route::get('/payrolls/{payroll}/edit', [PayrollController::class, 'edit'])->name('payrolls.edit');
+            Route::put('/payrolls/{payroll}', [PayrollController::class, 'update'])->name('payrolls.update');
+            Route::delete('/payrolls/{payroll}', [PayrollController::class, 'destroy'])->name('payrolls.destroy');
+
+            // === Employee Routes (opsional, jika sudah ada model dan controller-nya) ===
+            Route::get('/employees', [EmployeeController::class, 'index'])->name('employees.index');
+            Route::get('/employees/create', [EmployeeController::class, 'create'])->name('employees.create');
+            Route::post('/employees', [EmployeeController::class, 'store'])->name('employees.store');
+            Route::get('/employees/{employee}/edit', [EmployeeController::class, 'edit'])->name('employees.edit');
+            Route::put('/employees/{employee}', [EmployeeController::class, 'update'])->name('employees.update');
+            Route::delete('/employees/{employee}', [EmployeeController::class, 'destroy'])->name('employees.destroy');
         });
     });
 

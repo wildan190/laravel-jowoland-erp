@@ -22,5 +22,4 @@ class ProjectRequest extends FormRequest
             'contact_id' => 'required|exists:contacts,id',
         ];
     }
-    
 }

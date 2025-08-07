@@ -30,6 +30,7 @@ class ProjectController extends Controller
     public function create()
     {
         $contacts = Contact::orderBy('name')->get();
+
         return view('project_management.create', compact('contacts'));
     }
 
@@ -85,7 +86,7 @@ class ProjectController extends Controller
     {
         $tasks = $project->tasks()->get(['id', 'task_name', 'due_date', 'created_at']);
         $events = $tasks->map(
-            fn($task) => [
+            fn ($task) => [
                 'id' => $task->id,
                 'title' => $task->task_name,
                 'start' => $task->created_at->toDateString(),

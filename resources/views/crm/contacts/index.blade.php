@@ -13,7 +13,7 @@
 
         <div class="d-flex justify-content-between mb-3">
             <h4>Daftar Kontak</h4>
-            <a href="{{ route('contacts.create') }}" class="btn btn-primary">
+            <a href="{{ route('contacts.create') }}" class="btn btn-warning">
                 <i class="fas fa-plus"></i> Tambah Kontak
             </a>
         </div>
