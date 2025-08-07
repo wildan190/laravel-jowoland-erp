@@ -24,15 +24,41 @@
         {{-- Card Detail --}}
         <div class="card shadow-sm mb-4">
             <div class="card-body">
-                <h5 class="text-dark">{{ $project->name }}</h5>
-                <p><strong>Lokasi:</strong> {{ $project->location }}</p>
-                <p><strong>Deskripsi:</strong> {{ $project->description }}</p>
-                <p><strong>Tanggal Mulai:</strong> {{ \Carbon\Carbon::parse($project->start_date)->format('d M Y') }}</p>
-                <p><strong>Tanggal Selesai:</strong> {{ \Carbon\Carbon::parse($project->end_date)->format('d M Y') }}</p>
 
+                {{-- Informasi Perusahaan / Contact --}}
+                @if ($project->contact)
+                    <div class="mb-4 border-bottom pb-3">
+                        <h3 class="text-uppercase fw-bold mb-1 text-primary">{{ $project->contact->company }}</h3>
+                        <div class="mb-1"><strong>Klien:</strong> {{ $project->contact->name }}</div>
+                        <div class="mb-1"><strong>Email:</strong> {{ $project->contact->email }}</div>
+                        <div class="mb-1"><strong>Telepon:</strong> {{ $project->contact->phone }}</div>
+                        @if ($project->contact->address)
+                            <div><strong>Alamat:</strong> {{ $project->contact->address }}</div>
+                        @endif
+                    </div>
+                @endif
+
+                {{-- Informasi Proyek --}}
+                <h5 class="text-dark fw-bold">{{ $project->name }}</h5>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <p><strong>Lokasi:</strong> {{ $project->location }}</p>
+                        <p><strong>Deskripsi:</strong> {{ $project->description }}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <p><strong>Tanggal Mulai:</strong>
+                            {{ \Carbon\Carbon::parse($project->start_date)->format('d M Y') }}</p>
+                        <p><strong>Tanggal Selesai:</strong>
+                            {{ \Carbon\Carbon::parse($project->end_date)->format('d M Y') }}</p>
+                    </div>
+                </div>
+
+                {{-- Status Proyek --}}
                 @if ($project->is_overdue)
                     <div class="alert alert-danger">
-                        <i class="fa fa-exclamation-circle me-2"></i> Proyek ini telah melewati tanggal target dan belum selesai (Overdue).
+                        <i class="fa fa-exclamation-circle me-2"></i> Proyek ini telah melewati tanggal target dan belum
+                        selesai (Overdue).
                     </div>
                 @elseif ($project->progress_percentage == 100)
                     <div class="alert alert-success">
@@ -55,7 +81,9 @@
                         </div>
                     </div>
                 </div>
+
             </div>
+
         </div>
 
         {{-- Pipeline Tahapan (Checklist Style) --}}
@@ -70,8 +98,7 @@
                             <div
                                 class="step-box p-3 rounded shadow-sm {{ $task->is_done ? 'bg-success text-white' : 'bg-light' }}">
                                 <div class="mb-2">
-                                    <input type="checkbox"
-                                        data-task-id="{{ $task->id }}"
+                                    <input type="checkbox" data-task-id="{{ $task->id }}"
                                         class="task-check form-check-input large-checkbox"
                                         {{ $task->is_done ? 'checked' : '' }}>
                                 </div>
@@ -107,7 +134,7 @@
         }
 
         .step-box:hover {
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             transform: translateY(-2px);
         }
 
@@ -119,45 +146,45 @@
     {{-- JavaScript --}}
     <script>
         document.querySelectorAll('.task-check').forEach(checkbox => {
-            checkbox.addEventListener('change', function () {
+            checkbox.addEventListener('change', function() {
                 const taskId = this.dataset.taskId;
                 const url = `{{ route('tasks.updateStatus', ':id') }}`.replace(':id', taskId);
 
                 fetch(url, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                    },
-                    body: JSON.stringify({
-                        is_done: this.checked
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        },
+                        body: JSON.stringify({
+                            is_done: this.checked
+                        })
                     })
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success && data.updated_percentage !== undefined) {
-                        const bar = document.getElementById('progress-bar');
-                        const text = document.getElementById('progress-text');
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success && data.updated_percentage !== undefined) {
+                            const bar = document.getElementById('progress-bar');
+                            const text = document.getElementById('progress-text');
 
-                        bar.style.width = data.updated_percentage + '%';
-                        bar.setAttribute('aria-valuenow', data.updated_percentage);
-                        text.textContent = data.updated_percentage + '%';
+                            bar.style.width = data.updated_percentage + '%';
+                            bar.setAttribute('aria-valuenow', data.updated_percentage);
+                            text.textContent = data.updated_percentage + '%';
 
-                        if (this.checked) {
-                            this.closest('.step-box').classList.add('bg-success', 'text-white');
-                        } else {
-                            this.closest('.step-box').classList.remove('bg-success', 'text-white');
+                            if (this.checked) {
+                                this.closest('.step-box').classList.add('bg-success', 'text-white');
+                            } else {
+                                this.closest('.step-box').classList.remove('bg-success', 'text-white');
+                            }
+
+                            if (data.updated_percentage >= 80) {
+                                bar.className = 'progress-bar bg-success';
+                            } else if (data.updated_percentage >= 40) {
+                                bar.className = 'progress-bar bg-warning';
+                            } else {
+                                bar.className = 'progress-bar bg-danger';
+                            }
                         }
-
-                        if (data.updated_percentage >= 80) {
-                            bar.className = 'progress-bar bg-success';
-                        } else if (data.updated_percentage >= 40) {
-                            bar.className = 'progress-bar bg-warning';
-                        } else {
-                            bar.className = 'progress-bar bg-danger';
-                        }
-                    }
-                });
+                    });
             });
         });
     </script>

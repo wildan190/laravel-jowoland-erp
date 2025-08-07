@@ -8,6 +8,7 @@ use App\Action\ProjectManagement\UpdateProjectAction;
 use App\Action\ProjectManagement\UpdateTaskStatusAction;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ProjectManagement\ProjectRequest;
+use App\Models\Contact;
 use App\Models\Project;
 use App\Models\ProjectTask;
 use Illuminate\Http\Request;
@@ -28,7 +29,8 @@ class ProjectController extends Controller
 
     public function create()
     {
-        return view('project_management.create');
+        $contacts = Contact::orderBy('name')->get();
+        return view('project_management.projects.create', compact('contacts'));
     }
 
     public function store(ProjectRequest $request, CreateProjectAction $createAction)
@@ -51,9 +53,10 @@ class ProjectController extends Controller
 
     public function edit(Project $project)
     {
-        $project->load('tasks');
+        $project->load('tasks', 'contact'); // Eager load
+        $contacts = Contact::orderBy('name')->get();
 
-        return view('project_management.edit', compact('project'));
+        return view('project_management.edit', compact('project', 'contacts'));
     }
 
     public function update(ProjectRequest $request, Project $project, UpdateProjectAction $updateAction)
@@ -82,7 +85,7 @@ class ProjectController extends Controller
     {
         $tasks = $project->tasks()->get(['id', 'task_name', 'due_date', 'created_at']);
         $events = $tasks->map(
-            fn ($task) => [
+            fn($task) => [
                 'id' => $task->id,
                 'title' => $task->task_name,
                 'start' => $task->created_at->toDateString(),

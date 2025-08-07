@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Project extends Model
 {
-    protected $fillable = ['name', 'location', 'description', 'start_date', 'end_date'];
+    protected $fillable = ['name', 'location', 'description', 'start_date', 'end_date', 'contact_id'];
 
     public function tasks()
     {
@@ -28,10 +28,15 @@ class Project extends Model
 
     public function getIsOverdueAttribute()
     {
-        if (! $this->end_date) {
+        if (!$this->end_date) {
             return false;
         }
 
         return now()->gt(\Carbon\Carbon::parse($this->end_date)) && $this->progress_percentage < 100;
+    }
+
+    public function contact()
+    {
+        return $this->belongsTo(Contact::class);
     }
 }

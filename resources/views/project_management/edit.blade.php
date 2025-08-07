@@ -21,65 +21,78 @@
         <div class="card shadow-sm">
             <div class="card-body">
                 <form action="{{ route('projects.update', $project) }}" method="POST">
-                    @csrf
-                    @method('PUT')
+    @csrf
+    @method('PUT')
 
-                    {{-- Nama Proyek --}}
-                    <div class="mb-3">
-                        <label for="name" class="form-label fw-semibold">Nama Proyek</label>
-                        <input type="text" name="name" class="form-control" value="{{ $project->name }}" required>
-                    </div>
+    {{-- Nama Proyek --}}
+    <div class="mb-3">
+        <label for="name" class="form-label fw-semibold">Nama Proyek</label>
+        <input type="text" name="name" class="form-control" value="{{ $project->name }}" required>
+    </div>
 
-                    {{-- Lokasi --}}
-                    <div class="mb-3">
-                        <label for="location" class="form-label fw-semibold">Lokasi</label>
-                        <input type="text" name="location" class="form-control" value="{{ $project->location }}">
-                    </div>
+    {{-- Lokasi --}}
+    <div class="mb-3">
+        <label for="location" class="form-label fw-semibold">Lokasi</label>
+        <input type="text" name="location" class="form-control" value="{{ $project->location }}">
+    </div>
 
-                    {{-- Deskripsi --}}
-                    <div class="mb-3">
-                        <label for="description" class="form-label fw-semibold">Deskripsi</label>
-                        <textarea name="description" class="form-control" rows="3">{{ $project->description }}</textarea>
-                    </div>
+    {{-- Kontak Person --}}
+    <div class="mb-3">
+        <label for="contact_id" class="form-label fw-semibold">Kontak Person</label>
+        <select name="contact_id" class="form-select" required>
+            <option value="">-- Pilih Kontak --</option>
+            @foreach ($contacts as $contact)
+                <option value="{{ $contact->id }}"
+                    {{ $project->contact_id == $contact->id ? 'selected' : '' }}>
+                    {{ $contact->name }}
+                </option>
+            @endforeach
+        </select>
+    </div>
 
-                    {{-- Tanggal Mulai dan Selesai --}}
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label fw-semibold">Tanggal Mulai</label>
-                            <input type="date" name="start_date" class="form-control" value="{{ $project->start_date }}"
-                                required>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label fw-semibold">Tanggal Selesai</label>
-                            <input type="date" name="end_date" class="form-control" value="{{ $project->end_date }}"
-                                required>
-                        </div>
-                    </div>
+    {{-- Deskripsi --}}
+    <div class="mb-3">
+        <label for="description" class="form-label fw-semibold">Deskripsi</label>
+        <textarea name="description" class="form-control" rows="3">{{ $project->description }}</textarea>
+    </div>
 
-                    <hr>
+    {{-- Tanggal Mulai dan Selesai --}}
+    <div class="row">
+        <div class="col-md-6 mb-3">
+            <label class="form-label fw-semibold">Tanggal Mulai</label>
+            <input type="date" name="start_date" class="form-control" value="{{ $project->start_date }}" required>
+        </div>
+        <div class="col-md-6 mb-3">
+            <label class="form-label fw-semibold">Tanggal Selesai</label>
+            <input type="date" name="end_date" class="form-control" value="{{ $project->end_date }}" required>
+        </div>
+    </div>
 
-                    {{-- Checklist Tahapan --}}
-                    <h5 class="text-dark mb-2">Checklist Tahapan</h5>
-                    <div id="task-list">
-                        @foreach ($project->tasks as $task)
-                            <div class="input-group mb-2 task-row">
-                                <input type="text" name="tasks_existing[{{ $task->id }}]" class="form-control"
-                                    value="{{ $task->task_name }}" required>
-                                <input type="date" name="tasks_existing_due_date[{{ $task->id }}]"
-                                    class="form-control" value="{{ $task->due_date }}">
-                                <button type="button" class="btn btn-danger remove-task">×</button>
-                            </div>
-                        @endforeach
-                    </div>
+    <hr>
 
-                    <button type="button" class="btn btn-outline-secondary mb-3" id="add-task">+ Tambah Tahapan</button>
+    {{-- Checklist Tahapan --}}
+    <h5 class="text-dark mb-2">Checklist Tahapan</h5>
+    <div id="task-list">
+        @foreach ($project->tasks as $task)
+            <div class="input-group mb-2 task-row">
+                <input type="text" name="tasks_existing[{{ $task->id }}]" class="form-control"
+                    value="{{ $task->task_name }}" required>
+                <input type="date" name="tasks_existing_due_date[{{ $task->id }}]" class="form-control"
+                    value="{{ $task->due_date }}">
+                <button type="button" class="btn btn-danger remove-task">×</button>
+            </div>
+        @endforeach
+    </div>
 
-                    {{-- Tombol Aksi --}}
-                    <div class="mt-3 d-flex justify-content-end">
-                        <a href="{{ route('projects.index') }}" class="btn btn-secondary me-2">Batal</a>
-                        <button type="submit" class="btn btn-primary">Update Proyek</button>
-                    </div>
-                </form>
+    <button type="button" class="btn btn-outline-secondary mb-3" id="add-task">+ Tambah Tahapan</button>
+
+    {{-- Tombol Aksi --}}
+    <div class="mt-3 d-flex justify-content-end">
+        <a href="{{ route('projects.index') }}" class="btn btn-secondary me-2">Batal</a>
+        <button type="submit" class="btn btn-primary">Update Proyek</button>
+    </div>
+</form>
+
             </div>
         </div>
     </div>

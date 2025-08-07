@@ -23,48 +23,80 @@
                 <form action="{{ route('projects.store') }}" method="POST">
                     @csrf
 
+                    {{-- Nama Proyek --}}
                     <div class="mb-3">
-                        <label for="name" class="form-label fw-semibold">Nama Proyek</label>
-                        <input type="text" name="name" class="form-control" required>
+                        <label for="name" class="form-label">Nama Proyek</label>
+                        <input type="text" name="name" id="name"
+                            class="form-control @error('name') is-invalid @enderror" value="{{ old('name') }}" required>
+                        @error('name')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
                     </div>
 
+                    {{-- Lokasi --}}
                     <div class="mb-3">
-                        <label for="location" class="form-label fw-semibold">Lokasi</label>
-                        <input type="text" name="location" class="form-control">
+                        <label for="location" class="form-label">Lokasi</label>
+                        <input type="text" name="location" id="location"
+                            class="form-control @error('location') is-invalid @enderror" value="{{ old('location') }}"
+                            required>
+                        @error('location')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
                     </div>
 
+                    {{-- Deskripsi --}}
                     <div class="mb-3">
-                        <label for="description" class="form-label fw-semibold">Deskripsi</label>
-                        <textarea name="description" class="form-control" rows="3"></textarea>
+                        <label for="description" class="form-label">Deskripsi</label>
+                        <textarea name="description" id="description" rows="3"
+                            class="form-control @error('description') is-invalid @enderror">{{ old('description') }}</textarea>
+                        @error('description')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
                     </div>
 
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label fw-semibold">Tanggal Mulai</label>
-                            <input type="date" name="start_date" class="form-control" required>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label fw-semibold">Tanggal Selesai</label>
-                            <input type="date" name="end_date" class="form-control" required>
-                        </div>
+                    {{-- Tanggal Mulai --}}
+                    <div class="mb-3">
+                        <label for="start_date" class="form-label">Tanggal Mulai</label>
+                        <input type="date" name="start_date" id="start_date"
+                            class="form-control @error('start_date') is-invalid @enderror" value="{{ old('start_date') }}"
+                            required>
+                        @error('start_date')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
                     </div>
 
-                    <hr>
-                    <h5 class="text-dark">Checklist Tahapan Pekerjaan</h5>
-                    <div id="task-list">
-                        <div class="input-group mb-2">
-                            <input type="text" name="tasks[]" class="form-control" placeholder="Nama Tahapan" required>
-                            <input type="date" name="tasks_due_date[]" class="form-control" placeholder="Due Date">
-                            <button type="button" class="btn btn-danger remove-task">×</button>
-                        </div>
+                    {{-- Tanggal Selesai --}}
+                    <div class="mb-3">
+                        <label for="end_date" class="form-label">Tanggal Selesai</label>
+                        <input type="date" name="end_date" id="end_date"
+                            class="form-control @error('end_date') is-invalid @enderror" value="{{ old('end_date') }}"
+                            required>
+                        @error('end_date')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
                     </div>
-                    <button type="button" class="btn btn-outline-secondary mb-3" id="add-task">+ Tambah Tahapan</button>
 
-                    <div class="mt-3 d-flex justify-content-end">
-                        <a href="{{ route('projects.index') }}" class="btn btn-secondary me-2">Batal</a>
-                        <button type="submit" class="btn btn-primary">Simpan Proyek</button>
+                    {{-- Kontak --}}
+                    <div class="mb-4">
+                        <label for="contact_id" class="form-label">Pilih Kontak</label>
+                        <select name="contact_id" id="contact_id"
+                            class="form-select @error('contact_id') is-invalid @enderror" required>
+                            <option value="">-- Pilih Kontak --</option>
+                            @foreach ($contacts as $contact)
+                                <option value="{{ $contact->id }}"
+                                    {{ old('contact_id') == $contact->id ? 'selected' : '' }}>
+                                    {{ $contact->name }}
+                                </option>
+                            @endforeach
+                        </select>
+                        @error('contact_id')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
                     </div>
+
+                    <button type="submit" class="btn btn-warning"><i class="fa fa-save me-1"></i> Simpan Proyek</button>
                 </form>
+
             </div>
         </div>
     </div>
