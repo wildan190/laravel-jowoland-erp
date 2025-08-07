@@ -30,7 +30,7 @@ class ProjectController extends Controller
     public function create()
     {
         $contacts = Contact::orderBy('name')->get();
-        return view('project_management.projects.create', compact('contacts'));
+        return view('project_management.create', compact('contacts'));
     }
 
     public function store(ProjectRequest $request, CreateProjectAction $createAction)
