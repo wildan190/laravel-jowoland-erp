@@ -193,7 +193,7 @@
                             </li>
 
                             {{-- Transactions --}}
-                            <li class="nav-item">
+                            {{-- <li class="nav-item">
                                 <a class="nav-link text-white {{ request()->routeIs('accounting.transactions.index') ? 'active' : '' }}"
                                     href="{{ route('accounting.transactions.index') }}">
                                     <i class="fa fa-exchange-alt me-2"></i> Transaksi
@@ -204,7 +204,7 @@
                                     href="{{ route('accounting.transactions.create') }}">
                                     <i class="fa fa-plus me-2"></i> Tambah Transaksi
                                 </a>
-                            </li>
+                            </li> --}}
 
                             {{-- Reports --}}
                             <li class="nav-item">
@@ -412,7 +412,7 @@
                         </li>
 
                         {{-- Transactions --}}
-                        <li class="nav-item">
+                        {{-- <li class="nav-item">
                             <a class="nav-link text-white {{ request()->routeIs('accounting.transactions.index') ? 'active' : '' }}"
                                 href="{{ route('accounting.transactions.index') }}">
                                 <i class="fa fa-exchange-alt me-2"></i> Transaksi
@@ -423,7 +423,7 @@
                                 href="{{ route('accounting.transactions.create') }}">
                                 <i class="fa fa-plus me-2"></i> Tambah Transaksi
                             </a>
-                        </li>
+                        </li> --}}
 
                         {{-- Reports --}}
                         <li class="nav-item">

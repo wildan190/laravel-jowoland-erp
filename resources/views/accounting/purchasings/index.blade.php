@@ -21,6 +21,7 @@
                 <table class="table table-bordered table-striped mb-0">
                     <thead>
                         <tr>
+                            <th>No.</th>
                             <th>Tanggal</th>
                             <th>Barang</th>
                             <th>Harga Satuan</th>
@@ -32,6 +33,7 @@
                     <tbody>
                         @foreach ($purchasings as $purchase)
                             <tr>
+                                <td>{{ $loop->iteration }}</td>
                                 <td>{{ \Carbon\Carbon::parse($purchase->date)->format('d M Y') }}</td>
                                 <td>{{ $purchase->item_name }}</td>
                                 <td>Rp{{ number_format($purchase->unit_price, 0, ',', '.') }}</td>
