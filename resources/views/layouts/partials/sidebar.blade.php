@@ -15,7 +15,8 @@
         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
     </div>
     <div class="offcanvas-body d-flex flex-column justify-content-between">
-        <div>
+        {{-- Menu Container yang bisa di-scroll --}}
+        <div class="sidebar-menu-container">
             <div class="profile-card text-center mb-4">
                 <div class="avatar rounded-circle bg-warning text-black"
                     style="width: 60px; height: 60px; display: flex; align-items: center; justify-content: center; font-size: 24px;">
@@ -32,22 +33,21 @@
                     </a>
                 </li>
             </ul>
-            
+
             {{-- separate --}}
             <hr class="text-warning">
             <h6 class="text-warning mb-4">MENU</h6>
             <ul class="nav flex-column" id="mobileMainMenu">
-
                 {{-- Dropdown: CRM --}}
                 <li class="nav-item mb-2">
-                    <a class="nav-link text-white dropdown-toggle {{ (request()->routeIs('contacts.*') || request()->routeIs('deal.*') || request()->routeIs('pipeline.*')) ? 'text-warning' : '' }}" 
-                        data-bs-toggle="collapse" href="#crmMenuMobile" role="button" 
-                        aria-expanded="{{ (request()->routeIs('contacts.*') || request()->routeIs('deal.*') || request()->routeIs('pipeline.*')) ? 'true' : 'false' }}"
+                    <a class="nav-link text-white dropdown-toggle {{ request()->routeIs('contacts.*') || request()->routeIs('deal.*') || request()->routeIs('pipeline.*') ? 'text-warning' : '' }}"
+                        data-bs-toggle="collapse" href="#crmMenuMobile" role="button"
+                        aria-expanded="{{ request()->routeIs('contacts.*') || request()->routeIs('deal.*') || request()->routeIs('pipeline.*') ? 'true' : 'false' }}"
                         aria-controls="crmMenuMobile">
                         <i class="fa fa-building me-2"></i> CRM
                     </a>
-                    <div class="collapse {{ (request()->routeIs('contacts.*') || request()->routeIs('deal.*') || request()->routeIs('pipeline.*')) ? 'show' : '' }}" id="crmMenuMobile"
-                        data-bs-parent="#mobileMainMenu">
+                    <div class="collapse {{ request()->routeIs('contacts.*') || request()->routeIs('deal.*') || request()->routeIs('pipeline.*') ? 'show' : '' }}"
+                        id="crmMenuMobile" data-bs-parent="#mobileMainMenu">
                         <ul class="nav flex-column ms-3">
                             <li class="nav-item">
                                 <a class="nav-link text-white {{ request()->routeIs('contacts.index') ? 'active' : '' }}"
@@ -81,7 +81,7 @@
                 <li class="nav-item mb-2">
                     <a class="nav-link text-white dropdown-toggle {{ request()->routeIs('projects.*') ? 'text-warning' : '' }}"
                         data-bs-toggle="collapse" href="#projectMenuMobile" role="button"
-                        aria-expanded="{{ request()->routeIs('projects.*') ? 'true' : 'false' }}" 
+                        aria-expanded="{{ request()->routeIs('projects.*') ? 'true' : 'false' }}"
                         aria-controls="projectMenuMobile">
                         <i class="fa fa-project-diagram me-2"></i> Project Management
                     </a>
@@ -106,13 +106,13 @@
 
                 {{-- Dropdown: HR Management --}}
                 <li class="nav-item mb-2">
-                    <a class="nav-link text-white dropdown-toggle {{ (request()->routeIs('employees.*') || request()->routeIs('divisions.*') || request()->routeIs('payrolls.*')) ? 'text-warning' : '' }}"
+                    <a class="nav-link text-white dropdown-toggle {{ request()->routeIs('employees.*') || request()->routeIs('divisions.*') || request()->routeIs('payrolls.*') ? 'text-warning' : '' }}"
                         data-bs-toggle="collapse" href="#hrmMenuMobile" role="button"
-                        aria-expanded="{{ (request()->routeIs('employees.*') || request()->routeIs('divisions.*') || request()->routeIs('payrolls.*')) ? 'true' : 'false' }}"
+                        aria-expanded="{{ request()->routeIs('employees.*') || request()->routeIs('divisions.*') || request()->routeIs('payrolls.*') ? 'true' : 'false' }}"
                         aria-controls="hrmMenuMobile">
                         <i class="fa fa-users-cog me-2"></i> HR Management
                     </a>
-                    <div class="collapse {{ (request()->routeIs('employees.*') || request()->routeIs('divisions.*') || request()->routeIs('payrolls.*')) ? 'show' : '' }}"
+                    <div class="collapse {{ request()->routeIs('employees.*') || request()->routeIs('divisions.*') || request()->routeIs('payrolls.*') ? 'show' : '' }}"
                         id="hrmMenuMobile" data-bs-parent="#mobileMainMenu">
                         <ul class="nav flex-column ms-3">
                             {{-- Employees --}}
@@ -154,8 +154,72 @@
                     </div>
                 </li>
 
+                <li class="nav-item mb-2">
+                    <a class="nav-link text-white dropdown-toggle {{ request()->routeIs('accounting.*') ? 'text-warning' : '' }}"
+                        data-bs-toggle="collapse" href="#accountingMenuMobile" role="button"
+                        aria-expanded="{{ request()->routeIs('accounting.*') ? 'true' : 'false' }}"
+                        aria-controls="accountingMenuMobile">
+                        <i class="fa fa-calculator me-2"></i> Accounting
+                    </a>
+                    <div class="collapse {{ request()->routeIs('accounting.*') ? 'show' : '' }}"
+                        id="accountingMenuMobile" data-bs-parent="#mobileMainMenu">
+                        <ul class="nav flex-column ms-3">
+                            {{-- Incomes --}}
+                            <li class="nav-item">
+                                <a class="nav-link text-white {{ request()->routeIs('accounting.incomes.index') ? 'active' : '' }}"
+                                    href="{{ route('accounting.incomes.index') }}">
+                                    <i class="fa fa-arrow-up me-2"></i> Manajemen Pendapatan
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-white {{ request()->routeIs('accounting.incomes.create') ? 'active' : '' }}"
+                                    href="{{ route('accounting.incomes.create') }}">
+                                    <i class="fa fa-plus me-2"></i> Tambah Pendapatan
+                                </a>
+                            </li>
+
+                            {{-- Purchasings --}}
+                            <li class="nav-item">
+                                <a class="nav-link text-white {{ request()->routeIs('accounting.purchasings.index') ? 'active' : '' }}"
+                                    href="{{ route('accounting.purchasings.index') }}">
+                                    <i class="fa fa-shopping-cart me-2"></i> Pembelian
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-white {{ request()->routeIs('accounting.purchasings.create') ? 'active' : '' }}"
+                                    href="{{ route('accounting.purchasings.create') }}">
+                                    <i class="fa fa-cart-plus me-2"></i> Tambah Pembelian
+                                </a>
+                            </li>
+
+                            {{-- Transactions --}}
+                            <li class="nav-item">
+                                <a class="nav-link text-white {{ request()->routeIs('accounting.transactions.index') ? 'active' : '' }}"
+                                    href="{{ route('accounting.transactions.index') }}">
+                                    <i class="fa fa-exchange-alt me-2"></i> Transaksi
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-white {{ request()->routeIs('accounting.transactions.create') ? 'active' : '' }}"
+                                    href="{{ route('accounting.transactions.create') }}">
+                                    <i class="fa fa-plus me-2"></i> Tambah Transaksi
+                                </a>
+                            </li>
+
+                            {{-- Reports --}}
+                            <li class="nav-item">
+                                <a class="nav-link text-white {{ request()->routeIs('accounting.reports.index') ? 'active' : '' }}"
+                                    href="{{ route('accounting.reports.index') }}">
+                                    <i class="fa fa-chart-bar me-2"></i> Laporan
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
             </ul>
         </div>
+
+        {{-- Logout button tetap di bawah --}}
         <div class="logout-wrapper mt-3">
             <form method="POST" action="{{ route('logout') }}">
                 @csrf
@@ -168,9 +232,10 @@
 </div>
 
 {{-- Sidebar Desktop --}}
-<div class="d-none d-md-flex flex-column justify-content-between position-fixed top-0 start-0 bg-black text-white vh-100 p-3"
+<div class="d-none d-md-flex flex-column justify-content-between position-fixed top-0 start-0 bg-black text-white vh-100 p-3 sidebar-desktop"
     style="width: 250px;">
-    <div>
+    {{-- Menu Container yang bisa di-scroll --}}
+    <div class="sidebar-menu-container">
         <div class="profile-card text-center mb-4">
             <div class="avatar rounded-circle bg-warning text-black"
                 style="width: 80px; height: 80px; display: flex; align-items: center; justify-content: center; font-size: 32px;">
@@ -194,14 +259,14 @@
 
             {{-- Dropdown: CRM --}}
             <li class="nav-item mb-2">
-                <a class="nav-link text-white dropdown-toggle {{ (request()->routeIs('contacts.*') || request()->routeIs('deal.*') || request()->routeIs('pipeline.*')) ? 'text-warning' : '' }}" 
-                    data-bs-toggle="collapse" href="#crmMenu" role="button" 
-                    aria-expanded="{{ (request()->routeIs('contacts.*') || request()->routeIs('deal.*') || request()->routeIs('pipeline.*')) ? 'true' : 'false' }}"
+                <a class="nav-link text-white dropdown-toggle {{ request()->routeIs('contacts.*') || request()->routeIs('deal.*') || request()->routeIs('pipeline.*') ? 'text-warning' : '' }}"
+                    data-bs-toggle="collapse" href="#crmMenu" role="button"
+                    aria-expanded="{{ request()->routeIs('contacts.*') || request()->routeIs('deal.*') || request()->routeIs('pipeline.*') ? 'true' : 'false' }}"
                     aria-controls="crmMenu">
                     <i class="fa fa-building me-2"></i> CRM
                 </a>
-                <div class="collapse {{ (request()->routeIs('contacts.*') || request()->routeIs('deal.*') || request()->routeIs('pipeline.*')) ? 'show' : '' }}" id="crmMenu"
-                    data-bs-parent="#mainMenu">
+                <div class="collapse {{ request()->routeIs('contacts.*') || request()->routeIs('deal.*') || request()->routeIs('pipeline.*') ? 'show' : '' }}"
+                    id="crmMenu" data-bs-parent="#mainMenu">
                     <ul class="nav flex-column ms-3">
                         <li class="nav-item">
                             <a class="nav-link text-white {{ request()->routeIs('contacts.index') ? 'active' : '' }}"
@@ -233,14 +298,14 @@
 
             {{-- Dropdown: Project Management --}}
             <li class="nav-item mb-2">
-                <a class="nav-link text-white dropdown-toggle {{ (request()->is('projects*') || request()->routeIs('projects.*')) ? 'text-warning' : '' }}"
+                <a class="nav-link text-white dropdown-toggle {{ request()->is('projects*') || request()->routeIs('projects.*') ? 'text-warning' : '' }}"
                     data-bs-toggle="collapse" href="#projectMenu" role="button"
-                    aria-expanded="{{ (request()->is('projects*') || request()->routeIs('projects.*')) ? 'true' : 'false' }}" 
+                    aria-expanded="{{ request()->is('projects*') || request()->routeIs('projects.*') ? 'true' : 'false' }}"
                     aria-controls="projectMenu">
                     <i class="fa fa-project-diagram me-2"></i> Project Management
                 </a>
-                <div class="collapse {{ (request()->is('projects*') || request()->routeIs('projects.*')) ? 'show' : '' }}" id="projectMenu"
-                    data-bs-parent="#mainMenu">
+                <div class="collapse {{ request()->is('projects*') || request()->routeIs('projects.*') ? 'show' : '' }}"
+                    id="projectMenu" data-bs-parent="#mainMenu">
                     <ul class="nav flex-column ms-3">
                         <li class="nav-item">
                             <a class="nav-link text-white {{ request()->routeIs('projects.index') ? 'active' : '' }}"
@@ -260,13 +325,13 @@
 
             {{-- Dropdown: HR Management --}}
             <li class="nav-item mb-2">
-                <a class="nav-link text-white dropdown-toggle {{ (request()->is('employees*') || request()->is('divisions*') || request()->is('payrolls*') || request()->routeIs('employees.*') || request()->routeIs('divisions.*') || request()->routeIs('payrolls.*')) ? 'text-warning' : '' }}"
+                <a class="nav-link text-white dropdown-toggle {{ request()->is('employees*') || request()->is('divisions*') || request()->is('payrolls*') || request()->routeIs('employees.*') || request()->routeIs('divisions.*') || request()->routeIs('payrolls.*') ? 'text-warning' : '' }}"
                     data-bs-toggle="collapse" href="#hrmMenu" role="button"
-                    aria-expanded="{{ (request()->is('employees*') || request()->is('divisions*') || request()->is('payrolls*') || request()->routeIs('employees.*') || request()->routeIs('divisions.*') || request()->routeIs('payrolls.*')) ? 'true' : 'false' }}"
+                    aria-expanded="{{ request()->is('employees*') || request()->is('divisions*') || request()->is('payrolls*') || request()->routeIs('employees.*') || request()->routeIs('divisions.*') || request()->routeIs('payrolls.*') ? 'true' : 'false' }}"
                     aria-controls="hrmMenu">
                     <i class="fa fa-users-cog me-2"></i> HR Management
                 </a>
-                <div class="collapse {{ (request()->is('employees*') || request()->is('divisions*') || request()->is('payrolls*') || request()->routeIs('employees.*') || request()->routeIs('divisions.*') || request()->routeIs('payrolls.*')) ? 'show' : '' }}"
+                <div class="collapse {{ request()->is('employees*') || request()->is('divisions*') || request()->is('payrolls*') || request()->routeIs('employees.*') || request()->routeIs('divisions.*') || request()->routeIs('payrolls.*') ? 'show' : '' }}"
                     id="hrmMenu" data-bs-parent="#mainMenu">
                     <ul class="nav flex-column ms-3">
                         {{-- Employees --}}
@@ -308,9 +373,72 @@
                 </div>
             </li>
 
-        </ul>
+            <li class="nav-item mb-2">
+                <a class="nav-link text-white dropdown-toggle {{ request()->is('accounting*') || request()->routeIs('accounting.*') ? 'text-warning' : '' }}"
+                    data-bs-toggle="collapse" href="#accountingMenu" role="button"
+                    aria-expanded="{{ request()->is('accounting*') || request()->routeIs('accounting.*') ? 'true' : 'false' }}"
+                    aria-controls="accountingMenu">
+                    <i class="fa fa-calculator me-2"></i> Accounting
+                </a>
+                <div class="collapse {{ request()->is('accounting*') || request()->routeIs('accounting.*') ? 'show' : '' }}"
+                    id="accountingMenu" data-bs-parent="#mainMenu">
+                    <ul class="nav flex-column ms-3">
+                        {{-- Incomes --}}
+                        <li class="nav-item">
+                            <a class="nav-link text-white {{ request()->routeIs('accounting.incomes.index') ? 'active' : '' }}"
+                                href="{{ route('accounting.incomes.index') }}">
+                                <i class="fa fa-arrow-up me-2"></i> Manajemen Pendapatan
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-white {{ request()->routeIs('accounting.incomes.create') ? 'active' : '' }}"
+                                href="{{ route('accounting.incomes.create') }}">
+                                <i class="fa fa-plus me-2"></i> Tambah Pendapatan
+                            </a>
+                        </li>
 
+                        {{-- Purchasings --}}
+                        <li class="nav-item">
+                            <a class="nav-link text-white {{ request()->routeIs('accounting.purchasings.index') ? 'active' : '' }}"
+                                href="{{ route('accounting.purchasings.index') }}">
+                                <i class="fa fa-shopping-cart me-2"></i> Pembelian
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-white {{ request()->routeIs('accounting.purchasings.create') ? 'active' : '' }}"
+                                href="{{ route('accounting.purchasings.create') }}">
+                                <i class="fa fa-cart-plus me-2"></i> Tambah Pembelian
+                            </a>
+                        </li>
+
+                        {{-- Transactions --}}
+                        <li class="nav-item">
+                            <a class="nav-link text-white {{ request()->routeIs('accounting.transactions.index') ? 'active' : '' }}"
+                                href="{{ route('accounting.transactions.index') }}">
+                                <i class="fa fa-exchange-alt me-2"></i> Transaksi
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-white {{ request()->routeIs('accounting.transactions.create') ? 'active' : '' }}"
+                                href="{{ route('accounting.transactions.create') }}">
+                                <i class="fa fa-plus me-2"></i> Tambah Transaksi
+                            </a>
+                        </li>
+
+                        {{-- Reports --}}
+                        <li class="nav-item">
+                            <a class="nav-link text-white {{ request()->routeIs('accounting.reports.index') ? 'active' : '' }}"
+                                href="{{ route('accounting.reports.index') }}">
+                                <i class="fa fa-chart-bar me-2"></i> Laporan
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </li>
+        </ul>
     </div>
+
+    {{-- Logout button tetap di bawah --}}
     <div class="logout-wrapper mt-3">
         <form method="POST" action="{{ route('logout') }}">
             @csrf
@@ -450,7 +578,7 @@
         .offcanvas-body {
             padding: 1rem;
         }
-        
+
         .profile-card .avatar {
             width: 60px;
             height: 60px;
@@ -467,5 +595,225 @@
     /* Highlight dropdown parent when child is active */
     .nav-link.text-warning {
         color: rgb(255, 191, 0) !important;
+    }
+</style>
+
+<style>
+    /* Desktop Sidebar - Scrollable */
+    .sidebar-desktop {
+        height: 100vh;
+        overflow-y: auto;
+        scrollbar-width: thin;
+        scrollbar-color: rgb(255, 191, 0) transparent;
+    }
+
+    .sidebar-desktop::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    .sidebar-desktop::-webkit-scrollbar-track {
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 3px;
+    }
+
+    .sidebar-desktop::-webkit-scrollbar-thumb {
+        background: rgb(255, 191, 0);
+        border-radius: 3px;
+    }
+
+    .sidebar-desktop::-webkit-scrollbar-thumb:hover {
+        background: rgb(255, 96, 0);
+    }
+
+    /* Mobile Offcanvas - Scrollable */
+    .offcanvas-body {
+        overflow-y: auto;
+        max-height: calc(100vh - 120px);
+    }
+
+    /* Ensure the menu container is scrollable */
+    .sidebar-menu-container {
+        flex: 1;
+        overflow-y: auto;
+        padding-right: 5px;
+    }
+
+    /* Smooth scrolling */
+    .sidebar-desktop,
+    .offcanvas-body,
+    .sidebar-menu-container {
+        scroll-behavior: smooth;
+    }
+
+    .nav-link {
+        transition: all 0.3s ease;
+        padding: 10px 15px;
+        margin: 2px 0;
+        border-radius: 5px;
+        display: flex;
+        align-items: center;
+        text-decoration: none;
+    }
+
+    .nav-link:hover {
+        background-color: rgb(255, 96, 0);
+        color: white !important;
+        text-decoration: none;
+    }
+
+    .nav-link.active {
+        background-color: rgb(255, 191, 0);
+        color: black !important;
+    }
+
+    .nav-link.dropdown-toggle {
+        position: relative;
+    }
+
+    .nav-link.dropdown-toggle::after {
+        content: '\f078';
+        font-family: 'Font Awesome 5 Free';
+        font-weight: 900;
+        position: absolute;
+        right: 15px;
+        transition: transform 0.3s ease;
+    }
+
+    .nav-link.dropdown-toggle[aria-expanded="true"]::after {
+        transform: rotate(180deg);
+    }
+
+    .nav-link.dropdown-toggle.collapsed::after {
+        transform: rotate(0deg);
+    }
+
+    /* Indentasi untuk submenu */
+    .collapse .nav-link {
+        padding-left: 25px;
+        font-size: 0.9em;
+        border-left: 2px solid rgb(255, 191, 0);
+        margin-left: 10px;
+        border-radius: 0 5px 5px 0;
+    }
+
+    .collapse .nav-link:hover {
+        background-color: rgb(255, 96, 0);
+        border-left-color: rgb(255, 96, 0);
+    }
+
+    .collapse .nav-link.active {
+        background-color: rgb(255, 191, 0);
+        color: black !important;
+        border-left-color: rgb(255, 96, 0);
+    }
+
+    /* Smooth collapse animation */
+    .collapse {
+        transition: height 0.3s ease;
+    }
+
+    .nav-item button {
+        background-color: rgb(255, 96, 0);
+        color: white;
+        border-radius: 5px;
+        border: none;
+        transition: all 0.3s ease;
+    }
+
+    .nav-item button:hover {
+        background-color: rgb(255, 191, 0);
+        color: black;
+    }
+
+    .offcanvas-body {
+        background-color: rgb(0, 0, 0);
+    }
+
+    .offcanvas-title {
+        color: rgb(255, 191, 0);
+    }
+
+    .profile-card {
+        background-color: rgba(255, 255, 255, 0.1);
+        padding: 15px;
+        border-radius: 10px;
+    }
+
+    .avatar {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 80px;
+        height: 80px;
+        font-size: 32px;
+        border-radius: 50%;
+        font-weight: bold;
+        color: #000;
+        background-color: rgb(255, 191, 0);
+        margin: 0 auto;
+    }
+
+    .profile-card a {
+        font-size: 14px;
+        text-decoration: none;
+    }
+
+    .profile-card a:hover {
+        text-decoration: underline;
+        color: rgb(255, 96, 0);
+    }
+
+    .logout-wrapper {
+        padding-bottom: 1rem;
+        flex-shrink: 0;
+        /* Prevent logout button from shrinking */
+    }
+
+    /* Responsive fixes */
+    @media (max-width: 768px) {
+        .offcanvas-body {
+            padding: 1rem;
+        }
+
+        .profile-card .avatar {
+            width: 60px;
+            height: 60px;
+            font-size: 24px;
+        }
+
+        .sidebar-menu-container {
+            max-height: calc(100vh - 200px);
+            /* Adjust for mobile */
+        }
+    }
+
+    /* Icon spacing consistency */
+    .nav-link i {
+        width: 20px;
+        text-align: center;
+    }
+
+    /* Highlight dropdown parent when child is active */
+    .nav-link.text-warning {
+        color: rgb(255, 191, 0) !important;
+    }
+
+    /* Additional scrollbar styling for mobile */
+    .sidebar-menu-container::-webkit-scrollbar {
+        width: 4px;
+    }
+
+    .sidebar-menu-container::-webkit-scrollbar-track {
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 2px;
+    }
+
+    .sidebar-menu-container::-webkit-scrollbar-thumb {
+        background: rgb(255, 191, 0);
+        border-radius: 2px;
+    }
+
+    .sidebar-menu-container::-webkit-scrollbar-thumb:hover {
+        background: rgb(255, 96, 0);
     }
 </style>
