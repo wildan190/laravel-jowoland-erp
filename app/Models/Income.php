@@ -12,4 +12,9 @@ class Income extends Model
     {
         return $this->belongsTo(Deal::class);
     }
+
+    public function getClientNameAttribute()
+    {
+        return $this->deal->contact->name ?? null;
+    }
 }

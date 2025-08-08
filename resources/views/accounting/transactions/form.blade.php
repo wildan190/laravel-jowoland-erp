@@ -23,7 +23,7 @@
         @foreach($incomes as $inc)
             <option value="{{ $inc->id }}" data-amount="{{ $inc->amount }}"
                 {{ old('income_id', $transaction->income_id ?? '') == $inc->id ? 'selected' : '' }}>
-                {{ $inc->contact->name }} - Rp {{ number_format($inc->amount, 0, ',', '.') }}
+                {{ $inc->description }} - Rp {{ number_format($inc->amount, 0, ',', '.') }}
             </option>
         @endforeach
     </select>

@@ -12,7 +12,7 @@ class TransactionController extends Controller
 {
     public function index()
     {
-        $transactions = Transaction::with(['income.contact', 'purchasing'])
+        $transactions = Transaction::with(['income.deal.contact', 'purchasing'])
             ->latest()
             ->get();
 
@@ -25,7 +25,7 @@ class TransactionController extends Controller
 
     public function create()
     {
-        $incomes = Income::all();
+        $incomes = Income::with('deal.contact')->get();
         $purchasings = Purchasing::all();
         return view('accounting.transactions.create', compact('incomes', 'purchasings'));
     }
