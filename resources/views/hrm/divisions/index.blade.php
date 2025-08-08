@@ -24,6 +24,7 @@
             <table class="table table-bordered table-hover mb-0">
                 <thead class="table-light">
                     <tr>
+                        <th>No.</th>
                         <th>Nama Divisi</th>
                         <th class="text-center" style="width: 20%">Aksi</th>
                     </tr>
@@ -31,6 +32,7 @@
                 <tbody>
                     @forelse ($divisions as $division)
                         <tr>
+                            <td>{{ $loop->iteration }}</td>
                             <td>{{ $division->name }}</td>
                             <td class="text-center">
                                 <a href="{{ route('divisions.edit', $division) }}" class="btn btn-sm btn-warning me-1">
