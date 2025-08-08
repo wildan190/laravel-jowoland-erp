@@ -1,5 +1,9 @@
 <?php
 
+use App\Http\Controllers\Accounting\IncomeController;
+use App\Http\Controllers\Accounting\PurchasingController;
+use App\Http\Controllers\Accounting\ReportController;
+use App\Http\Controllers\Accounting\TransactionController;
 use App\Http\Controllers\App\DashboardController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
@@ -9,7 +13,6 @@ use App\Http\Controllers\HRM\DivisionController;
 use App\Http\Controllers\HRM\EmployeeController;
 use App\Http\Controllers\HRM\PayrollController;
 use App\Http\Controllers\ProjectManagement\ProjectController;
-use App\Http\Controllers\ProjectManagement\ProjectProgressController;
 use Illuminate\Support\Facades\Route;
 
 // Guest routes
@@ -93,7 +96,35 @@ Route::middleware(['auth'])
             Route::put('/employees/{employee}', [EmployeeController::class, 'update'])->name('employees.update');
             Route::delete('/employees/{employee}', [EmployeeController::class, 'destroy'])->name('employees.destroy');
         });
+
+        // Modul Accounting
+        Route::prefix('accounting')
+            ->name('accounting.')
+            ->group(function () {
+                Route::get('incomes', [IncomeController::class, 'index'])->name('incomes.index');
+                Route::get('incomes/create', [IncomeController::class, 'create'])->name('incomes.create');
+                Route::get('incomes/{income}/edit', [IncomeController::class, 'edit'])->name('incomes.edit');
+                Route::put('incomes/{income}', [IncomeController::class, 'update'])->name('incomes.update');
+                Route::delete('incomes/{income}', [IncomeController::class, 'destroy'])->name('incomes.destroy');
+                Route::post('incomes', [IncomeController::class, 'store'])->name('incomes.store');
+
+                Route::get('purchasings', [PurchasingController::class, 'index'])->name('purchasings.index');
+                Route::get('purchasings/create', [PurchasingController::class, 'create'])->name('purchasings.create');
+                Route::post('purchasings', [PurchasingController::class, 'store'])->name('purchasings.store');
+                Route::get('purchasings/{purchasing}/edit', [PurchasingController::class, 'edit'])->name('purchasings.edit');
+                Route::put('purchasings/{purchasing}', [PurchasingController::class, 'update'])->name('purchasings.update');
+                Route::delete('purchasings/{purchasing}', [PurchasingController::class, 'destroy'])->name('purchasings.destroy');
+
+                Route::get('transactions', [TransactionController::class, 'index'])->name('transactions.index');
+                Route::get('transactions/create', [TransactionController::class, 'create'])->name('transactions.create');
+                Route::post('transactions', [TransactionController::class, 'store'])->name('transactions.store');
+                Route::get('transactions/{transaction}/edit', [TransactionController::class, 'edit'])->name('transactions.edit');
+                Route::put('transactions/{transaction}', [TransactionController::class, 'update'])->name('transactions.update');
+                Route::delete('transactions/{transaction}', [TransactionController::class, 'destroy'])->name('transactions.destroy');
+
+                Route::get('reports', [ReportController::class, 'index'])->name('reports.index');
+            });
     });
 
 // Default redirect
-Route::get('/', fn () => redirect()->route('login'));
+Route::get('/', fn() => redirect()->route('login'));
