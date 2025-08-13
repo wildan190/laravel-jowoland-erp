@@ -213,6 +213,12 @@
                                     <i class="fa fa-chart-bar me-2"></i> Laporan
                                 </a>
                             </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-white {{ request()->routeIs('accounting.reports.annual') ? 'active' : '' }}"
+                                    href="{{ route('accounting.reports.annual') }}">
+                                    <i class="fa fa-chart-bar me-2"></i> Laporan
+                                </a>
+                            </li>
                         </ul>
                     </div>
                 </li>
@@ -430,6 +436,12 @@
                             <a class="nav-link text-white {{ request()->routeIs('accounting.reports.index') ? 'active' : '' }}"
                                 href="{{ route('accounting.reports.index') }}">
                                 <i class="fa fa-chart-bar me-2"></i> Laporan
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-white {{ request()->routeIs('accounting.reports.annual') ? 'active' : '' }}"
+                                href="{{ route('accounting.reports.annual') }}">
+                                <i class="fa fa-chart-bar me-2"></i> Annual Report
                             </a>
                         </li>
                     </ul>

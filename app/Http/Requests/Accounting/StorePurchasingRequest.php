@@ -14,20 +14,20 @@ class StorePurchasingRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'item_name'   => 'required|string|max:255',
-            'unit_price'  => 'required|numeric|min:0',
-            'quantity'    => 'required|integer|min:1',
-            'date'        => 'required|date'
+            'item_name' => 'required|string|max:255',
+            'unit_price' => 'required|numeric|min:0',
+            'quantity' => 'required|integer|min:1',
+            'date' => 'required|date',
         ];
     }
 
     public function messages(): array
     {
         return [
-            'item_name.required'  => 'Nama barang wajib diisi.',
+            'item_name.required' => 'Nama barang wajib diisi.',
             'unit_price.required' => 'Harga satuan wajib diisi.',
-            'quantity.required'   => 'Jumlah barang wajib diisi.',
-            'date.required'       => 'Tanggal pembelian wajib diisi.',
+            'quantity.required' => 'Jumlah barang wajib diisi.',
+            'date.required' => 'Tanggal pembelian wajib diisi.',
         ];
     }
 }

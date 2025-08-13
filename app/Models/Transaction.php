@@ -12,7 +12,7 @@ class Transaction extends Model
         'purchasing_id',
         'amount',
         'description',
-        'date'
+        'date',
     ];
 
     public function income()

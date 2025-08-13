@@ -12,7 +12,7 @@ class StoreIncomeRequest extends FormRequest
             'deal_id' => 'required|exists:deals,id',
             'description' => 'required|string|max:255',
             'amount' => 'required|numeric|min:0',
-            'date' => 'required|date'
+            'date' => 'required|date',
         ];
     }
 }

@@ -14,7 +14,7 @@ class CalculateTransactionSummary
         return [
             'income' => $income,
             'expense' => $expense,
-            'balance' => $income - $expense
+            'balance' => $income - $expense,
         ];
     }
 }

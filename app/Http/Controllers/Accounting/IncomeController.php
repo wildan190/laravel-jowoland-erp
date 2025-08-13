@@ -5,8 +5,8 @@ namespace App\Http\Controllers\Accounting;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Accounting\StoreIncomeRequest;
 use App\Http\Requests\Accounting\UpdateIncomeRequest;
-use App\Models\Income;
 use App\Models\Deal;
+use App\Models\Income;
 
 class IncomeController extends Controller
 {
@@ -29,6 +29,7 @@ class IncomeController extends Controller
     public function create()
     {
         $deals = Deal::with('contact')->orderBy('id', 'desc')->get();
+
         return view('accounting.incomes.create', compact('deals'));
     }
 
@@ -83,6 +84,7 @@ class IncomeController extends Controller
     public function destroy(Income $income)
     {
         $income->delete();
+
         return back()->with('success', 'Pemasukan berhasil dihapus.');
     }
 }

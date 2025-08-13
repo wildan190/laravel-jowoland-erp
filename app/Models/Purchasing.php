@@ -11,7 +11,7 @@ class Purchasing extends Model
         'unit_price',
         'quantity',
         'total_price',
-        'date'
+        'date',
     ];
 
     protected static function booted()

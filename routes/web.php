@@ -123,8 +123,9 @@ Route::middleware(['auth'])
                 // Route::delete('transactions/{transaction}', [TransactionController::class, 'destroy'])->name('transactions.destroy');
 
                 Route::get('reports', [ReportController::class, 'index'])->name('reports.index');
+                Route::get('reports/annual', [\App\Http\Controllers\Accounting\ReportController::class, 'annualReport'])->name('reports.annual');
             });
     });
 
 // Default redirect
-Route::get('/', fn() => redirect()->route('login'));
+Route::get('/', fn () => redirect()->route('login'));

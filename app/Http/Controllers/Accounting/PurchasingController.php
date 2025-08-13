@@ -11,6 +11,7 @@ class PurchasingController extends Controller
     public function index()
     {
         $purchasings = Purchasing::latest()->get();
+
         return view('accounting.purchasings.index', compact('purchasings'));
     }
 
@@ -45,6 +46,7 @@ class PurchasingController extends Controller
     public function destroy(Purchasing $purchasing)
     {
         $purchasing->delete();
+
         return back()->with('success', 'Pembelian berhasil dihapus.');
     }
 }
