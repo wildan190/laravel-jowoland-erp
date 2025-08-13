@@ -3,7 +3,7 @@
 @section('title', 'Edit Deal')
 
 @section('content')
-    <div class="container">
+<div class="container-fluid">
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb mb-4">
                 <li class="breadcrumb-item"><a href="{{ route('deal.index') }}">Deals</a></li>

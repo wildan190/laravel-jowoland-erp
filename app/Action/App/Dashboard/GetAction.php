@@ -3,9 +3,9 @@
 namespace App\Action\App\Dashboard;
 
 use App\Models\Income;
-use App\Models\Purchasing;
 use App\Models\Loan;
 use App\Models\Project;
+use App\Models\Purchasing;
 
 class GetAction
 {
@@ -16,8 +16,8 @@ class GetAction
         $totalPurchasing = Purchasing::sum('total_price');
         $loans = Loan::all();
 
-        $totalLoan = $loans->sum(fn($loan) => $loan->total_debt);
-        $totalMonthlyInstallment = $loans->sum(fn($loan) => $loan->monthly_installment);
+        $totalLoan = $loans->sum(fn ($loan) => $loan->total_debt);
+        $totalMonthlyInstallment = $loans->sum(fn ($loan) => $loan->monthly_installment);
 
         $projects = Project::with('tasks')->get();
         $totalProjects = $projects->count();

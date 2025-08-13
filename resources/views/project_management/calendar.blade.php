@@ -3,7 +3,7 @@
 @section('title', 'Timeline Proyek')
 
 @section('content')
-<div class="container">
+<div class="container-fluid">
     {{-- Breadcrumb --}}
     <nav aria-label="breadcrumb" class="mb-4">
         <ol class="breadcrumb">
