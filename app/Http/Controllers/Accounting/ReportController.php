@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Models\Income;
 use App\Models\Payroll;
 use App\Models\Purchasing;
-use App\Models\Transaction;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
@@ -69,12 +68,12 @@ class ReportController extends Controller
 
         // Masukkan data income
         foreach ($incomes as $inc) {
-            $quarter = 'Q' . \Carbon\Carbon::parse($inc->date)->quarter;
+            $quarter = 'Q'.\Carbon\Carbon::parse($inc->date)->quarter;
             $quarters[$quarter]->push(
                 (object) [
                     'date' => $inc->date,
                     'type' => 'income',
-                    'description' => ($inc->deal->title ?? '-') . ($inc->deal->contact->company ? ' - ' . $inc->deal->contact->company : ''),
+                    'description' => ($inc->deal->title ?? '-').($inc->deal->contact->company ? ' - '.$inc->deal->contact->company : ''),
                     'amount' => $inc->amount,
                 ],
             );
@@ -83,7 +82,7 @@ class ReportController extends Controller
 
         // Masukkan data purchasing
         foreach ($purchasings as $pur) {
-            $quarter = 'Q' . \Carbon\Carbon::parse($pur->date)->quarter;
+            $quarter = 'Q'.\Carbon\Carbon::parse($pur->date)->quarter;
             $quarters[$quarter]->push(
                 (object) [
                     'date' => $pur->date,
@@ -97,7 +96,7 @@ class ReportController extends Controller
 
         // Hitung total gaji per kuartal
         foreach ($payrolls as $p) {
-            $quarter = 'Q' . \Carbon\Carbon::parse($p->pay_date)->quarter;
+            $quarter = 'Q'.\Carbon\Carbon::parse($p->pay_date)->quarter;
             $summary[$quarter]['payroll'] += $p->total;
         }
 
