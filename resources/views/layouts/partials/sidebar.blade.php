@@ -416,6 +416,12 @@
                                 <i class="fa fa-cart-plus me-2"></i> Tambah Pembelian
                             </a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-white {{ request()->routeIs('accounting.loans.index') ? 'active' : '' }}"
+                                href="{{ route('accounting.loans.index') }}">
+                                <i class="fa fa-credit-card me-2"></i> Kredit
+                            </a>
+                        </li>
 
                         {{-- Transactions --}}
                         {{-- <li class="nav-item">

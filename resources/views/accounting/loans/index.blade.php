@@ -12,18 +12,16 @@
         </ol>
     </nav>
 
-    <div class="mb-3">
-        <a href="{{ route('accounting.loans.create') }}" class="btn btn-primary">+ Tambah Hutang</a>
-    </div>
-
     <div class="card shadow-sm">
-        <div class="card-header">
+        <div class="card-header d-flex justify-content-between align-items-center">
             <h5 class="mb-0">Daftar Hutang</h5>
+            <a href="{{ route('accounting.loans.create') }}" class="btn btn-warning btn-sm">+ Tambah Hutang</a>
         </div>
         <div class="card-body table-responsive">
-            <table class="table table-bordered table-hover table-sm">
+            <table class="table table-bordered table-striped mb-0 table-hover table-sm">
                 <thead class="table-light">
                     <tr>
+                        <th>No.</th>
                         <th>Vendor / Bank</th>
                         <th>Pokok</th>
                         <th>Bunga (%)</th>
@@ -33,33 +31,36 @@
                         <th>Tanggal Akhir</th>
                         <th>Lama Cicilan</th>
                         <th>Keterangan</th>
-                        <th>Aksi</th>
+                        <th class="text-center">Aksi</th>
                     </tr>
                 </thead>
                 <tbody>
                     @forelse($loans as $loan)
                         <tr>
+                            <td>{{ $loop->iteration }}</td>
                             <td>{{ $loan->vendor }}</td>
                             <td>Rp{{ number_format($loan->principal, 0, ',', '.') }}</td>
                             <td>{{ $loan->interest_rate }}</td>
                             <td>Rp{{ number_format($loan->total_debt, 0, ',', '.') }}</td>
                             <td>Rp{{ number_format($loan->monthly_installment, 0, ',', '.') }}</td>
-                            <td>{{ $loan->start_date ? $loan->start_date->format('d M Y') : '-' }}</td>
-                            <td>{{ $loan->end_date ? $loan->end_date->format('d M Y') : '-' }}</td>
+                            <td>{{ $loan->start_date ? \Carbon\Carbon::parse($loan->start_date)->format('d M Y') : '-' }}</td>
+                            <td>{{ $loan->end_date ? \Carbon\Carbon::parse($loan->end_date)->format('d M Y') : '-' }}</td>
                             <td>{{ $loan->installments }} bulan</td>
                             <td>{{ $loan->description ?? '-' }}</td>
-                            <td>
-                                <a href="{{ route('accounting.loans.edit', $loan) }}" class="btn btn-sm btn-warning">Edit</a>
-                                <form action="{{ route('accounting.loans.destroy', $loan) }}" method="POST" class="d-inline" onsubmit="return confirm('Yakin hapus hutang ini?')">
+                            <td class="text-center">
+                                <a href="{{ route('accounting.loans.edit', $loan) }}" class="btn btn-sm btn-warning">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <form action="{{ route('accounting.loans.destroy', $loan) }}" method="POST" class="d-inline delete-form">
                                     @csrf
                                     @method('DELETE')
-                                    <button class="btn btn-sm btn-danger">Hapus</button>
+                                    <button type="button" class="btn btn-sm btn-danger delete-btn"><i class="fas fa-trash"></i></button>
                                 </form>
                             </td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="10" class="text-center">Tidak ada data hutang.</td>
+                            <td colspan="11" class="text-center">Tidak ada data hutang.</td>
                         </tr>
                     @endforelse
                 </tbody>
@@ -67,4 +68,24 @@
         </div>
     </div>
 </div>
+
+{{-- SweetAlert --}}
+<script>
+    document.querySelectorAll('.delete-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const form = this.closest('form');
+            Swal.fire({
+                title: 'Yakin?',
+                text: "Data hutang yang dihapus tidak dapat dikembalikan.",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonText: 'Batal',
+                confirmButtonText: 'Ya, hapus'
+            }).then((res) => {
+                if (res.isConfirmed) form.submit();
+            });
+        });
+    });
+</script>
 @endsection
