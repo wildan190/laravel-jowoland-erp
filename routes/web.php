@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Accounting\IncomeController;
+use App\Http\Controllers\Accounting\LoanController;
 use App\Http\Controllers\Accounting\PurchasingController;
 use App\Http\Controllers\Accounting\ReportController;
 use App\Http\Controllers\Accounting\TransactionController;
@@ -124,6 +125,13 @@ Route::middleware(['auth'])
 
                 Route::get('reports', [ReportController::class, 'index'])->name('reports.index');
                 Route::get('reports/annual', [\App\Http\Controllers\Accounting\ReportController::class, 'annualReport'])->name('reports.annual');
+
+                Route::get('loans/', [LoanController::class, 'index'])->name('loans.index');
+                Route::get('loans/create', [LoanController::class, 'create'])->name('loans.create');
+                Route::post('loans/store', [LoanController::class, 'store'])->name('loans.store');
+                Route::get('loans/{loan}/edit', [LoanController::class, 'edit'])->name('loans.edit');
+                Route::put('loans/{loan}', [LoanController::class, 'update'])->name('loans.update');
+                Route::delete('loans/{loan}', [LoanController::class, 'destroy'])->name('loans.destroy');
             });
     });
 

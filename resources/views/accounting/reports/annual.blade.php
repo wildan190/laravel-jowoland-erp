@@ -45,85 +45,106 @@
         $totalYearIncome = collect($summary)->sum('income');
         $totalYearExpense = collect($summary)->sum('expense');
         $totalYearPayroll = collect($summary)->sum('payroll');
-        $totalYearBalance = $totalYearIncome - ($totalYearExpense + $totalYearPayroll);
+        $totalYearLoan = collect($summary)->sum('loan');
+        $totalYearBalance = $totalYearIncome - ($totalYearExpense + $totalYearPayroll + $totalYearLoan);
     @endphp
 
     {{-- Enhanced Summary Cards --}}
-    <div class="row g-4 mb-5">
-        <div class="col-lg-3 col-md-6">
+    <div class="row g-3 mb-5">
+        <div class="col-xl col-lg-6 col-md-6">
             <div class="card h-100 border-0 shadow-sm hover-card">
-                <div class="card-body p-4">
-                    <div class="d-flex align-items-center">
-                        <div class="flex-shrink-0">
-                            <div class="bg-success bg-opacity-10 p-3 rounded-3">
-                                <i class="fas fa-arrow-up text-success fs-4"></i>
+                <div class="card-body p-3">
+                    <div class="d-flex flex-column text-center">
+                        <div class="mb-2">
+                            <div class="bg-success bg-opacity-10 p-3 rounded-3 d-inline-block">
+                                <i class="fas fa-arrow-up text-success fs-5"></i>
                             </div>
                         </div>
-                        <div class="flex-grow-1 ms-3">
-                            <p class="text-secondary mb-1 fw-semibold">Total Pendapatan</p>
-                            <h4 class="text-success fw-bold mb-0">
+                        <div>
+                            <p class="text-secondary mb-1 fw-semibold small">Total Pendapatan</p>
+                            <h6 class="text-success fw-bold mb-0" style="font-size: 0.9rem; line-height: 1.2;">
                                 Rp {{ number_format($totalYearIncome, 0, ',', '.') }}
-                            </h4>
+                            </h6>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="col-lg-3 col-md-6">
+        <div class="col-xl col-lg-6 col-md-6">
             <div class="card h-100 border-0 shadow-sm hover-card">
-                <div class="card-body p-4">
-                    <div class="d-flex align-items-center">
-                        <div class="flex-shrink-0">
-                            <div class="bg-danger bg-opacity-10 p-3 rounded-3">
-                                <i class="fas fa-arrow-down text-danger fs-4"></i>
+                <div class="card-body p-3">
+                    <div class="d-flex flex-column text-center">
+                        <div class="mb-2">
+                            <div class="bg-danger bg-opacity-10 p-3 rounded-3 d-inline-block">
+                                <i class="fas fa-arrow-down text-danger fs-5"></i>
                             </div>
                         </div>
-                        <div class="flex-grow-1 ms-3">
-                            <p class="text-secondary mb-1 fw-semibold">Total Pengeluaran</p>
-                            <h4 class="text-danger fw-bold mb-0">
+                        <div>
+                            <p class="text-secondary mb-1 fw-semibold small">Total Pengeluaran</p>
+                            <h6 class="text-danger fw-bold mb-0" style="font-size: 0.9rem; line-height: 1.2;">
                                 Rp {{ number_format($totalYearExpense, 0, ',', '.') }}
-                            </h4>
+                            </h6>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="col-lg-3 col-md-6">
+        <div class="col-xl col-lg-6 col-md-6">
             <div class="card h-100 border-0 shadow-sm hover-card">
-                <div class="card-body p-4">
-                    <div class="d-flex align-items-center">
-                        <div class="flex-shrink-0">
-                            <div class="bg-warning bg-opacity-10 p-3 rounded-3">
-                                <i class="fas fa-users text-warning fs-4"></i>
+                <div class="card-body p-3">
+                    <div class="d-flex flex-column text-center">
+                        <div class="mb-2">
+                            <div class="bg-warning bg-opacity-10 p-3 rounded-3 d-inline-block">
+                                <i class="fas fa-users text-warning fs-5"></i>
                             </div>
                         </div>
-                        <div class="flex-grow-1 ms-3">
-                            <p class="text-secondary mb-1 fw-semibold">Total Gaji</p>
-                            <h4 class="text-warning fw-bold mb-0">
+                        <div>
+                            <p class="text-secondary mb-1 fw-semibold small">Total Gaji</p>
+                            <h6 class="text-warning fw-bold mb-0" style="font-size: 0.9rem; line-height: 1.2;">
                                 Rp {{ number_format($totalYearPayroll, 0, ',', '.') }}
-                            </h4>
+                            </h6>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="col-lg-3 col-md-6">
+        <div class="col-xl col-lg-6 col-md-6">
             <div class="card h-100 border-0 shadow-sm hover-card">
-                <div class="card-body p-4">
-                    <div class="d-flex align-items-center">
-                        <div class="flex-shrink-0">
-                            <div class="bg-{{ $totalYearBalance >= 0 ? 'primary' : 'secondary' }} bg-opacity-10 p-3 rounded-3">
-                                <i class="fas fa-wallet text-{{ $totalYearBalance >= 0 ? 'primary' : 'secondary' }} fs-4"></i>
+                <div class="card-body p-3">
+                    <div class="d-flex flex-column text-center">
+                        <div class="mb-2">
+                            <div class="bg-info bg-opacity-10 p-3 rounded-3 d-inline-block">
+                                <i class="fas fa-credit-card text-info fs-5"></i>
                             </div>
                         </div>
-                        <div class="flex-grow-1 ms-3">
-                            <p class="text-secondary mb-1 fw-semibold">Saldo Akhir Tahun</p>
-                            <h4 class="text-{{ $totalYearBalance >= 0 ? 'primary' : 'secondary' }} fw-bold mb-0">
+                        <div>
+                            <p class="text-secondary mb-1 fw-semibold small">Total Hutang</p>
+                            <h6 class="text-info fw-bold mb-0" style="font-size: 0.9rem; line-height: 1.2;">
+                                Rp {{ number_format($totalYearLoan, 0, ',', '.') }}
+                            </h6>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl col-lg-6 col-md-6">
+            <div class="card h-100 border-0 shadow-sm hover-card">
+                <div class="card-body p-3">
+                    <div class="d-flex flex-column text-center">
+                        <div class="mb-2">
+                            <div class="bg-{{ $totalYearBalance >= 0 ? 'primary' : 'secondary' }} bg-opacity-10 p-3 rounded-3 d-inline-block">
+                                <i class="fas fa-wallet text-{{ $totalYearBalance >= 0 ? 'primary' : 'secondary' }} fs-5"></i>
+                            </div>
+                        </div>
+                        <div>
+                            <p class="text-secondary mb-1 fw-semibold small">Saldo Akhir Tahun</p>
+                            <h6 class="text-{{ $totalYearBalance >= 0 ? 'primary' : 'secondary' }} fw-bold mb-0" style="font-size: 0.9rem; line-height: 1.2;">
                                 Rp {{ number_format($totalYearBalance, 0, ',', '.') }}
-                            </h4>
+                            </h6>
                         </div>
                     </div>
                 </div>
@@ -169,7 +190,7 @@
                                 {{-- Quarter Summary --}}
                                 <div class="bg-light p-4 border-bottom">
                                     <div class="row g-3">
-                                        <div class="col-md-3 text-center">
+                                        <div class="col-lg-2 col-md-6 text-center">
                                             <div class="text-success">
                                                 <i class="fas fa-plus-circle me-1"></i>
                                                 <strong>Pemasukan</strong>
@@ -178,7 +199,7 @@
                                                 Rp {{ number_format($summary[$q]['income'], 0, ',', '.') }}
                                             </div>
                                         </div>
-                                        <div class="col-md-3 text-center">
+                                        <div class="col-lg-2 col-md-6 text-center">
                                             <div class="text-danger">
                                                 <i class="fas fa-minus-circle me-1"></i>
                                                 <strong>Pengeluaran</strong>
@@ -187,7 +208,7 @@
                                                 Rp {{ number_format($summary[$q]['expense'], 0, ',', '.') }}
                                             </div>
                                         </div>
-                                        <div class="col-md-3 text-center">
+                                        <div class="col-lg-2 col-md-6 text-center">
                                             <div class="text-warning">
                                                 <i class="fas fa-hand-holding-usd me-1"></i>
                                                 <strong>Gaji</strong>
@@ -196,7 +217,16 @@
                                                 Rp {{ number_format($summary[$q]['payroll'], 0, ',', '.') }}
                                             </div>
                                         </div>
-                                        <div class="col-md-3 text-center">
+                                        <div class="col-lg-2 col-md-6 text-center">
+                                            <div class="text-info">
+                                                <i class="fas fa-credit-card me-1"></i>
+                                                <strong>Hutang</strong>
+                                            </div>
+                                            <div class="h6 text-info mb-0">
+                                                Rp {{ number_format($summary[$q]['loan'], 0, ',', '.') }}
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-2 col-md-6 text-center">
                                             <div class="text-primary">
                                                 <i class="fas fa-balance-scale me-1"></i>
                                                 <strong>Saldo</strong>
@@ -210,7 +240,7 @@
 
                                 {{-- Transactions Table --}}
                                 <div class="p-4">
-                                    @if($transactions->isEmpty() && $summary[$q]['payroll'] == 0)
+                                    @if($transactions->isEmpty() && $summary[$q]['payroll'] == 0 && $summary[$q]['loan'] == 0)
                                         <div class="text-center py-5">
                                             <i class="fas fa-inbox text-muted" style="font-size: 3rem;"></i>
                                             <h5 class="text-muted mt-3">Tidak ada transaksi</h5>
@@ -236,7 +266,7 @@
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    @foreach($transactions as $t)
+                                                    @foreach($transactions->sortBy('date') as $t)
                                                         <tr class="border-bottom-light">
                                                             <td class="py-3">
                                                                 <span class="fw-semibold">
@@ -248,9 +278,13 @@
                                                                     <span class="badge bg-success bg-opacity-75 px-3 py-2">
                                                                         <i class="fas fa-arrow-up me-1"></i>Pemasukan
                                                                     </span>
-                                                                @else
+                                                                @elseif($t->type === 'expense')
                                                                     <span class="badge bg-danger bg-opacity-75 px-3 py-2">
                                                                         <i class="fas fa-arrow-down me-1"></i>Pengeluaran
+                                                                    </span>
+                                                                @elseif($t->type === 'loan')
+                                                                    <span class="badge bg-info bg-opacity-75 px-3 py-2">
+                                                                        <i class="fas fa-credit-card me-1"></i>Hutang
                                                                     </span>
                                                                 @endif
                                                             </td>
@@ -258,13 +292,14 @@
                                                                 <span class="text-dark">{{ $t->description }}</span>
                                                             </td>
                                                             <td class="py-3 text-end">
-                                                                <span class="fw-bold text-{{ $t->type === 'income' ? 'success' : 'danger' }}">
+                                                                <span class="fw-bold text-{{ $t->type === 'income' ? 'success' : ($t->type === 'loan' ? 'info' : 'danger') }}">
                                                                     {{ $t->type === 'income' ? '+' : '-' }} Rp {{ number_format($t->amount, 0, ',', '.') }}
                                                                 </span>
                                                             </td>
                                                         </tr>
                                                     @endforeach
 
+                                                    {{-- Payroll Summary Row (if exists) --}}
                                                     @if($summary[$q]['payroll'] > 0)
                                                         <tr class="bg-warning bg-opacity-10 border-warning">
                                                             <td colspan="3" class="py-3 text-end fw-bold text-warning">
@@ -324,6 +359,37 @@
     
     .table-hover tbody tr:hover {
         background-color: rgba(102, 126, 234, 0.05);
+    }
+
+    /* Responsive adjustments for cards */
+    @media (max-width: 1199.98px) {
+        .col-xl {
+            flex: 0 0 auto;
+            width: 33.333333%;
+        }
+    }
+    
+    @media (max-width: 767.98px) {
+        .col-xl {
+            flex: 0 0 auto;
+            width: 100%;
+        }
+        
+        .card-body h6 {
+            font-size: 0.85rem !important;
+            word-break: break-all;
+        }
+        
+        .card-body .small {
+            font-size: 0.75rem !important;
+        }
+    }
+    
+    /* Ensure numbers don't overflow */
+    .card-body h6 {
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+        hyphens: auto;
     }
 </style>
 @endsection
