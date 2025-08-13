@@ -20,6 +20,15 @@
                 <form action="{{ route('accounting.incomes.update', $income) }}" method="POST">
                     @csrf
                     @method('PUT')
+                    @if ($errors->any())
+                    <div class="alert alert-danger">
+                        <ul class="mb-0">
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
                     @include('accounting.incomes.form')
                     <button class="btn btn-primary">Update</button>
                     <a href="{{ route('accounting.incomes.index') }}" class="btn btn-secondary">Batal</a>
