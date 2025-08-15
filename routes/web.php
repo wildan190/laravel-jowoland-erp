@@ -140,4 +140,4 @@ Route::middleware(['auth'])
     });
 
 // Default redirect
-Route::get('/', fn() => redirect()->route('login'));
+Route::get('/', fn () => redirect()->route('login'));
