@@ -4,6 +4,7 @@ use App\Http\Controllers\Accounting\IncomeController;
 use App\Http\Controllers\Accounting\LoanController;
 use App\Http\Controllers\Accounting\PurchasingController;
 use App\Http\Controllers\Accounting\ReportController;
+use App\Http\Controllers\Accounting\TaxReportController;
 use App\Http\Controllers\Accounting\TransactionController;
 use App\Http\Controllers\App\DashboardController;
 use App\Http\Controllers\Auth\LoginController;
@@ -132,8 +133,11 @@ Route::middleware(['auth'])
                 Route::get('loans/{loan}/edit', [LoanController::class, 'edit'])->name('loans.edit');
                 Route::put('loans/{loan}', [LoanController::class, 'update'])->name('loans.update');
                 Route::delete('loans/{loan}', [LoanController::class, 'destroy'])->name('loans.destroy');
+
+                Route::get('/tax', [TaxReportController::class, 'index'])->name('tax.index');
+                Route::get('/tax/export', [TaxReportController::class, 'exportPdf'])->name('tax.export');
             });
     });
 
 // Default redirect
-Route::get('/', fn () => redirect()->route('login'));
+Route::get('/', fn() => redirect()->route('login'));
