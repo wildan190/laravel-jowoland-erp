@@ -4,6 +4,7 @@ use App\Http\Controllers\Accounting\IncomeController;
 use App\Http\Controllers\Accounting\InvoiceController;
 use App\Http\Controllers\Accounting\LoanController;
 use App\Http\Controllers\Accounting\PurchasingController;
+use App\Http\Controllers\Accounting\ReceiptController;
 use App\Http\Controllers\Accounting\ReportController;
 use App\Http\Controllers\Accounting\TaxReportController;
 use App\Http\Controllers\Accounting\TransactionController;
@@ -143,6 +144,13 @@ Route::middleware(['auth'])
                 Route::post('invoices/', [InvoiceController::class, 'store'])->name('invoices.store');
                 Route::get('invoices/{id}', [InvoiceController::class, 'show'])->name('invoices.show');
                 Route::get('invoices/{id}/pdf', [InvoiceController::class, 'exportPdf'])->name('invoices.pdf');
+
+                Route::get('receipts', [ReceiptController::class, 'index'])->name('receipts.index');
+                Route::get('receipts/create', [ReceiptController::class, 'create'])->name('receipts.create');
+                Route::post('receipts', [ReceiptController::class, 'store'])->name('receipts.store');
+
+                Route::get('receipts/{receipt}', [ReceiptController::class, 'show'])->name('receipts.show');
+                Route::get('receipts/{receipt}/pdf', [ReceiptController::class, 'pdf'])->name('receipts.pdf');
             });
     });
 

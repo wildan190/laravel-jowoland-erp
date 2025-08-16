@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Project extends Model
 {
-    protected $fillable = ['name', 'location', 'description', 'start_date', 'end_date', 'contact_id'];
+    protected $fillable = ['name', 'location', 'description', 'start_date', 'end_date', 'contact_id', 'deal_id'];
 
     public function tasks()
     {
