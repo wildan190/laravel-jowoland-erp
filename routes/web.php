@@ -16,6 +16,7 @@ use App\Http\Controllers\CRM\PipelineStageController;
 use App\Http\Controllers\HRM\DivisionController;
 use App\Http\Controllers\HRM\EmployeeController;
 use App\Http\Controllers\HRM\PayrollController;
+use App\Http\Controllers\Marketing\MarketingController;
 use App\Http\Controllers\ProjectManagement\ProjectController;
 use Illuminate\Support\Facades\Route;
 
@@ -152,6 +153,31 @@ Route::middleware(['auth'])
                 Route::get('receipts/{receipt}', [ReceiptController::class, 'show'])->name('receipts.show');
                 Route::get('receipts/{receipt}/pdf', [ReceiptController::class, 'pdf'])->name('receipts.pdf');
             });
+
+        Route::prefix('marketing')->group(function () {
+            Route::get('/kanban', [MarketingController::class, 'kanban'])->name('marketing.kanban');
+            Route::post('/kanban', [MarketingController::class, 'storeKanbanBoard']);
+            Route::post('/kanban/task', [MarketingController::class, 'storeKanbanTask'])->name('marketing.kanban.task.store');
+            Route::get('/kanban/task/{task}/edit', [MarketingController::class, 'editKanbanTask'])->name('marketing.kanban.task.edit');
+            Route::put('/kanban/task/{task}', [MarketingController::class, 'updateKanbanTask'])->name('marketing.kanban.task.update');
+            Route::delete('/kanban/task/{task}', [MarketingController::class, 'destroyKanbanTask'])->name('marketing.kanban.task.destroy');
+            Route::post('/kanban/update-task', [MarketingController::class, 'updateKanbanTask'])->name('marketing.kanban.update-task');
+
+            Route::get('/mindmap', [MarketingController::class, 'mindmap'])->name('marketing.mindmap');
+            Route::get('/mindmap/{id}/nodes', [MarketingController::class, 'getMindMapNodes'])->name('marketing.mindmap.nodes');
+            Route::post('/mindmap', [MarketingController::class, 'storeMindMap'])->name('marketing.mindmap.store');
+            Route::post('/mindmap/node', [MarketingController::class, 'storeMindNode'])->name('marketing.mindmap.node.store');
+            Route::post('/mindmap/node/ajax', [MarketingController::class, 'storeMindNodeAjax'])->name('marketing.mindmap.node.ajax');
+            Route::get('/mindmap/node/{node}/edit', [MarketingController::class, 'editMindNode'])->name('marketing.mindmap.node.edit');
+            Route::put('/mindmap/node/{node}', [MarketingController::class, 'updateMindNode'])->name('marketing.mindmap.node.update');
+            Route::delete('/mindmap/node/{node}', [MarketingController::class, 'destroyMindNode'])->name('marketing.mindmap.node.destroy');
+
+            Route::get('/strategy', [MarketingController::class, 'strategy'])->name('marketing.strategy');
+            Route::post('/strategy', [MarketingController::class, 'storeStrategy']);
+
+            Route::get('/social', [MarketingController::class, 'social'])->name('marketing.social');
+            Route::post('/social', [MarketingController::class, 'storeSocial']);
+        });
     });
 
 // Default redirect
