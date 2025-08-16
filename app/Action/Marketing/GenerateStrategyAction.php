@@ -8,7 +8,7 @@ class GenerateStrategyAction
 {
     public function execute(string $prompt): string
     {
-        $apiKey = env('GEMINI_API_KEY'); // Set this in .env with the provided key: AIzaSyDbO4BxqpE2lIccLBS33EcXQ3CGOApe1S4
+        $apiKey = env('GEMINI_API_KEY');
 
         $url = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent';
 
