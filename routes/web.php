@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Accounting\IncomeController;
+use App\Http\Controllers\Accounting\InvoiceController;
 use App\Http\Controllers\Accounting\LoanController;
 use App\Http\Controllers\Accounting\PurchasingController;
 use App\Http\Controllers\Accounting\ReportController;
@@ -136,6 +137,12 @@ Route::middleware(['auth'])
 
                 Route::get('/tax', [TaxReportController::class, 'index'])->name('tax.index');
                 Route::get('/tax/export', [TaxReportController::class, 'exportPdf'])->name('tax.export');
+
+                Route::get('invoices/', [InvoiceController::class, 'index'])->name('invoices.index');
+                Route::get('invoices/create', [InvoiceController::class, 'create'])->name('invoices.create');
+                Route::post('invoices/', [InvoiceController::class, 'store'])->name('invoices.store');
+                Route::get('invoices/{id}', [InvoiceController::class, 'show'])->name('invoices.show');
+                Route::get('invoices/{id}/pdf', [InvoiceController::class, 'exportPdf'])->name('invoices.pdf');
             });
     });
 

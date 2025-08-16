@@ -9,14 +9,7 @@ class Deal extends Model
 {
     use HasFactory;
 
-    protected $fillable = [
-        'contact_id',
-        'pipeline_stage_id',
-        'title',
-        'value',
-        'status',
-        'notes',
-    ];
+    protected $fillable = ['contact_id', 'pipeline_stage_id', 'title', 'value', 'status', 'notes'];
 
     public function contact()
     {
@@ -26,5 +19,10 @@ class Deal extends Model
     public function stage()
     {
         return $this->belongsTo(PipelineStage::class, 'pipeline_stage_id');
+    }
+
+    public function projects()
+    {
+        return $this->hasMany(Project::class);
     }
 }

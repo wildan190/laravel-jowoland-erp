@@ -39,4 +39,9 @@ class Project extends Model
     {
         return $this->belongsTo(Contact::class);
     }
+
+    public function deal()
+    {
+        return $this->belongsTo(Deal::class);
+    }
 }
