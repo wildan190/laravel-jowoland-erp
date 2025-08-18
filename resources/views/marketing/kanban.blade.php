@@ -51,26 +51,31 @@
                             <div class="modal-body">
                                 <form action="{{ route('marketing.kanban') }}" method="POST" class="row">
                                     @csrf
-                                    <div class="col-12">
-                                        <label for="name" class="form-label fw-semibold">Board Name</label>
-                                        <input type="text" name="name" id="name"
-                                            class="form-control @error('name') is-invalid @enderror"
-                                            value="{{ old('name') }}" required>
-                                        @error('name')
-                                            <div class="invalid-feedback">{{ $message }}</div>
-                                        @enderror
+                                    <div>
+                                        <div class="col-12">
+                                            <label for="name" class="form-label fw-semibold">Board Name</label>
+                                            <input type="text" name="name" id="name"
+                                                class="form-control @error('name') is-invalid @enderror"
+                                                value="{{ old('name') }}" required>
+                                            @error('name')
+                                                <div class="invalid-feedback">{{ $message }}</div>
+                                            @enderror
+                                        </div>
+                                        <div class="col-12">
+                                            <label for="description" class="form-label fw-semibold">Description</label>
+                                            <textarea name="description" id="description" class="form-control @error('description') is-invalid @enderror"
+                                                rows="4">{{ old('description') }}</textarea>
+                                            @error('description')
+                                                <div class="invalid-feedback">{{ $message }}</div>
+                                            @enderror
+                                        </div>
                                     </div>
-                                    <div class="col-12">
-                                        <label for="description" class="form-label fw-semibold">Description</label>
-                                        <textarea name="description" id="description" class="form-control @error('description') is-invalid @enderror"
-                                            rows="4">{{ old('description') }}</textarea>
-                                        @error('description')
-                                            <div class="invalid-feedback">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-                                    <div class="col-12">
-                                        <button type="submit" class="btn btn-warning w-100"><i class="fa fa-plus me-1"></i>
-                                            Create Board</button>
+                                    <div class="col-12 mt-3">
+                                        <div class="col-12">
+                                            <button type="submit" class="btn btn-warning w-100"><i
+                                                    class="fa fa-plus me-1"></i>
+                                                Create Board</button>
+                                        </div>
                                     </div>
                                 </form>
                             </div>
@@ -127,9 +132,9 @@
                                                             <div class="invalid-feedback">{{ $message }}</div>
                                                         @enderror
                                                     </div>
-                                                    <div class="col-12">
-                                                        <button type="submit" class="btn btn-warning w-100"><i
-                                                                class="fa fa-plus me-1"></i> Add Task</button>
+                                                    <div class="col-12 mt-3">
+                                                            <button type="submit" class="btn btn-warning w-100"><i
+                                                                    class="fa fa-plus me-1"></i> Add Task</button>
                                                     </div>
                                                 </form>
                                             </div>
@@ -203,7 +208,7 @@
                                                             <div class="invalid-feedback">{{ $message }}</div>
                                                         @enderror
                                                     </div>
-                                                    <div class="col-12">
+                                                     <div class="col-12 mt-3">
                                                         <button type="submit" class="btn btn-warning w-100"><i
                                                                 class="fa fa-plus me-1"></i> Add Task</button>
                                                     </div>
@@ -279,7 +284,7 @@
                                                             <div class="invalid-feedback">{{ $message }}</div>
                                                         @enderror
                                                     </div>
-                                                    <div class="col-12">
+                                                    <div class="col-12 mt-3">
                                                         <button type="submit" class="btn btn-warning w-100"><i
                                                                 class="fa fa-plus me-1"></i> Add Task</button>
                                                     </div>
