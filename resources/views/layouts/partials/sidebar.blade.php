@@ -225,7 +225,7 @@
 
 {{-- Sidebar Desktop --}}
 <div class="d-none d-md-flex flex-column justify-content-between position-fixed top-0 start-0 bg-black text-white vh-100 p-3 sidebar-desktop"
-    style="width: 250px;">
+    style="width: 280px;">
     {{-- Menu Container yang bisa di-scroll --}}
     <div class="sidebar-menu-container">
         <div class="profile-card text-center mb-4">

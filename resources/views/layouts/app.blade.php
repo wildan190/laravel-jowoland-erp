@@ -126,7 +126,9 @@
 
     {{-- Konten utama --}}
     <div class="main-content p-4">
-        @yield('content')
+        <div class="container-fluid">
+            @yield('content')
+        </div>
     </div>
 
     <script src="{{ asset('js/bootstrap.bundle.min.js') }}"></script>
