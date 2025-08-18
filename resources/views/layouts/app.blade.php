@@ -21,16 +21,50 @@
 
     <link href="https://cdnjs.cloudflare.com/ajax/libs/dragula/3.7.3/dragula.min.css" rel="stylesheet">
     <style>
-        .kanban-columns { display: flex; gap: 20px; }
-        .kanban-column { flex: 1; padding: 10px; background: #f8f9fa; border-radius: 5px; min-height: 300px; }
-        .kanban-task { padding: 10px; background: white; border: 1px solid #ddd; margin-bottom: 10px; border-radius: 5px; }
-        .error { color: red; font-size: 0.875em; }
+        .kanban-columns {
+            display: flex;
+            gap: 20px;
+        }
+
+        .kanban-column {
+            flex: 1;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 5px;
+            min-height: 300px;
+        }
+
+        .kanban-task {
+            padding: 10px;
+            background: white;
+            border: 1px solid #ddd;
+            margin-bottom: 10px;
+            border-radius: 5px;
+        }
+
+        .error {
+            color: red;
+            font-size: 0.875em;
+        }
     </style>
     <style>
-        jmnodes jmnode { background-color: #3498db; color: white; }
-        jmnodes jmnode[selected] { background-color: #2ecc71; }
-        jmnodes jmnode.root { background-color: #e74c3c; }
-        .jsmind-container { border: 1px solid #ccc; background: #f9f9f9; }
+        jmnodes jmnode {
+            background-color: #3498db;
+            color: white;
+        }
+
+        jmnodes jmnode[selected] {
+            background-color: #2ecc71;
+        }
+
+        jmnodes jmnode.root {
+            background-color: #e74c3c;
+        }
+
+        .jsmind-container {
+            border: 1px solid #ccc;
+            background: #f9f9f9;
+        }
     </style>
 
     <style>

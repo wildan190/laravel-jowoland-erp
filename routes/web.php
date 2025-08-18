@@ -7,7 +7,6 @@ use App\Http\Controllers\Accounting\PurchasingController;
 use App\Http\Controllers\Accounting\ReceiptController;
 use App\Http\Controllers\Accounting\ReportController;
 use App\Http\Controllers\Accounting\TaxReportController;
-use App\Http\Controllers\Accounting\TransactionController;
 use App\Http\Controllers\App\DashboardController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
@@ -119,13 +118,6 @@ Route::middleware(['auth'])
                 Route::get('purchasings/{purchasing}/edit', [PurchasingController::class, 'edit'])->name('purchasings.edit');
                 Route::put('purchasings/{purchasing}', [PurchasingController::class, 'update'])->name('purchasings.update');
                 Route::delete('purchasings/{purchasing}', [PurchasingController::class, 'destroy'])->name('purchasings.destroy');
-
-                // Route::get('transactions', [TransactionController::class, 'index'])->name('transactions.index');
-                // Route::get('transactions/create', [TransactionController::class, 'create'])->name('transactions.create');
-                // Route::post('transactions', [TransactionController::class, 'store'])->name('transactions.store');
-                // Route::get('transactions/{transaction}/edit', [TransactionController::class, 'edit'])->name('transactions.edit');
-                // Route::put('transactions/{transaction}', [TransactionController::class, 'update'])->name('transactions.update');
-                // Route::delete('transactions/{transaction}', [TransactionController::class, 'destroy'])->name('transactions.destroy');
 
                 Route::get('reports', [ReportController::class, 'index'])->name('reports.index');
                 Route::get('reports/annual', [\App\Http\Controllers\Accounting\ReportController::class, 'annualReport'])->name('reports.annual');
