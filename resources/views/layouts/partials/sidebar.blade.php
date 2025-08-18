@@ -422,6 +422,26 @@
                                 <i class="fa fa-chart-bar me-2"></i> Annual Report
                             </a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-white {{ request()->routeIs('accounting.tax.index') ? 'active' : '' }}"
+                                href="{{ route('accounting.tax.index') }}">
+                                <i class="fa fa-chart-bar me-2"></i> Tax Report
+                            </a>
+                        </li>
+                        {{-- invoices --}}
+                        <li class="nav-item">
+                            <a class="nav-link text-white {{ request()->routeIs('accounting.invoices.index') ? 'active' : '' }}"
+                                href="{{ route('accounting.invoices.index') }}">
+                                <i class="fa fa-file-invoice me-2"></i> Invoices
+                            </a>
+                        </li>
+                        {{-- recepits --}}
+                        <li class="nav-item">
+                            <a class="nav-link text-white {{ request()->routeIs('accounting.receipts.index') ? 'active' : '' }}"
+                                href="{{ route('accounting.receipts.index') }}">
+                                <i class="fa fa-receipt me-2"></i> Receipts
+                            </a>
+                        </li>
                     </ul>
                 </div>
             </li>
