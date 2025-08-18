@@ -10,4 +10,8 @@ class SocialMediaPost extends Model
     use HasFactory;
 
     protected $fillable = ['platform', 'content', 'scheduled_at', 'generated_content'];
+
+    protected $casts = [
+        'scheduled_at' => 'datetime',
+    ];
 }

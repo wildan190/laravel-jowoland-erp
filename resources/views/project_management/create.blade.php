@@ -28,6 +28,21 @@
                         <label for="name" class="form-label fw-semibold">Nama Proyek</label>
                         <input type="text" name="name" class="form-control" required>
                     </div>
+                    
+                    {{-- Pilih Deal --}}
+                    <div class="mb-3">
+                        <label for="deal_id" class="form-label fw-semibold">Deal</label>
+                        <select name="deal_id" id="deal_id" class="form-select" required>
+                            <option value="">-- Pilih Deal --</option>
+                            @foreach ($contacts as $contact)
+                                @foreach ($contact->deals as $deal)
+                                    <option value="{{ $deal->id }}" data-contact="{{ $contact->id }}">
+                                        {{ $deal->title }} - {{ number_format($deal->value, 0, ',', '.') }}
+                                    </option>
+                                @endforeach
+                            @endforeach
+                        </select>
+                    </div>
 
                     {{-- Pilih Kontak / Perusahaan --}}
                     <div class="mb-3">
