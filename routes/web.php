@@ -137,6 +137,7 @@ Route::middleware(['auth'])
                 Route::post('invoices/', [InvoiceController::class, 'store'])->name('invoices.store');
                 Route::get('invoices/{id}', [InvoiceController::class, 'show'])->name('invoices.show');
                 Route::get('invoices/{id}/pdf', [InvoiceController::class, 'exportPdf'])->name('invoices.pdf');
+                Route::patch('/invoices/{invoice}/update-status', [\App\Http\Controllers\Accounting\InvoiceController::class, 'updateStatus'])->name('invoices.update-status');
 
                 Route::get('receipts', [ReceiptController::class, 'index'])->name('receipts.index');
                 Route::get('receipts/create', [ReceiptController::class, 'create'])->name('receipts.create');

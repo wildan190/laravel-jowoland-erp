@@ -42,6 +42,7 @@ class InvoiceAction
                 'subtotal' => $subtotal,
                 'tax' => $tax,
                 'grand_total' => $grandTotal,
+                'is_pending' => true,
             ]);
 
             // 🔹 Simpan item detail

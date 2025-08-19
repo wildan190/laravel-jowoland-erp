@@ -1,19 +1,20 @@
 <div class="mb-3">
-    <label class="form-label">Pilih Deal</label>
-    <select name="deal_id" id="deal-select" 
-        class="form-select @error('deal_id') is-invalid @enderror">
-        <option value="">-- Pilih Deal --</option>
-        @foreach($deals as $deal)
-            <option value="{{ $deal->id }}"
-                data-client="{{ $deal->contact->name }}"
-                data-client-id="{{ $deal->contact->id }}"
-                data-amount="{{ $deal->value }}"
-                {{ old('deal_id', $income->deal_id ?? '') == $deal->id ? 'selected' : '' }}>
-                {{ $deal->contact->name }} - {{ $deal->title }} (Rp {{ number_format($deal->value, 0, ',', '.') }})
+    <label class="form-label">Pilih Invoice</label>
+    <select name="invoice_id" id="invoice-select" 
+        class="form-select @error('invoice_id') is-invalid @enderror">
+        <option value="">-- Pilih Invoice --</option>
+        @foreach($invoices as $invoice)
+            <option value="{{ $invoice->id }}"
+                data-client="{{ $invoice->project->contact->name }}"
+                data-client-id="{{ $invoice->project->contact->id }}"
+                data-amount="{{ $invoice->grand_total }}"
+                {{ old('invoice_id', $income->invoice_id ?? '') == $invoice->id ? 'selected' : '' }}>
+                {{ $invoice->invoice_number }} - {{ $invoice->project->contact->name }} 
+                (Rp {{ number_format($invoice->grand_total, 0, ',', '.') }})
             </option>
         @endforeach
     </select>
-    @error('deal_id')<div class="invalid-feedback">{{ $message }}</div>@enderror
+    @error('invoice_id')<div class="invalid-feedback">{{ $message }}</div>@enderror
 </div>
 
 {{-- Hidden untuk ID contact --}}
@@ -51,25 +52,24 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function () {
-    const dealSelect = document.getElementById('deal-select');
+    const invoiceSelect = document.getElementById('invoice-select');
     const clientInput = document.getElementById('client-name');
     const contactIdInput = document.getElementById('contact-id');
     const amountInput = document.getElementById('amount');
 
-    // Set data saat halaman load (untuk edit)
-    if (dealSelect.value) {
-        const selected = dealSelect.options[dealSelect.selectedIndex];
+    if (invoiceSelect.value) {
+        const selected = invoiceSelect.options[invoiceSelect.selectedIndex];
         clientInput.value = selected.dataset.client || '';
         contactIdInput.value = selected.dataset.clientId || '';
         amountInput.value = selected.dataset.amount || '';
     }
 
-    // Set data saat pilihan berubah
-    dealSelect.addEventListener('change', function () {
-        const selected = dealSelect.options[dealSelect.selectedIndex];
+    invoiceSelect.addEventListener('change', function () {
+        const selected = invoiceSelect.options[invoiceSelect.selectedIndex];
         clientInput.value = selected.dataset.client || '';
         contactIdInput.value = selected.dataset.clientId || '';
         amountInput.value = selected.dataset.amount || '';
     });
 });
+
 </script>

@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Accounting;
 
 use App\Http\Controllers\Controller;
 use App\Models\Invoice;
-use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 
 class InvoiceController extends Controller
@@ -45,11 +44,28 @@ class InvoiceController extends Controller
         return view('accounting.invoices.show', compact('invoice'));
     }
 
+    public function updateStatus(Request $request, Invoice $invoice)
+    {
+
+        if ($invoice->is_pending === false) {
+            return redirect()->back()->with('error', 'Invoice sudah Paid dan tidak bisa diubah lagi.');
+        }
+
+        $data = $request->validate([
+            'is_pending' => 'required|boolean',
+        ]);
+
+        if ($data['is_pending'] == false) {
+            $invoice->update(['is_pending' => false]);
+        }
+
+        return redirect()->back()->with('success', 'Status invoice berhasil diperbarui.');
+    }
+
     public function exportPdf($id)
     {
         $invoice = Invoice::with(['project.contact', 'project.deal', 'items'])->findOrFail($id);
 
-        // Data company (bisa diambil dari config / database)
         $company = [
             'name' => 'PT Contoh Perusahaan',
             'address' => 'Jl. Raya No. 123, Jakarta',
@@ -59,13 +75,11 @@ class InvoiceController extends Controller
             'logo' => null,
         ];
 
-        // Jika ada logo, convert ke base64 agar bisa tampil di PDF
         $logoPath = public_path('assets/img/logo.png');
         if (file_exists($logoPath)) {
             $company['logo'] = 'data:image/png;base64,'.base64_encode(file_get_contents($logoPath));
         }
 
-        // Hitung subtotal, ppn, total
         $subtotal = $invoice->project_amount + $invoice->items->sum('price');
         $ppn = $subtotal * 0.11;
         $grandTotal = $subtotal + $ppn;

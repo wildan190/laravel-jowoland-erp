@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container">
+<div class="container-fluid">
     {{-- Breadcrumb --}}
     <nav aria-label="breadcrumb" class="mb-4">
         <ol class="breadcrumb">
@@ -61,6 +61,16 @@
                         <td>{{ $invoice->project->name }}</td>
                         <th>Due Date</th>
                         <td>{{ $invoice->due_date }}</td>
+                    </tr>
+                    <tr>
+                        <th>Status</th>
+                        <td colspan="3">
+                            @if($invoice->is_pending)
+                                <span class="badge bg-warning text-dark px-3 py-2">Pending</span>
+                            @else
+                                <span class="badge bg-success px-3 py-2">Paid</span>
+                            @endif
+                        </td>
                     </tr>
                 </table>
             </div>

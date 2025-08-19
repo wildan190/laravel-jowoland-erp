@@ -30,13 +30,13 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach ($incomes as $income)
+                        @forelse ($incomes as $income)
                             <tr>
                                 <td>{{ $loop->iteration }}</td>
                                 <td>{{ \Carbon\Carbon::parse($income->date)->format('d M Y') }}</td>
-                                <td>{{ $income->deal->contact->name ?? '-' }}</td>
+                                <td>{{ $income->deal->contact->name ?? ($income->contact->name ?? '-') }}</td>
                                 <td>{{ $income->description }}</td>
-                                <td>Rp{{ number_format($income->amount, 0, ',', '.') }}</td>
+                                <td class="text-end">Rp{{ number_format($income->amount, 0, ',', '.') }}</td>
                                 <td class="text-center">
                                     <a href="{{ route('accounting.incomes.edit', $income) }}"
                                         class="btn btn-sm btn-warning"><i class="fas fa-edit"></i></a>
@@ -49,8 +49,20 @@
                                     </form>
                                 </td>
                             </tr>
-                        @endforeach
+                        @empty
+                            <tr>
+                                <td colspan="6" class="text-center text-muted">Belum ada data pemasukan</td>
+                            </tr>
+                        @endforelse
                     </tbody>
+                    <tfoot>
+                        <tr>
+                            <th colspan="4" class="text-end">Total</th>
+                            <th colspan="2" class="text-start">
+                                Rp{{ number_format($incomes->sum('amount'), 0, ',', '.') }}
+                            </th>
+                        </tr>
+                    </tfoot>
                 </table>
             </div>
         </div>

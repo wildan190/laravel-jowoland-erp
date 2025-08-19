@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Invoice extends Model
 {
-    protected $fillable = ['project_id', 'invoice_number', 'project_amount', 'items_total', 'subtotal', 'tax', 'grand_total', 'due_date'];
+    protected $fillable = ['project_id', 'invoice_number', 'project_amount', 'items_total', 'subtotal', 'tax', 'grand_total', 'due_date', 'is_pending'];
 
     public function project()
     {

@@ -28,23 +28,24 @@ class IncomeController extends Controller
      */
     public function create()
     {
-        $deals = Deal::with('contact')->orderBy('id', 'desc')->get();
+        $invoices = \App\Models\Invoice::with('project.contact')
+            ->where('is_pending', false) // hanya Paid
+            ->orderBy('id', 'desc')
+            ->get();
 
-        return view('accounting.incomes.create', compact('deals'));
+        return view('accounting.incomes.create', compact('invoices'));
     }
 
-    /**
-     * Simpan pemasukan baru.
-     */
     public function store(StoreIncomeRequest $request)
     {
-        $deal = Deal::with('contact')->findOrFail($request->deal_id);
+        $invoice = \App\Models\Invoice::with('project.contact')->where('is_pending', false)->findOrFail($request->invoice_id);
 
         Income::create([
-            'deal_id' => $deal->id,
-            'amount' => $deal->value, // ambil langsung dari deal
+            'invoice_id' => $invoice->id,
+            'contact_id' => $invoice->project->contact->id,
+            'amount' => $invoice->grand_total,
             'date' => $request->date,
-            'description' => $request->description ?? "Pembayaran dari {$deal->contact->name}",
+            'description' => $request->description ?? "Pembayaran dari {$invoice->project->contact->name}",
         ]);
 
         return redirect()->route('accounting.incomes.index')->with('success', 'Pemasukan berhasil ditambahkan.');
@@ -55,10 +56,12 @@ class IncomeController extends Controller
      */
     public function edit(Income $income)
     {
-        $income->load('deal.contact');
-        $deals = Deal::with('contact')->orderBy('id', 'desc')->get();
+        $invoices = \App\Models\Invoice::with('project.contact')
+            ->where('is_pending', false) // hanya Paid
+            ->orderBy('id', 'desc')
+            ->get();
 
-        return view('accounting.incomes.edit', compact('income', 'deals'));
+        return view('accounting.incomes.edit', compact('income', 'invoices'));
     }
 
     /**
@@ -66,13 +69,14 @@ class IncomeController extends Controller
      */
     public function update(UpdateIncomeRequest $request, Income $income)
     {
-        $deal = Deal::with('contact')->findOrFail($request->deal_id);
+        $invoice = \App\Models\Invoice::with('project.contact')->where('is_pending', false)->findOrFail($request->invoice_id);
 
-        $income->update([
-            'deal_id' => $deal->id,
-            'amount' => $deal->value, // tetap otomatis
+        Income::update([
+            'invoice_id' => $invoice->id,
+            'contact_id' => $invoice->project->contact->id,
+            'amount' => $invoice->grand_total,
             'date' => $request->date,
-            'description' => $request->description ?? "Pembayaran dari {$deal->contact->name}",
+            'description' => $request->description ?? "Pembayaran dari {$invoice->project->contact->name}",
         ]);
 
         return redirect()->route('accounting.incomes.index')->with('success', 'Pemasukan berhasil diperbarui.');
