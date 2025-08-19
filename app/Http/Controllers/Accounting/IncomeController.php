@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Accounting;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Accounting\StoreIncomeRequest;
 use App\Http\Requests\Accounting\UpdateIncomeRequest;
-use App\Models\Deal;
 use App\Models\Income;
 
 class IncomeController extends Controller
@@ -57,7 +56,7 @@ class IncomeController extends Controller
     public function edit(Income $income)
     {
         $invoices = \App\Models\Invoice::with('project.contact')
-            ->where('is_pending', false) // hanya Paid
+            ->where('is_pending', false)
             ->orderBy('id', 'desc')
             ->get();
 
