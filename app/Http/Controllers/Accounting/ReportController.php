@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Accounting;
 
 use App\Http\Controllers\Controller;
 use App\Models\Income;
+use App\Models\Invoice;
 use App\Models\Loan;
 use App\Models\Payroll;
 use App\Models\Purchasing;
@@ -79,7 +80,9 @@ class ReportController extends Controller
     {
         $year = $request->get('year', now()->year);
 
-        $incomes = Income::with('deal.contact')->whereYear('date', $year)->get();
+        // ✅ Income diambil dari Invoice yang sudah dibayar (is_pending = 0)
+        $invoices = Invoice::with('contact')->whereYear('due_date', $year)->where('is_pending', 0)->get();
+
         $purchasings = Purchasing::whereYear('date', $year)->get();
         $payrolls = Payroll::with('employee')->whereYear('pay_date', $year)->get();
         $loans = Loan::all(); // ambil semua pinjaman, bukan hanya yang jatuh tempo tahun ini
@@ -98,21 +101,27 @@ class ReportController extends Controller
             'Q4' => ['income' => 0, 'expense' => 0, 'payroll' => 0, 'loan' => 0, 'balance' => 0],
         ];
 
-        // Income
-        foreach ($incomes as $inc) {
-            $quarter = 'Q'.Carbon::parse($inc->date)->quarter;
+        // === Income (Invoice Paid) ===
+        foreach ($invoices as $inv) {
+            $quarter = 'Q'.Carbon::parse($inv->due_date)->quarter;
+
+            $desc = "Invoice #{$inv->invoice_number}";
+            if ($inv->contact && $inv->contact->company) {
+                $desc .= " - {$inv->contact->company}";
+            }
+
             $quarters[$quarter]->push(
                 (object) [
-                    'date' => $inc->date,
+                    'date' => $inv->due_date,
                     'type' => 'income',
-                    'description' => ($inc->deal->title ?? '-').($inc->deal->contact->company ? ' - '.$inc->deal->contact->company : ''),
-                    'amount' => $inc->amount,
+                    'description' => $desc,
+                    'amount' => $inv->grand_total,
                 ],
             );
-            $summary[$quarter]['income'] += $inc->amount;
+            $summary[$quarter]['income'] += $inv->grand_total;
         }
 
-        // Purchasing
+        // === Purchasing ===
         foreach ($purchasings as $pur) {
             $quarter = 'Q'.Carbon::parse($pur->date)->quarter;
             $quarters[$quarter]->push(
@@ -126,17 +135,32 @@ class ReportController extends Controller
             $summary[$quarter]['expense'] += $pur->total_price;
         }
 
-        // Payroll
+        // === Payroll (diringkas per kuartal) ===
         foreach ($payrolls as $p) {
             $quarter = 'Q'.Carbon::parse($p->pay_date)->quarter;
             $basicSalary = $p->employee->salary ?? 0;
             $allowance = $p->allowance ?? 0;
             $deduction = $p->deduction ?? 0;
             $total = $basicSalary + $allowance - $deduction;
+
             $summary[$quarter]['payroll'] += $total;
         }
 
-        // Loan: hitung cicilan per bulan, masukkan ke kuartal sesuai bulan
+        // Setelah loop payroll, masukkan 1 entri ringkasan per kuartal
+        foreach (array_keys($summary) as $quarter) {
+            if ($summary[$quarter]['payroll'] > 0) {
+                $quarters[$quarter]->push(
+                    (object) [
+                        'date' => Carbon::create($year, $quarter === 'Q1' ? 3 : ($quarter === 'Q2' ? 6 : ($quarter === 'Q3' ? 9 : 12)), 30),
+                        'type' => 'payroll',
+                        'description' => 'Gaji Karyawan / Staff',
+                        'amount' => $summary[$quarter]['payroll'],
+                    ],
+                );
+            }
+        }
+
+        // === Loan: cicilan per bulan sesuai kuartal ===
         foreach ($loans as $loan) {
             $monthlyPayment = ($loan->principal + ($loan->principal * $loan->interest_rate) / 100) / max(1, $loan->installments);
             $start = Carbon::parse($loan->start_date);
@@ -144,7 +168,6 @@ class ReportController extends Controller
 
             $current = $start->copy();
             while ($current->lte($end)) {
-                // hanya cicilan di tahun yang sama dengan $year
                 if ($current->year == $year) {
                     $quarter = 'Q'.$current->quarter;
                     $quarters[$quarter]->push(
@@ -161,7 +184,7 @@ class ReportController extends Controller
             }
         }
 
-        // Hitung balance per kuartal
+        // === Balance per kuartal ===
         foreach (array_keys($summary) as $q) {
             $summary[$q]['balance'] = $summary[$q]['income'] - ($summary[$q]['expense'] + $summary[$q]['payroll'] + $summary[$q]['loan']);
         }

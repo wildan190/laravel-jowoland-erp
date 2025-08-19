@@ -18,6 +18,13 @@ class Invoice extends Model
         return $this->hasMany(InvoiceItem::class);
     }
 
+    // relasi ke kontak
+
+    public function contact()
+    {
+        return $this->belongsTo(Contact::class);
+    }
+
     public function calculateTotals()
     {
         $itemsTotal = $this->items->sum('price');
