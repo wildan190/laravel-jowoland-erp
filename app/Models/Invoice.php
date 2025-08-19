@@ -20,9 +20,21 @@ class Invoice extends Model
 
     // relasi ke kontak
 
+    public function incomes()
+    {
+        return $this->hasMany(Income::class);
+    }
+
     public function contact()
     {
-        return $this->belongsTo(Contact::class);
+        return $this->hasOneThrough(
+            Contact::class,
+            Income::class,
+            'invoice_id', // foreign key di incomes
+            'id',         // foreign key di contacts
+            'id',         // local key di invoices
+            'contact_id'  // local key di incomes
+        );
     }
 
     public function calculateTotals()
