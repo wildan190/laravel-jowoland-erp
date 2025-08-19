@@ -10,6 +10,7 @@ use App\Models\Payroll;
 use App\Models\Purchasing;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use InvalidArgumentException;
 use PDF;
 
 class TaxReportController extends Controller
