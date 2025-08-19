@@ -4,10 +4,10 @@ namespace App\Http\Controllers\Accounting;
 
 use App\Http\Controllers\Controller;
 use App\Models\Income;
+use App\Models\Invoice;
 use App\Models\Loan;
 use App\Models\Payroll;
 use App\Models\Purchasing;
-use App\Models\Invoice;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use PDF;
@@ -17,7 +17,7 @@ class TaxReportController extends Controller
     private function calculateReport($startDate, $endDate)
     {
         // Validate date range
-        if (!$startDate || !$endDate || $startDate > $endDate) {
+        if (! $startDate || ! $endDate || $startDate > $endDate) {
             throw new InvalidArgumentException('Invalid date range provided');
         }
 
@@ -73,16 +73,20 @@ class TaxReportController extends Controller
         $bungaPendek = $loans->sum(function ($loan) {
             if ($loan->installments > 0) {
                 $totalBunga = ($loan->principal * ($loan->interest_rate ?? 0)) / 100;
+
                 return round($totalBunga / $loan->installments, 2);
             }
+
             return 0;
         });
 
         $bungaPanjang = $loans->sum(function ($loan) {
             if ($loan->installments > 0) {
                 $totalBunga = ($loan->principal * ($loan->interest_rate ?? 0)) / 100;
+
                 return round($totalBunga - $totalBunga / $loan->installments, 2);
             }
+
             return 0;
         });
 
@@ -154,7 +158,7 @@ class TaxReportController extends Controller
 
         // Logo base64
         $logoPath = public_path('assets/img/logo.png');
-        $logoBase64 = file_exists($logoPath) ? 'data:image/png;base64,' . base64_encode(file_get_contents($logoPath)) : null;
+        $logoBase64 = file_exists($logoPath) ? 'data:image/png;base64,'.base64_encode(file_get_contents($logoPath)) : null;
 
         // Info perusahaan
         $data['company'] = [
@@ -167,13 +171,13 @@ class TaxReportController extends Controller
         ];
 
         // Surat
-        $data['nomor_surat'] = 'SPT/' . date('Y') . '/' . rand(100, 999);
+        $data['nomor_surat'] = 'SPT/'.date('Y').'/'.rand(100, 999);
         $data['tanggal_terbit'] = Carbon::now()->translatedFormat('d F Y');
         $data['startDate'] = $startDate;
         $data['endDate'] = $endDate;
 
         $pdf = PDF::loadView('accounting.tax.pdf', $data)->setPaper('A4', 'portrait');
 
-        return $pdf->download('laporan_pajak_resmi_' . $startDate . '_to_' . $endDate . '.pdf');
+        return $pdf->download('laporan_pajak_resmi_'.$startDate.'_to_'.$endDate.'.pdf');
     }
 }
