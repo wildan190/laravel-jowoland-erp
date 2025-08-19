@@ -8,10 +8,11 @@ use App\Models\Invoice;
 use App\Models\Loan;
 use App\Models\Payroll;
 use App\Models\Purchasing;
+use Barryvdh\DomPDF\Facade\Pdf as PDF;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use InvalidArgumentException;
-use PDF;
 
 class TaxReportController extends Controller
 {
@@ -152,33 +153,76 @@ class TaxReportController extends Controller
 
     public function exportPdf(Request $request)
     {
-        $startDate = $request->input('start_date', Carbon::now()->startOfYear()->toDateString());
-        $endDate = $request->input('end_date', Carbon::now()->endOfYear()->toDateString());
+        try {
+            // Validate input dates
+            $request->validate([
+                'start_date' => 'nullable|date|before_or_equal:end_date',
+                'end_date' => 'nullable|date|after_or_equal:start_date',
+            ]);
 
-        $data = $this->calculateReport($startDate, $endDate);
+            // Set default dates if not provided
+            $startDate = $request->input('start_date', Carbon::now()->startOfYear()->toDateString());
+            $endDate = $request->input('end_date', Carbon::now()->endOfYear()->toDateString());
 
-        // Logo base64
-        $logoPath = public_path('assets/img/logo.png');
-        $logoBase64 = file_exists($logoPath) ? 'data:image/png;base64,'.base64_encode(file_get_contents($logoPath)) : null;
+            // Parse dates to ensure valid format
+            $startDate = Carbon::parse($startDate)->startOfDay()->toDateString();
+            $endDate = Carbon::parse($endDate)->endOfDay()->toDateString();
 
-        // Info perusahaan
-        $data['company'] = [
-            'name' => 'PT. Jowoland Construction',
-            'address' => 'Ketitang, Godong, Grobogan, Jawa Tengah',
-            'phone' => '0852-8074-9218',
-            'email' => 'info@jowolandborepile.com',
-            'npwp' => '01.234.567.8-999.000',
-            'logo' => $logoBase64,
-        ];
+            // Calculate financial report
+            $data = $this->calculateReport($startDate, $endDate);
 
-        // Surat
-        $data['nomor_surat'] = 'SPT/'.date('Y').'/'.rand(100, 999);
-        $data['tanggal_terbit'] = Carbon::now()->translatedFormat('d F Y');
-        $data['startDate'] = $startDate;
-        $data['endDate'] = $endDate;
+            // Handle company logo
+            $logoPath = public_path('assets/img/logo.png');
+            $logoBase64 = null;
+            try {
+                if (file_exists($logoPath)) {
+                    $logoBase64 = 'data:image/png;base64,'.base64_encode(file_get_contents($logoPath));
+                }
+            } catch (\Exception $e) {
+                Log::warning('Failed to load logo for PDF: '.$e->getMessage());
+            }
 
-        $pdf = PDF::loadView('accounting.tax.pdf', $data)->setPaper('A4', 'portrait');
+            // Company information
+            $data['company'] = [
+                'name' => config('company.name', 'PT. Jowoland Construction'),
+                'address' => config('company.address', 'Ketitang, Godong, Grobogan, Jawa Tengah'),
+                'phone' => config('company.phone', '0852-8074-9218'),
+                'email' => config('company.email', 'info@jowolandborepile.com'),
+                'npwp' => config('company.npwp', '01.234.567.8-999.000'),
+                'logo' => $logoBase64,
+                'director_name' => config('company.director_name', 'Andi Pratama'),
+            ];
 
-        return $pdf->download('laporan_pajak_resmi_'.$startDate.'_to_'.$endDate.'.pdf');
+            // Document information
+            $data['nomor_surat'] = 'SPT/'.Carbon::now()->format('Y').'/'.str_pad(rand(100, 999), 3, '0', STR_PAD_LEFT);
+            $data['tanggal_terbit'] = Carbon::now()->translatedFormat('d F Y', 'id');
+            $data['startDate'] = Carbon::parse($startDate)->translatedFormat('d F Y', 'id');
+            $data['endDate'] = Carbon::parse($endDate)->translatedFormat('d F Y', 'id');
+
+            // Generate PDF
+            $pdf = PDF::loadView('accounting.tax.general_ledger', $data)
+                ->setPaper('A4', 'portrait')
+                ->setOptions([
+                    'isHtml5ParserEnabled' => true,
+                    'isRemoteEnabled' => true,
+                    'defaultFont' => 'DejaVu Sans',
+                ]);
+
+            // Generate safe filename
+            $filename = 'buku_besar_'.str_replace(['-', ':', ' '], '_', $startDate).'_to_'.str_replace(['-', ':', ' '], '_', $endDate).'.pdf';
+
+            return $pdf->download($filename);
+
+        } catch (\Exception $e) {
+            Log::error('PDF generation failed: '.$e->getMessage(), [
+                'start_date' => $startDate,
+                'end_date' => $endDate,
+            ]);
+
+            return response()->json([
+                'error' => 'Failed to generate PDF report',
+                'message' => config('app.debug') ? $e->getMessage() : 'An error occurred while generating the report',
+            ], 500);
+        }
     }
 }
