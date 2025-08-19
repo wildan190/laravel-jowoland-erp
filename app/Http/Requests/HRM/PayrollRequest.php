@@ -14,11 +14,19 @@ class PayrollRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'employee_id' => 'required|exists:employees,id',
+            'employee_ids' => 'required|array|min:1',
+            'employee_ids.*' => 'exists:employees,id', // pastikan id valid
+
+            'basic_salaries' => 'required|array',
+            'basic_salaries.*' => 'required|numeric|min:0',
+
+            'allowances' => 'nullable|array',
+            'allowances.*' => 'nullable|numeric|min:0',
+
+            'notes' => 'nullable|array',
+            'notes.*' => 'nullable|string|max:1000',
+
             'pay_date' => 'required|date',
-            'allowance' => 'nullable|numeric|min:0',
-            'basic_salary' => 'required|numeric|min:0',
-            'notes' => 'nullable|string|max:1000',
         ];
     }
 }

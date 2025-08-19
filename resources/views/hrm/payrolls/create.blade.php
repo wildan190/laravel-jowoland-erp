@@ -37,65 +37,79 @@
                 {{-- Pilih Karyawan --}}
                 <div class="mb-3">
                     <label class="form-label">Karyawan</label>
-                    <select name="employee_id" id="employee-select"
-                        class="form-select @error('employee_id') is-invalid @enderror" required>
-                        <option value="">-- Pilih Karyawan --</option>
+                    <div class="border rounded p-2" style="max-height: 250px; overflow-y: auto;">
                         @foreach ($employees as $employee)
-                            <option value="{{ $employee->id }}" data-salary="{{ $employee->salary }}"
-                                {{ old('employee_id') == $employee->id ? 'selected' : '' }}>
-                                {{ $employee->name }} (Rp {{ number_format($employee->salary, 0, ',', '.') }})
-                            </option>
+                            @php
+                                $checked = false;
+                                if(old('employee_ids')) {
+                                    $checked = in_array($employee->id, old('employee_ids'));
+                                }
+                            @endphp
+                            <div class="form-check">
+                                <input type="checkbox"
+                                       class="form-check-input employee-check"
+                                       id="employee_{{ $employee->id }}"
+                                       value="{{ $employee->id }}"
+                                       data-name="{{ $employee->name }}"
+                                       data-salary="{{ $employee->salary }}"
+                                       {{ $checked ? 'checked' : '' }}>
+                                <label class="form-check-label" for="employee_{{ $employee->id }}">
+                                    {{ $employee->name }} (Rp {{ number_format($employee->salary, 0, ',', '.') }})
+                                </label>
+                            </div>
                         @endforeach
-                    </select>
-                    @error('employee_id')
-                        <div class="invalid-feedback">{{ $message }}</div>
-                    @enderror
-                </div>
-
-                {{-- Gaji Pokok --}}
-                <div class="mb-3">
-                    <label class="form-label">Gaji Pokok</label>
-                    <input type="number" class="form-control" id="basic_salary" name="basic_salary"
-                        value="{{ old('basic_salary') }}" readonly>
-                    @error('basic_salary')
+                    </div>
+                    @error('employee_ids')
                         <div class="text-danger small">{{ $message }}</div>
                     @enderror
                 </div>
 
-                {{-- Tunjangan --}}
-                <div class="mb-3">
-                    <label class="form-label">Tunjangan</label>
-                    <input type="number" name="allowance"
-                        class="form-control @error('allowance') is-invalid @enderror"
-                        value="{{ old('allowance', 0) }}">
-                    @error('allowance')
-                        <div class="invalid-feedback">{{ $message }}</div>
-                    @enderror
+                {{-- Container untuk form per karyawan --}}
+                <div id="employee-forms">
+                    @if(old('employee_ids'))
+                        @foreach(old('employee_ids') as $index => $empId)
+                            @php
+                                $employee = $employees->firstWhere('id', $empId);
+                                $basic_salary = old('basic_salaries.' . $index, $employee->salary);
+                                $allowance = old('allowances.' . $index, 0);
+                                $note = old('notes.' . $index, '');
+                            @endphp
+                            <div id="form-{{ $empId }}" class="card p-3 mb-3 border">
+                                <h5>{{ $employee->name }}</h5>
+                                <input type="hidden" name="employee_ids[]" value="{{ $empId }}">
+
+                                <div class="mb-2">
+                                    <label class="form-label">Gaji Pokok</label>
+                                    <input type="number" name="basic_salaries[]" class="form-control" value="{{ $basic_salary }}" readonly>
+                                </div>
+
+                                <div class="mb-2">
+                                    <label class="form-label">Tunjangan</label>
+                                    <input type="number" name="allowances[]" class="form-control" value="{{ $allowance }}">
+                                </div>
+
+                                <div class="mb-2">
+                                    <label class="form-label">Catatan</label>
+                                    <textarea name="notes[]" class="form-control" rows="2">{{ $note }}</textarea>
+                                </div>
+                            </div>
+                        @endforeach
+                    @endif
                 </div>
 
                 {{-- Tanggal Gaji --}}
                 <div class="mb-3">
                     <label class="form-label">Tanggal</label>
                     <input type="date" name="pay_date"
-                        class="form-control @error('pay_date') is-invalid @enderror"
-                        value="{{ old('pay_date') }}" required>
+                           class="form-control @error('pay_date') is-invalid @enderror"
+                           value="{{ old('pay_date', date('Y-m-d')) }}" required>
                     @error('pay_date')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>
 
-                {{-- Catatan --}}
-                <div class="mb-3">
-                    <label class="form-label">Catatan</label>
-                    <textarea name="notes" rows="3"
-                        class="form-control @error('notes') is-invalid @enderror">{{ old('notes') }}</textarea>
-                    @error('notes')
-                        <div class="invalid-feedback">{{ $message }}</div>
-                    @enderror
-                </div>
-
                 {{-- Tombol --}}
-                <div class="d-flex justify-content-between">
+                <div class="d-flex justify-content-between mt-3">
                     <a href="{{ route('payrolls.index') }}" class="btn btn-secondary">
                         <i class="fa fa-arrow-left me-1"></i> Batal
                     </a>
@@ -108,19 +122,57 @@
     </div>
 </div>
 
-{{-- Script autofill gaji pokok --}}
+{{-- Script untuk form dinamis --}}
 <script>
-    document.getElementById('employee-select').addEventListener('change', function () {
-        const salary = this.options[this.selectedIndex].getAttribute('data-salary');
-        document.getElementById('basic_salary').value = salary || 0;
-    });
+    const container = document.getElementById('employee-forms');
 
-    // Trigger saat halaman dimuat jika old() sudah ada
-    window.addEventListener('DOMContentLoaded', function () {
-        const selected = document.querySelector('#employee-select option:checked');
-        if (selected && selected.dataset.salary) {
-            document.getElementById('basic_salary').value = selected.dataset.salary;
-        }
+    function createForm(employeeId, name, salary) {
+        if(document.getElementById('form-' + employeeId)) return; // prevent duplicate
+
+        const div = document.createElement('div');
+        div.id = `form-${employeeId}`;
+        div.classList.add('card', 'p-3', 'mb-3', 'border');
+
+        div.innerHTML = `
+            <h5>${name}</h5>
+            <input type="hidden" name="employee_ids[]" value="${employeeId}">
+
+            <div class="mb-2">
+                <label class="form-label">Gaji Pokok</label>
+                <input type="number" name="basic_salaries[]" class="form-control" value="${salary}" readonly>
+            </div>
+
+            <div class="mb-2">
+                <label class="form-label">Tunjangan</label>
+                <input type="number" name="allowances[]" class="form-control" value="0">
+            </div>
+
+            <div class="mb-2">
+                <label class="form-label">Catatan</label>
+                <textarea name="notes[]" class="form-control" rows="2"></textarea>
+            </div>
+        `;
+
+        container.appendChild(div);
+    }
+
+    function removeForm(employeeId) {
+        const form = document.getElementById(`form-${employeeId}`);
+        if (form) form.remove();
+    }
+
+    document.querySelectorAll('.employee-check').forEach(function(checkbox) {
+        checkbox.addEventListener('change', function() {
+            const id = this.value;
+            const name = this.dataset.name;
+            const salary = this.dataset.salary;
+
+            if(this.checked) {
+                createForm(id, name, salary);
+            } else {
+                removeForm(id);
+            }
+        });
     });
 </script>
 @endsection
