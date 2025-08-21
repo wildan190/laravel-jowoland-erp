@@ -249,6 +249,51 @@
         <h6 class="text-warning mb-4">MENU</h6>
         <ul class="nav flex-column" id="mainMenu">
 
+            <li class="nav-item mb-2">
+                <a class="nav-link text-white dropdown-toggle {{ request()->is('marketing*') || request()->routeIs('marketing.*') ? 'text-warning' : '' }}"
+                    data-bs-toggle="collapse" href="#marketingMenu" role="button"
+                    aria-expanded="{{ request()->is('marketing*') || request()->routeIs('marketing.*') ? 'true' : 'false' }}"
+                    aria-controls="marketingMenu">
+                    <i class="fa fa-bullhorn me-2"></i> Marketing Strategy
+                </a>
+                <div class="collapse {{ request()->is('marketing*') || request()->routeIs('marketing.*') ? 'show' : '' }}"
+                    id="marketingMenu" data-bs-parent="#mainMenu">
+                    <ul class="nav flex-column ms-3">
+                        {{-- Kanban --}}
+                        <li class="nav-item">
+                            <a class="nav-link text-white {{ request()->routeIs('marketing.kanban') ? 'active' : '' }}"
+                                href="{{ route('marketing.kanban') }}">
+                                <i class="fa fa-tasks me-2"></i> Kanban
+                            </a>
+                        </li>
+
+                        {{-- Mindmap --}}
+                        <li class="nav-item">
+                            <a class="nav-link text-white {{ request()->routeIs('marketing.mindmap') ? 'active' : '' }}"
+                                href="{{ route('marketing.mindmap') }}">
+                                <i class="fa fa-sitemap me-2"></i> Mindmap
+                            </a>
+                        </li>
+
+                        {{-- Strategy --}}
+                        <li class="nav-item">
+                            <a class="nav-link text-white {{ request()->routeIs('marketing.strategy') ? 'active' : '' }}"
+                                href="{{ route('marketing.strategy') }}">
+                                <i class="fa fa-chess me-2"></i> Strategi
+                            </a>
+                        </li>
+
+                        {{-- Social --}}
+                        <li class="nav-item">
+                            <a class="nav-link text-white {{ request()->routeIs('marketing.social') ? 'active' : '' }}"
+                                href="{{ route('marketing.social') }}">
+                                <i class="fa fa-share-alt me-2"></i> Sosial
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </li>
+
             {{-- Dropdown: CRM --}}
             <li class="nav-item mb-2">
                 <a class="nav-link text-white dropdown-toggle {{ request()->routeIs('contacts.*') || request()->routeIs('deal.*') || request()->routeIs('pipeline.*') ? 'text-warning' : '' }}"
@@ -440,51 +485,6 @@
                             <a class="nav-link text-white {{ request()->routeIs('accounting.receipts.index') ? 'active' : '' }}"
                                 href="{{ route('accounting.receipts.index') }}">
                                 <i class="fa fa-receipt me-2"></i> Receipts
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-            </li>
-
-            <li class="nav-item mb-2">
-                <a class="nav-link text-white dropdown-toggle {{ request()->is('marketing*') || request()->routeIs('marketing.*') ? 'text-warning' : '' }}"
-                    data-bs-toggle="collapse" href="#marketingMenu" role="button"
-                    aria-expanded="{{ request()->is('marketing*') || request()->routeIs('marketing.*') ? 'true' : 'false' }}"
-                    aria-controls="marketingMenu">
-                    <i class="fa fa-bullhorn me-2"></i> Marketing Strategy
-                </a>
-                <div class="collapse {{ request()->is('marketing*') || request()->routeIs('marketing.*') ? 'show' : '' }}"
-                    id="marketingMenu" data-bs-parent="#mainMenu">
-                    <ul class="nav flex-column ms-3">
-                        {{-- Kanban --}}
-                        <li class="nav-item">
-                            <a class="nav-link text-white {{ request()->routeIs('marketing.kanban') ? 'active' : '' }}"
-                                href="{{ route('marketing.kanban') }}">
-                                <i class="fa fa-tasks me-2"></i> Kanban
-                            </a>
-                        </li>
-
-                        {{-- Mindmap --}}
-                        <li class="nav-item">
-                            <a class="nav-link text-white {{ request()->routeIs('marketing.mindmap') ? 'active' : '' }}"
-                                href="{{ route('marketing.mindmap') }}">
-                                <i class="fa fa-sitemap me-2"></i> Mindmap
-                            </a>
-                        </li>
-
-                        {{-- Strategy --}}
-                        <li class="nav-item">
-                            <a class="nav-link text-white {{ request()->routeIs('marketing.strategy') ? 'active' : '' }}"
-                                href="{{ route('marketing.strategy') }}">
-                                <i class="fa fa-chess me-2"></i> Strategi
-                            </a>
-                        </li>
-
-                        {{-- Social --}}
-                        <li class="nav-item">
-                            <a class="nav-link text-white {{ request()->routeIs('marketing.social') ? 'active' : '' }}"
-                                href="{{ route('marketing.social') }}">
-                                <i class="fa fa-share-alt me-2"></i> Sosial
                             </a>
                         </li>
                     </ul>

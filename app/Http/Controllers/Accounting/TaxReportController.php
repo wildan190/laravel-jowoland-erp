@@ -154,24 +154,19 @@ class TaxReportController extends Controller
     public function exportPdf(Request $request)
     {
         try {
-            // Validate input dates
             $request->validate([
                 'start_date' => 'nullable|date|before_or_equal:end_date',
                 'end_date' => 'nullable|date|after_or_equal:start_date',
             ]);
 
-            // Set default dates if not provided
             $startDate = $request->input('start_date', Carbon::now()->startOfYear()->toDateString());
             $endDate = $request->input('end_date', Carbon::now()->endOfYear()->toDateString());
 
-            // Parse dates to ensure valid format
             $startDate = Carbon::parse($startDate)->startOfDay()->toDateString();
             $endDate = Carbon::parse($endDate)->endOfDay()->toDateString();
 
-            // Calculate financial report
             $data = $this->calculateReport($startDate, $endDate);
 
-            // Handle company logo
             $logoPath = public_path('assets/img/logo.png');
             $logoBase64 = null;
             try {
@@ -182,7 +177,6 @@ class TaxReportController extends Controller
                 Log::warning('Failed to load logo for PDF: '.$e->getMessage());
             }
 
-            // Company information
             $data['company'] = [
                 'name' => config('company.name', 'PT. Jowoland Construction'),
                 'address' => config('company.address', 'Ketitang, Godong, Grobogan, Jawa Tengah'),
@@ -193,14 +187,12 @@ class TaxReportController extends Controller
                 'director_name' => config('company.director_name', 'Andi Pratama'),
             ];
 
-            // Document information
             $data['nomor_surat'] = 'SPT/'.Carbon::now()->format('Y').'/'.str_pad(rand(100, 999), 3, '0', STR_PAD_LEFT);
             $data['tanggal_terbit'] = Carbon::now()->translatedFormat('d F Y', 'id');
             $data['startDate'] = Carbon::parse($startDate)->translatedFormat('d F Y', 'id');
             $data['endDate'] = Carbon::parse($endDate)->translatedFormat('d F Y', 'id');
 
-            // Generate PDF
-            $pdf = PDF::loadView('accounting.tax.general_ledger', $data)
+            $pdf = PDF::loadView('accounting.tax.pdf', $data)
                 ->setPaper('A4', 'portrait')
                 ->setOptions([
                     'isHtml5ParserEnabled' => true,
@@ -208,7 +200,6 @@ class TaxReportController extends Controller
                     'defaultFont' => 'DejaVu Sans',
                 ]);
 
-            // Generate safe filename
             $filename = 'buku_besar_'.str_replace(['-', ':', ' '], '_', $startDate).'_to_'.str_replace(['-', ':', ' '], '_', $endDate).'.pdf';
 
             return $pdf->download($filename);
