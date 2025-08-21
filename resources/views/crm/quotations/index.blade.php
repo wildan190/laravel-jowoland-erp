@@ -17,7 +17,7 @@
             <div>
                 <i class="fa fa-file-invoice me-1"></i> Daftar Quotation
             </div>
-            <a href="{{ route('crm.quotations.create') }}" class="btn btn-sm btn-primary">
+            <a href="{{ route('crm.quotations.create') }}" class="btn btn-sm btn-warning">
                 <i class="fa fa-plus me-1"></i> Tambah Quotation
             </a>
         </div>
