@@ -12,6 +12,7 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\CRM\DealController;
 use App\Http\Controllers\CRM\PipelineStageController;
+use App\Http\Controllers\CRM\UploadController;
 use App\Http\Controllers\HRM\DivisionController;
 use App\Http\Controllers\HRM\EmployeeController;
 use App\Http\Controllers\HRM\PayrollController;
@@ -59,6 +60,9 @@ Route::middleware(['auth'])
         Route::delete('/deal/{deal}', [DealController::class, 'destroy'])->name('deal.destroy');
         Route::get('/deal/kanban', [DealController::class, 'kanban'])->name('deal.kanban');
         Route::post('/deal/{deal}/move', [DealController::class, 'move'])->name('deal.move');
+
+        Route::get('upload', [UploadController::class, 'index'])->name('crm.upload.index');
+        Route::post('upload', [UploadController::class, 'store'])->name('crm.upload.store');
 
         Route::prefix('project-management')->group(function () {
             Route::get('projects', [ProjectController::class, 'index'])->name('projects.index');
@@ -174,4 +178,4 @@ Route::middleware(['auth'])
     });
 
 // Default redirect
-Route::get('/', fn () => redirect()->route('login'));
+Route::get('/', fn() => redirect()->route('login'));
