@@ -7,7 +7,7 @@
     {{-- Breadcrumb --}}
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb mb-4">
-            <li class="breadcrumb-item"><a href="{{ url('/') }}">Dashboard</a></li>
+            <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Dashboard</a></li>
             <li class="breadcrumb-item"><a href="{{ route('employees.index') }}">Manajemen Tim</a></li>
             <li class="breadcrumb-item active" aria-current="page">Tambah Karyawan</li>
         </ol>
