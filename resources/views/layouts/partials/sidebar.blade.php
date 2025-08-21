@@ -329,6 +329,13 @@
                                 <i class="fa fa-layer-group me-2"></i> Pipeline Stages
                             </a>
                         </li>
+                        {{-- upload file  --}}
+                        <li class="nav-item">
+                            <a class="nav-link text-white {{ request()->routeIs('crm.upload.index') ? 'active' : '' }}"
+                                href="{{ route('crm.upload.index') }}">
+                                <i class="fa fa-file-upload me-2"></i> Upload Recommendations
+                            </a>
+                        </li>
                     </ul>
                 </div>
             </li>
