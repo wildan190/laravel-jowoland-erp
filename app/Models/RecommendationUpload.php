@@ -10,8 +10,14 @@ class RecommendationUpload extends Model
     use HasFactory;
 
     protected $fillable = [
+        'contact_id',
         'file_name',
         'file_path',
         'uploaded_by',
     ];
+
+    public function contact()
+    {
+        return $this->belongsTo(Contact::class);
+    }
 }

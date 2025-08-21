@@ -14,6 +14,7 @@ class UploadRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'contact_id' => 'required|exists:contacts,id',
             'file' => 'required|file|mimes:pdf,doc,docx|max:2048',
         ];
     }

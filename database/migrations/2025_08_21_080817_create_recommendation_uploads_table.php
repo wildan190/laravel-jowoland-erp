@@ -10,10 +10,13 @@ return new class extends Migration
     {
         Schema::create('recommendation_uploads', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('contact_id');
             $table->string('file_name');
             $table->string('file_path')->nullable();
             $table->unsignedBigInteger('uploaded_by')->nullable();
             $table->timestamps();
+
+            $table->foreign('contact_id')->references('id')->on('contacts')->onDelete('cascade');
         });
     }
 

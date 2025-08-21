@@ -15,4 +15,9 @@ class Contact extends Model
     {
         return $this->hasMany(Deal::class);
     }
+
+    public function recommendationUploads()
+    {
+        return $this->hasMany(RecommendationUpload::class);
+    }
 }

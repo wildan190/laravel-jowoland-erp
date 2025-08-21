@@ -22,7 +22,26 @@
                 <form action="{{ route('crm.upload.store') }}" method="POST" enctype="multipart/form-data">
                     @csrf
                     <div class="row align-items-center">
-                        <div class="col-md-8">
+                        <div class="col-md-4">
+                            <label for="contact_id" class="form-label fw-bold">
+                                <i class="fa-solid fa-user me-1"></i> Pilih Kontak
+                            </label>
+                            <select name="contact_id" id="contact_id"
+                                class="form-select @error('contact_id') is-invalid @enderror" required>
+                                <option value="">-- Pilih Kontak --</option>
+                                @foreach ($contacts as $contact)
+                                    <option value="{{ $contact->id }}"
+                                        {{ old('contact_id') == $contact->id ? 'selected' : '' }}>
+                                        {{ $contact->name }} ({{ $contact->email }})
+                                    </option>
+                                @endforeach
+                            </select>
+                            @error('contact_id')
+                                <div class="text-danger small mt-1">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <div class="col-md-4">
                             <label for="file" class="form-label fw-bold">
                                 <i class="fa-solid fa-file-arrow-up me-1"></i> Pilih File (PDF/DOC/DOCX)
                             </label>
@@ -32,12 +51,14 @@
                                 <div class="text-danger small mt-1">{{ $message }}</div>
                             @enderror
                         </div>
+
                         <div class="col-md-4 mt-3 mt-md-0 text-md-end">
                             <button type="submit" class="btn btn-warning">
                                 <i class="fa-solid fa-upload me-1"></i> Upload
                             </button>
                         </div>
                     </div>
+
                 </form>
             </div>
         </div>
@@ -51,7 +72,8 @@
                         <tr>
                             <th>No.</th>
                             <th>Nama File</th>
-                            <th>Diunggah Oleh</th>
+                            <th>Kontak</th>
+                            {{-- <th>Diunggah Oleh</th> --}}
                             <th>Tanggal</th>
                             <th class="text-center">Aksi</th>
                         </tr>
@@ -61,7 +83,14 @@
                             <tr>
                                 <td>{{ $loop->iteration }}</td>
                                 <td>{{ $upload->file_name }}</td>
-                                <td>{{ $upload->uploaded_by ?? 'System' }}</td>
+                                <td>
+                                    @if ($upload->contact)
+                                        {{ $upload->contact->name }} ({{ $upload->contact->email }})
+                                    @else
+                                        Tidak diketahui
+                                    @endif
+                                </td>
+                                {{-- <td>{{ $upload->uploaded_by ?? 'System' }}</td> --}}
                                 <td>{{ $upload->created_at->format('d/m/Y H:i') }}</td>
                                 <td class="text-center">
                                     {{-- Tombol View (modal) --}}

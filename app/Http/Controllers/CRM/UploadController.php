@@ -12,13 +12,15 @@ class UploadController extends Controller
 {
     public function index(): View
     {
-        $uploads = \App\Models\RecommendationUpload::latest()->get();
-        return view('crm.upload', compact('uploads'));
+        $uploads = \App\Models\RecommendationUpload::with('contact')->latest()->get();
+        $contacts = \App\Models\Contact::all();
+
+        return view('crm.upload', compact('uploads', 'contacts'));
     }
 
     public function store(UploadRequest $request, UploadAction $action): RedirectResponse
     {
-        $action->execute($request->file('file'));
+        $action->execute($request->file('file'), $request->contact_id);
 
         return redirect()->back()->with('success', 'File berhasil diupload!');
     }
