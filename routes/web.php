@@ -12,6 +12,7 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\CRM\DealController;
 use App\Http\Controllers\CRM\PipelineStageController;
+use App\Http\Controllers\CRM\QuotationController;
 use App\Http\Controllers\CRM\UploadController;
 use App\Http\Controllers\HRM\DivisionController;
 use App\Http\Controllers\HRM\EmployeeController;
@@ -63,6 +64,14 @@ Route::middleware(['auth'])
 
         Route::get('upload', [UploadController::class, 'index'])->name('crm.upload.index');
         Route::post('upload', [UploadController::class, 'store'])->name('crm.upload.store');
+
+        Route::get('quotations', [QuotationController::class, 'index'])->name('crm.quotations.index');
+        Route::get('quotations/create', [QuotationController::class, 'create'])->name('crm.quotations.create');
+        Route::post('quotations', [QuotationController::class, 'store'])->name('crm.quotations.store');
+        Route::get('quotations/{quotation}/edit', [QuotationController::class, 'edit'])->name('crm.quotations.edit');
+        Route::put('quotations/{quotation}', [QuotationController::class, 'update'])->name('crm.quotations.update');
+        Route::delete('quotations/{quotation}', [QuotationController::class, 'destroy'])->name('crm.quotations.destroy');
+        Route::get('quotations/{quotation}/pdf', [QuotationController::class, 'exportPdf'])->name('crm.quotations.exportPdf');
 
         Route::prefix('project-management')->group(function () {
             Route::get('projects', [ProjectController::class, 'index'])->name('projects.index');
