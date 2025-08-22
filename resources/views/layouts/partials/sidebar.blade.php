@@ -336,6 +336,14 @@
                                 <i class="fa fa-file-upload me-2"></i> Upload Recommendations
                             </a>
                         </li>
+
+                        {{-- ads --}}
+                        <li class="nav-item">
+                            <a class="nav-link text-white {{ request()->routeIs('crm.ads_plans.index') ? 'active' : '' }}"
+                                href="{{ route('crm.ads_plans.index') }}">
+                                <i class="fa fa-bullhorn me-2"></i> Ads Plans
+                            </a>
+                        </li>
                     </ul>
                 </div>
             </li>
