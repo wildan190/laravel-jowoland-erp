@@ -12,9 +12,39 @@ use App\Models\Contact;
 
 class ContactController extends Controller
 {
-    public function index(IndexAction $action)
+    public function index(\Illuminate\Http\Request $request, IndexAction $action)
     {
-        $contacts = $action->handle();
+        $query = Contact::query();
+
+        // 🔍 Pencarian umum (lebih fleksibel)
+        if ($search = $request->get('search')) {
+            $search = strtolower($search); // case-insensitive
+
+            $query->where(function ($q) use ($search) {
+                $q->whereRaw('LOWER(name) LIKE ?', ["%{$search}%"])
+                    ->orWhereRaw('LOWER(email) LIKE ?', ["%{$search}%"])
+                    ->orWhereRaw('LOWER(phone) LIKE ?', ["%{$search}%"])
+                    ->orWhereRaw('LOWER(company) LIKE ?', ["%{$search}%"])
+                    ->orWhereRaw('LOWER(address) LIKE ?', ["%{$search}%"]);
+            });
+        }
+
+        // 📌 Filter perusahaan
+        if ($company = $request->get('company')) {
+            $query->whereRaw('LOWER(company) LIKE ?', ['%'.strtolower($company).'%']);
+        }
+
+        // 📌 Filter punya email
+        if ($request->boolean('has_email')) {
+            $query->whereNotNull('email')->where('email', '!=', '');
+        }
+
+        // 📌 Filter punya phone
+        if ($request->boolean('has_phone')) {
+            $query->whereNotNull('phone')->where('phone', '!=', '');
+        }
+
+        $contacts = $query->orderBy('name')->paginate(10)->withQueryString();
 
         return view('crm.contacts.index', compact('contacts'));
     }

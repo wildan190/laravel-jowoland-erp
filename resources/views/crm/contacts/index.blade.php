@@ -3,7 +3,7 @@
 @section('title', 'Kontak')
 
 @section('content')
-<div class="container-fluid">
+    <div class="container-fluid">
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb mb-4">
                 <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Home</a></li>
@@ -17,6 +17,39 @@
                 <i class="fas fa-plus"></i> Tambah Kontak
             </a>
         </div>
+
+        <div class="card shadow-sm mb-3">
+            <div class="card-body">
+                <form method="GET" action="{{ route('contacts.index') }}" class="row g-2">
+                    <div class="col-md-4">
+                        <input type="text" name="search" value="{{ request('search') }}" class="form-control"
+                            placeholder="Cari nama, email, telepon...">
+                    </div>
+                    <div class="col-md-3">
+                        <input type="text" name="company" value="{{ request('company') }}" class="form-control"
+                            placeholder="Filter perusahaan">
+                    </div>
+                    <div class="col-md-2">
+                        <select name="has_email" class="form-select">
+                            <option value="">-- Email --</option>
+                            <option value="1" {{ request('has_email') == '1' ? 'selected' : '' }}>Hanya yang ada
+                            </option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <select name="has_phone" class="form-select">
+                            <option value="">-- Telepon --</option>
+                            <option value="1" {{ request('has_phone') == '1' ? 'selected' : '' }}>Hanya yang ada
+                            </option>
+                        </select>
+                    </div>
+                    <div class="col-md-1 d-grid">
+                        <button type="submit" class="btn btn-warning"><i class="fas fa-search"></i></button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
 
         @if (session('success'))
             <div class="alert alert-success">{{ session('success') }}</div>
@@ -71,8 +104,9 @@
                     </table>
 
                     <div class="mt-3">
-                        {{ $contacts->links() }}
+                        {{ $contacts->appends(request()->query())->links('pagination::bootstrap-5') }}
                     </div>
+
                 </div>
             </div>
         </div>
