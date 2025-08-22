@@ -12,6 +12,38 @@
         </ol>
     </nav>
 
+    {{-- Filter --}}
+    <div class="card shadow-sm mb-3">
+        <div class="card-body">
+            <form action="{{ route('accounting.loans.index') }}" method="GET" class="row g-2 align-items-end">
+                <div class="col-md-4">
+                    <label for="vendor" class="form-label">Vendor / Bank</label>
+                    <input type="text" class="form-control" name="vendor" id="vendor" 
+                           value="{{ request('vendor') }}" placeholder="Cari vendor/bank">
+                </div>
+                {{-- <div class="col-md-3">
+                    <label for="due_date_start" class="form-label">Tanggal Jatuh Tempo (Mulai)</label>
+                    <input type="date" class="form-control" name="due_date_start" id="due_date_start" 
+                           value="{{ request('due_date_start') }}">
+                </div>
+                <div class="col-md-3">
+                    <label for="due_date_end" class="form-label">Tanggal Jatuh Tempo (Sampai)</label>
+                    <input type="date" class="form-control" name="due_date_end" id="due_date_end" 
+                           value="{{ request('due_date_end') }}">
+                </div> --}}
+                <div class="col-md-2 text-end">
+                    <button type="submit" class="btn btn-warning mt-2">
+                        <i class="fas fa-search me-1"></i> Filter
+                    </button>
+                    <a href="{{ route('accounting.loans.index') }}" class="btn btn-secondary mt-2">
+                        <i class="fas fa-times me-1"></i> Reset
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    {{-- Table --}}
     <div class="card shadow-sm">
         <div class="card-header d-flex justify-content-between align-items-center">
             <h5 class="mb-0">Daftar Hutang</h5>
@@ -43,8 +75,8 @@
                             <td>{{ $loan->interest_rate }}</td>
                             <td>Rp{{ number_format($loan->total_debt, 0, ',', '.') }}</td>
                             <td>Rp{{ number_format($loan->monthly_installment, 0, ',', '.') }}</td>
-                            <td>{{ $loan->start_date ? \Carbon\Carbon::parse($loan->start_date)->format('d M Y') : '-' }}</td>
-                            <td>{{ $loan->end_date ? \Carbon\Carbon::parse($loan->end_date)->format('d M Y') : '-' }}</td>
+                            <td>{{ $loan->start_date ? $loan->start_date->format('d M Y') : '-' }}</td>
+                            <td>{{ $loan->end_date ? $loan->end_date->format('d M Y') : '-' }}</td>
                             <td>{{ $loan->installments }} bulan</td>
                             <td>{{ $loan->description ?? '-' }}</td>
                             <td class="text-center">

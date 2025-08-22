@@ -6,15 +6,35 @@ use App\Action\Accounting\LoanAction;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Accounting\StoreLoanRequest;
 use App\Models\Loan;
+use Illuminate\Http\Request;
 
 class LoanController extends Controller
 {
-    public function index()
-    {
-        $loans = Loan::orderBy('due_date', 'asc')->get();
+    public function index(Request $request)
+{
+    $query = Loan::query();
 
-        return view('accounting.loans.index', compact('loans'));
+    // Filter vendor/bank
+    if ($request->filled('vendor')) {
+        $query->where('vendor', 'like', '%' . $request->vendor . '%');
     }
+
+    // Filter tanggal jatuh tempo mulai
+    if ($request->filled('due_date_start')) {
+        $query->where('due_date', '>=', $request->due_date_start);
+    }
+
+    // Filter tanggal jatuh tempo sampai
+    if ($request->filled('due_date_end')) {
+        $query->where('due_date', '<=', $request->due_date_end);
+    }
+
+    // Urutkan berdasarkan tanggal jatuh tempo
+    $loans = $query->orderBy('due_date', 'asc')->get();
+
+    return view('accounting.loans.index', compact('loans'));
+}
+
 
     public function create()
     {
