@@ -20,6 +20,35 @@
         </a>
     </div>
 
+    {{-- Form Search & Filter --}}
+    <form action="{{ route('projects.index') }}" method="GET" class="row g-2 mb-3">
+        <div class="col-md-4">
+            <input type="text" name="search" value="{{ request('search') }}" class="form-control"
+                placeholder="Cari nama proyek...">
+        </div>
+        <div class="col-md-3">
+            <select name="contact_id" class="form-select">
+                <option value="">-- Semua Kontak --</option>
+                @foreach($contacts as $contact)
+                    <option value="{{ $contact->id }}" {{ request('contact_id') == $contact->id ? 'selected' : '' }}>
+                        {{ $contact->name }}
+                    </option>
+                @endforeach
+            </select>
+        </div>
+        <div class="col-md-3">
+            <select name="status" class="form-select">
+                <option value="">-- Semua Status --</option>
+                <option value="overdue" {{ request('status') == 'overdue' ? 'selected' : '' }}>Overdue</option>
+                <option value="completed" {{ request('status') == 'completed' ? 'selected' : '' }}>Selesai</option>
+                <option value="ongoing" {{ request('status') == 'ongoing' ? 'selected' : '' }}>Berjalan</option>
+            </select>
+        </div>
+        <div class="col-md-2 d-grid">
+            <button type="submit" class="btn btn-warning"><i class="fa fa-search me-1"></i> Filter</button>
+        </div>
+    </form>
+
     {{-- Table --}}
     <div class="card shadow-sm">
         <div class="card-body table-responsive">
@@ -36,7 +65,7 @@
                 <tbody>
                     @forelse ($projects as $project)
                         <tr>
-                            <td>{{ $loop->iteration }}</td>
+                            <td>{{ $loop->iteration + ($projects->currentPage() - 1) * $projects->perPage() }}</td>
                             <td>{{ $project->name }}</td>
                             <td style="min-width: 200px;">
                                 <div class="d-flex align-items-center">
@@ -86,6 +115,11 @@
                     @endforelse
                 </tbody>
             </table>
+
+            {{-- Pagination --}}
+            <div class="mt-3">
+                {{ $projects->appends(request()->query())->links('pagination::bootstrap-5') }}
+            </div>
         </div>
     </div>
 </div>

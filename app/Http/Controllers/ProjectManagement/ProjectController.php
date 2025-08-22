@@ -18,13 +18,35 @@ class ProjectController extends Controller
 {
     public function index(Request $request)
     {
-        $projects = Project::withCount([
-            'tasks as progress' => function ($q) {
+        $query = Project::withCount([
+            'tasks as progress_percentage' => function ($q) {
                 $q->select(DB::raw('round(100 * sum(is_done)/count(*))'));
             },
-        ])->get();
+        ]);
 
-        return view('project_management.index', compact('projects'));
+        if ($search = $request->get('search')) {
+            $query->where('name', 'like', "%{$search}%");
+        }
+
+        if ($contactId = $request->get('contact_id')) {
+            $query->where('contact_id', $contactId);
+        }
+
+        if ($status = $request->get('status')) {
+            if ($status === 'overdue') {
+                $query->whereRaw('end_date < ?', [now()]);
+            } elseif ($status === 'completed') {
+                $query->whereHas('tasks', function ($q) {
+                    $q->havingRaw('round(100 * sum(is_done)/count(*)) = 100');
+                });
+            }
+        }
+
+        $projects = $query->orderBy('start_date', 'desc')->paginate(10)->withQueryString();
+
+        $contacts = Contact::orderBy('name')->get();
+
+        return view('project_management.index', compact('projects', 'contacts'));
     }
 
     public function create()
@@ -54,7 +76,7 @@ class ProjectController extends Controller
 
     public function edit(Project $project)
     {
-        $project->load('tasks', 'contact'); // Eager load
+        $project->load('tasks', 'contact');
         $contacts = Contact::orderBy('name')->get();
 
         return view('project_management.edit', compact('project', 'contacts'));
