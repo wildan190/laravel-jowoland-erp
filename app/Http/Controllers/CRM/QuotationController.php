@@ -7,7 +7,6 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\CRM\StoreQuotationRequest;
 use App\Models\Contact;
 use App\Models\Quotation;
-use Illuminate\Http\Request;
 use PDF;
 
 class QuotationController extends Controller
@@ -65,7 +64,7 @@ class QuotationController extends Controller
 
         // Simpan item–item detail
         foreach ($request->items as $item) {
-            if (!empty($item['item']) && ($item['qty'] ?? 0) > 0) {
+            if (! empty($item['item']) && ($item['qty'] ?? 0) > 0) {
                 $quotation->items()->create([
                     'item' => $item['item'],
                     'description' => $item['description'] ?? '',
@@ -105,7 +104,7 @@ class QuotationController extends Controller
 
         // Encode logo ke base64
         $logoPath = public_path('assets/img/logo.png');
-        $logoBase64 = file_exists($logoPath) ? 'data:image/' . pathinfo($logoPath, PATHINFO_EXTENSION) . ';base64,' . base64_encode(file_get_contents($logoPath)) : null;
+        $logoBase64 = file_exists($logoPath) ? 'data:image/'.pathinfo($logoPath, PATHINFO_EXTENSION).';base64,'.base64_encode(file_get_contents($logoPath)) : null;
 
         // Generate PDF
         $pdf = PDF::loadView('crm.quotations.pdf', [

@@ -53,6 +53,14 @@
                 </div>
             </div>
             <div class="col-md-2">
+                <div class="card text-white bg-dark">
+                    <div class="card-body">
+                        <h6>Total Budget Iklan</h6>
+                        <h4>Rp{{ number_format($totalAdsBudget, 0, ',', '.') }}</h4>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-2">
                 <div class="card text-white bg-warning">
                     <div class="card-body">
                         <h6>Total Cicilan Kredit</h6>
@@ -239,6 +247,47 @@
                             </tr>
                         @endforeach
                     </tbody>
+                </table>
+            </div>
+        </div>
+
+        {{-- Detail Ads Plan --}}
+        <div class="card shadow-sm mt-4">
+            <div class="card-header bg-dark text-white">
+                <h6 class="mb-0">Detail Rencana Iklan (Ads Plan)</h6>
+            </div>
+            <div class="card-body table-responsive">
+                <table class="table table-sm table-bordered mb-0">
+                    <thead>
+                        <tr>
+                            <th>Nama Campaign</th>
+                            <th>Platform</th>
+                            <th>Tanggal Mulai</th>
+                            <th>Tanggal Selesai</th>
+                            <th class="text-end">Budget</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse ($adsPlans as $ads)
+                            <tr>
+                                <td>{{ $ads->name }}</td>
+                                <td>{{ $ads->platform }}</td>
+                                <td>{{ \Carbon\Carbon::parse($ads->start_date)->format('d M Y') }}</td>
+                                <td>{{ \Carbon\Carbon::parse($ads->end_date)->format('d M Y') }}</td>
+                                <td class="text-end">Rp{{ number_format($ads->budget, 0, ',', '.') }}</td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="5" class="text-center text-muted">Tidak ada Ads Plan</td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <th colspan="4" class="text-end">Total</th>
+                            <th class="text-end">Rp{{ number_format($totalAdsBudget, 0, ',', '.') }}</th>
+                        </tr>
+                    </tfoot>
                 </table>
             </div>
         </div>

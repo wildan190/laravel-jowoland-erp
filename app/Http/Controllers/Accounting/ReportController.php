@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\Accounting;
 
 use App\Http\Controllers\Controller;
+use App\Models\AdsPlan;
 use App\Models\Income;
-use App\Models\Invoice;
 use App\Models\Loan;
 use App\Models\Payroll;
 use App\Models\Purchasing;
@@ -29,7 +29,14 @@ class ReportController extends Controller
             ->whereBetween('pay_date', [$startDate, $endDate])
             ->get();
 
-        $loans = Loan::all(); // ambil semua pinjaman
+        $loans = Loan::all();
+
+        // Ambil AdsPlan sesuai periode
+        $adsPlans = AdsPlan::whereBetween('start_date', [$startDate, $endDate])
+            ->orWhereBetween('end_date', [$startDate, $endDate])
+            ->get();
+
+        $totalAdsBudget = $adsPlans->sum('budget');
 
         // Buat list cicilan per bulan sesuai periode
         $loanPayments = collect();
@@ -41,7 +48,6 @@ class ReportController extends Controller
 
             $current = $start->copy();
             while ($current->lte($end)) {
-                // hanya ambil yang masuk periode filter
                 if ($current->between(\Carbon\Carbon::parse($startDate), \Carbon\Carbon::parse($endDate))) {
                     $loanPayments->push([
                         'vendor' => $loan->vendor,
@@ -70,27 +76,28 @@ class ReportController extends Controller
 
         $totalLoanPayment = $loanPayments->sum('monthly_payment');
 
-        $totalExpense = $totalPurchasing + $totalLoanPayment + $totalSalary;
+        $totalExpense = $totalPurchasing + $totalLoanPayment + $totalSalary + $totalAdsBudget;
         $balance = $totalIncome - $totalExpense;
 
-        return view('accounting.reports.index', compact('startDate', 'endDate', 'incomes', 'purchasings', 'payrolls', 'loanPayments', 'totalIncome', 'totalPurchasing', 'totalSalary', 'totalLoanPayment', 'totalExpense', 'balance'));
+        return view('accounting.reports.index', compact('startDate', 'endDate', 'incomes', 'purchasings', 'payrolls', 'loanPayments', 'adsPlans', 'totalIncome', 'totalPurchasing', 'totalSalary', 'totalLoanPayment', 'totalAdsBudget', 'totalExpense', 'balance'));
     }
 
     public function annualReport(Request $request)
     {
         $year = $request->get('year', now()->year);
 
-        // ✅ Ambil Income yg punya Invoice, is_pending = 0
         $incomes = Income::with(['contact', 'invoice'])
             ->whereHas('invoice', function ($q) use ($year) {
-                $q->whereYear('due_date', $year)
-                    ->where('is_pending', 0);
+                $q->whereYear('due_date', $year)->where('is_pending', 0);
             })
             ->get();
 
         $purchasings = Purchasing::whereYear('date', $year)->get();
         $payrolls = Payroll::with('employee')->whereYear('pay_date', $year)->get();
         $loans = Loan::all();
+
+        // ✅ Ads Plans
+        $adsPlans = AdsPlan::whereYear('start_date', $year)->orWhereYear('end_date', $year)->get();
 
         $quarters = [
             'Q1' => collect(),
@@ -100,10 +107,10 @@ class ReportController extends Controller
         ];
 
         $summary = [
-            'Q1' => ['income' => 0, 'expense' => 0, 'payroll' => 0, 'loan' => 0, 'balance' => 0],
-            'Q2' => ['income' => 0, 'expense' => 0, 'payroll' => 0, 'loan' => 0, 'balance' => 0],
-            'Q3' => ['income' => 0, 'expense' => 0, 'payroll' => 0, 'loan' => 0, 'balance' => 0],
-            'Q4' => ['income' => 0, 'expense' => 0, 'payroll' => 0, 'loan' => 0, 'balance' => 0],
+            'Q1' => ['income' => 0, 'expense' => 0, 'payroll' => 0, 'loan' => 0, 'ads' => 0, 'balance' => 0],
+            'Q2' => ['income' => 0, 'expense' => 0, 'payroll' => 0, 'loan' => 0, 'ads' => 0, 'balance' => 0],
+            'Q3' => ['income' => 0, 'expense' => 0, 'payroll' => 0, 'loan' => 0, 'ads' => 0, 'balance' => 0],
+            'Q4' => ['income' => 0, 'expense' => 0, 'payroll' => 0, 'loan' => 0, 'ads' => 0, 'balance' => 0],
         ];
 
         // === Income ===
@@ -126,12 +133,14 @@ class ReportController extends Controller
             $desc = implode(' - ', $descParts);
             $desc .= " | Invoice #{$inc->invoice->invoice_number}";
 
-            $quarters[$quarter]->push((object) [
-                'date' => $inc->invoice->due_date,
-                'type' => 'income',
-                'description' => $desc,
-                'amount' => $inc->amount,
-            ]);
+            $quarters[$quarter]->push(
+                (object) [
+                    'date' => $inc->invoice->due_date,
+                    'type' => 'income',
+                    'description' => $desc,
+                    'amount' => $inc->amount,
+                ],
+            );
 
             $summary[$quarter]['income'] += $inc->amount;
         }
@@ -139,16 +148,18 @@ class ReportController extends Controller
         // === Purchasing ===
         foreach ($purchasings as $pur) {
             $quarter = 'Q'.Carbon::parse($pur->date)->quarter;
-            $quarters[$quarter]->push((object) [
-                'date' => $pur->date,
-                'type' => 'expense',
-                'description' => $pur->item_name ?? '-',
-                'amount' => $pur->total_price,
-            ]);
+            $quarters[$quarter]->push(
+                (object) [
+                    'date' => $pur->date,
+                    'type' => 'expense',
+                    'description' => $pur->item_name ?? '-',
+                    'amount' => $pur->total_price,
+                ],
+            );
             $summary[$quarter]['expense'] += $pur->total_price;
         }
 
-        // === Payroll (diringkas per kuartal) ===
+        // === Payroll ===
         foreach ($payrolls as $p) {
             $quarter = 'Q'.Carbon::parse($p->pay_date)->quarter;
             $basicSalary = $p->employee->salary ?? 0;
@@ -159,15 +170,16 @@ class ReportController extends Controller
             $summary[$quarter]['payroll'] += $total;
         }
 
-        // Tambahkan ringkasan payroll per kuartal
         foreach (array_keys($summary) as $quarter) {
             if ($summary[$quarter]['payroll'] > 0) {
-                $quarters[$quarter]->push((object) [
-                    'date' => Carbon::create($year, $quarter === 'Q1' ? 3 : ($quarter === 'Q2' ? 6 : ($quarter === 'Q3' ? 9 : 12)), 30),
-                    'type' => 'payroll',
-                    'description' => 'Gaji Karyawan / Staff',
-                    'amount' => $summary[$quarter]['payroll'],
-                ]);
+                $quarters[$quarter]->push(
+                    (object) [
+                        'date' => Carbon::create($year, $quarter === 'Q1' ? 3 : ($quarter === 'Q2' ? 6 : ($quarter === 'Q3' ? 9 : 12)), 30),
+                        'type' => 'payroll',
+                        'description' => 'Gaji Karyawan / Staff',
+                        'amount' => $summary[$quarter]['payroll'],
+                    ],
+                );
             }
         }
 
@@ -181,22 +193,37 @@ class ReportController extends Controller
             while ($current->lte($end)) {
                 if ($current->year == $year) {
                     $quarter = 'Q'.$current->quarter;
-                    $quarters[$quarter]->push((object) [
-                        'date' => $current->copy(),
-                        'type' => 'loan',
-                        'description' => "Hutang ke {$loan->vendor} - {$loan->description}",
-                        'amount' => $monthlyPayment,
-                    ]);
+                    $quarters[$quarter]->push(
+                        (object) [
+                            'date' => $current->copy(),
+                            'type' => 'loan',
+                            'description' => "Hutang ke {$loan->vendor} - {$loan->description}",
+                            'amount' => $monthlyPayment,
+                        ],
+                    );
                     $summary[$quarter]['loan'] += $monthlyPayment;
                 }
                 $current->addMonth();
             }
         }
 
+        // === Ads Plan ===
+        foreach ($adsPlans as $ads) {
+            $quarter = 'Q'.Carbon::parse($ads->start_date)->quarter;
+            $quarters[$quarter]->push(
+                (object) [
+                    'date' => $ads->start_date,
+                    'type' => 'ads',
+                    'description' => "Ads Campaign: {$ads->name} ({$ads->platform})",
+                    'amount' => $ads->budget,
+                ],
+            );
+            $summary[$quarter]['ads'] += $ads->budget;
+        }
+
         // === Balance ===
         foreach (array_keys($summary) as $q) {
-            $summary[$q]['balance'] = $summary[$q]['income']
-                - ($summary[$q]['expense'] + $summary[$q]['payroll'] + $summary[$q]['loan']);
+            $summary[$q]['balance'] = $summary[$q]['income'] - ($summary[$q]['expense'] + $summary[$q]['payroll'] + $summary[$q]['loan'] + $summary[$q]['ads']);
         }
 
         return view('accounting.reports.annual', compact('year', 'quarters', 'summary'));

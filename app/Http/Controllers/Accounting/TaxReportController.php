@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Accounting;
 
 use App\Http\Controllers\Controller;
+use App\Models\AdsPlan;
 use App\Models\Income;
 use App\Models\Invoice;
 use App\Models\Loan;
@@ -18,16 +19,14 @@ class TaxReportController extends Controller
 {
     private function calculateReport($startDate, $endDate)
     {
-        // Validate date range
         if (! $startDate || ! $endDate || $startDate > $endDate) {
             throw new InvalidArgumentException('Invalid date range provided');
         }
 
-        // Convert to Carbon for consistent date handling
         $startDate = \Carbon\Carbon::parse($startDate)->startOfDay();
         $endDate = \Carbon\Carbon::parse($endDate)->endOfDay();
 
-        // Fetch data with proper relationships and date filtering
+        // Fetch data
         $incomes = Income::whereBetween('date', [$startDate, $endDate])->get();
         $purchasings = Purchasing::whereBetween('date', [$startDate, $endDate])->get();
         $payrolls = Payroll::with('employee')
@@ -37,17 +36,20 @@ class TaxReportController extends Controller
         $invoices = Invoice::whereBetween('due_date', [$startDate, $endDate])
             ->where('is_pending', true)
             ->get();
+        $adsPlans = AdsPlan::whereBetween('start_date', [$startDate, $endDate])
+            ->orWhereBetween('end_date', [$startDate, $endDate])
+            ->get();
 
-        // Calculate PPN (VAT)
+        // === Pajak PPN ===
         $totalIncome = $incomes->sum('amount') ?? 0;
         $ppn = round($totalIncome * 0.11, 2);
 
-        // Calculate PPh21 (Personal Income Tax)
+        // === Pajak PPh21 ===
         $pph21 = 0;
         foreach ($payrolls as $payroll) {
             $monthlySalary = ($payroll->employee->salary ?? 0) + ($payroll->allowance ?? 0) - ($payroll->deduction ?? 0);
             $annualSalary = $monthlySalary * 12;
-            $ptkp = 54000000; // Individual PTKP
+            $ptkp = 54000000;
             $pkp = max(0, $annualSalary - $ptkp);
 
             if ($pkp <= 60000000) {
@@ -62,16 +64,19 @@ class TaxReportController extends Controller
         }
         $pph21 = round($pph21, 2);
 
-        // Calculate HPP and Gross Profit
+        // === HPP & Laba Kotor ===
         $hpp = $purchasings->sum('total_price') ?? 0;
         $labaKotor = round($totalIncome - $hpp, 2);
 
-        // Calculate total payroll expenses
+        // === Beban Gaji ===
         $totalGaji = $payrolls->sum(function ($payroll) {
             return ($payroll->employee->salary ?? 0) + ($payroll->allowance ?? 0) - ($payroll->deduction ?? 0);
         });
 
-        // Calculate interest expenses
+        // === Beban Iklan (Ads) ===
+        $totalAds = $adsPlans->sum('budget') ?? 0;
+
+        // === Bunga Pinjaman ===
         $bungaPendek = $loans->sum(function ($loan) {
             if ($loan->installments > 0) {
                 $totalBunga = ($loan->principal * ($loan->interest_rate ?? 0)) / 100;
@@ -92,21 +97,23 @@ class TaxReportController extends Controller
             return 0;
         });
 
-        // Calculate net profit
-        $bebanUsaha = round($totalGaji + $bungaPendek, 2);
+        // === Beban Usaha (Gaji + Ads + Bunga Pendek) ===
+        $bebanUsaha = round($totalGaji + $totalAds + $bungaPendek, 2);
+
+        // === Laba Bersih ===
         $labaBersih = round($labaKotor - $bebanUsaha, 2);
 
-        // Calculate corporate tax (PPh Badan)
+        // === Pajak Badan ===
         $pphBadan = $labaBersih > 0 ? round($labaBersih * 0.22, 2) : 0;
 
-        // Calculate total tax obligations
+        // === Total Pajak (SPT) ===
         $totalSPT = round($ppn + $pph21 + $pphBadan, 2);
 
-        // Calculate receivables and payables
+        // === Piutang & Utang ===
         $piutangUsaha = $invoices->sum('grand_total') ?? 0;
         $utangUsahaCicilan = $loans->sum('monthly_installment') ?? 0;
 
-        // Prepare balance sheet
+        // === Neraca Aktiva ===
         $aktivaLancar = [
             'Kas' => $totalIncome,
             'Persediaan' => $hpp,
@@ -114,11 +121,12 @@ class TaxReportController extends Controller
         ];
 
         $aktivaTetap = [
-            'Aktiva Tetap' => $hpp, // Note: This might need adjustment based on actual fixed assets
+            'Aktiva Tetap' => $hpp, // placeholder
         ];
 
         $totalAktiva = round(array_sum($aktivaLancar) + array_sum($aktivaTetap), 2);
 
+        // === Neraca Kewajiban ===
         $kewajibanPendek = [
             'Utang Usaha (Cicilan Bulanan)' => $utangUsahaCicilan,
             'Bunga Terutang Jangka Pendek' => $bungaPendek,
@@ -135,7 +143,7 @@ class TaxReportController extends Controller
         $totalKewajiban = round(array_sum($kewajibanPendek) + array_sum($kewajibanPanjang), 2);
         $ekuitas = round($totalAktiva - $totalKewajiban, 2);
 
-        return array_merge(compact('startDate', 'endDate', 'totalIncome', 'hpp', 'labaKotor', 'bebanUsaha', 'labaBersih', 'ppn', 'pph21', 'pphBadan', 'totalSPT', 'aktivaLancar', 'aktivaTetap', 'totalAktiva', 'kewajibanPendek', 'kewajibanPanjang', 'totalKewajiban', 'ekuitas'), [
+        return array_merge(compact('startDate', 'endDate', 'totalIncome', 'hpp', 'labaKotor', 'totalGaji', 'totalAds', 'bebanUsaha', 'labaBersih', 'ppn', 'pph21', 'pphBadan', 'totalSPT', 'aktivaLancar', 'aktivaTetap', 'totalAktiva', 'kewajibanPendek', 'kewajibanPanjang', 'totalKewajiban', 'ekuitas'), [
             'aset' => $totalAktiva,
             'kewajiban' => $totalKewajiban,
         ]);
@@ -203,17 +211,19 @@ class TaxReportController extends Controller
             $filename = 'buku_besar_'.str_replace(['-', ':', ' '], '_', $startDate).'_to_'.str_replace(['-', ':', ' '], '_', $endDate).'.pdf';
 
             return $pdf->download($filename);
-
         } catch (\Exception $e) {
             Log::error('PDF generation failed: '.$e->getMessage(), [
                 'start_date' => $startDate,
                 'end_date' => $endDate,
             ]);
 
-            return response()->json([
-                'error' => 'Failed to generate PDF report',
-                'message' => config('app.debug') ? $e->getMessage() : 'An error occurred while generating the report',
-            ], 500);
+            return response()->json(
+                [
+                    'error' => 'Failed to generate PDF report',
+                    'message' => config('app.debug') ? $e->getMessage() : 'An error occurred while generating the report',
+                ],
+                500,
+            );
         }
     }
 }

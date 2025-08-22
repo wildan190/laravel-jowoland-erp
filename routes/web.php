@@ -10,6 +10,7 @@ use App\Http\Controllers\Accounting\TaxReportController;
 use App\Http\Controllers\App\DashboardController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\CRM\AdsPlanController;
 use App\Http\Controllers\CRM\DealController;
 use App\Http\Controllers\CRM\PipelineStageController;
 use App\Http\Controllers\CRM\QuotationController;
@@ -72,6 +73,13 @@ Route::middleware(['auth'])
         Route::put('quotations/{quotation}', [QuotationController::class, 'update'])->name('crm.quotations.update');
         Route::delete('quotations/{quotation}', [QuotationController::class, 'destroy'])->name('crm.quotations.destroy');
         Route::get('quotations/{quotation}/pdf', [QuotationController::class, 'exportPdf'])->name('crm.quotations.exportPdf');
+
+        Route::get('ads-plans', [AdsPlanController::class, 'index'])->name('crm.ads_plans.index');
+        Route::get('ads-plans/create', [AdsPlanController::class, 'create'])->name('crm.ads_plans.create');
+        Route::post('ads-plans', [AdsPlanController::class, 'store'])->name('crm.ads_plans.store');
+        Route::get('ads-plans/{adsPlan}/edit', [AdsPlanController::class, 'edit'])->name('crm.ads_plans.edit');
+        Route::put('ads-plans/{adsPlan}', [AdsPlanController::class, 'update'])->name('crm.ads_plans.update');
+        Route::delete('ads-plans/{adsPlan}', [AdsPlanController::class, 'destroy'])->name('crm.ads_plans.destroy');
 
         Route::prefix('project-management')->group(function () {
             Route::get('projects', [ProjectController::class, 'index'])->name('projects.index');
