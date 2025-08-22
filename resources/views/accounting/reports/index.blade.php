@@ -113,7 +113,7 @@
                         @forelse ($incomes as $income)
                             <tr>
                                 <td>{{ \Carbon\Carbon::parse($income->date)->format('d M Y') }}</td>
-                                <td>{{ $income->deal->contact->company ?? '-' }}</td>
+                                <td>{{ $income->invoice->contact->name ?? '-' }}</td>
                                 <td>{{ $income->description }}</td>
                                 <td class="text-end">Rp{{ number_format($income->amount, 0, ',', '.') }}</td>
                             </tr>
