@@ -7,13 +7,40 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\CRM\StoreQuotationRequest;
 use App\Models\Contact;
 use App\Models\Quotation;
+use Illuminate\Http\Request;
 use PDF;
 
 class QuotationController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $quotations = Quotation::with('contact')->latest()->get();
+        $query = Quotation::with('contact');
+
+        // 🔍 Search umum (quotation number, contact name)
+        if ($search = $request->get('search')) {
+            $query->where(function ($q) use ($search) {
+                $q->where('quotation_number', 'like', "%{$search}%")
+                    ->orWhereHas('contact', function ($q2) use ($search) {
+                        $q2->where('name', 'like', "%{$search}%");
+                    });
+            });
+        }
+
+        // 📌 Filter kategori
+        if ($category = $request->get('category')) {
+            $query->where('category', $category);
+        }
+
+        // 📌 Filter by date range
+        if ($request->filled('start_date') && $request->filled('end_date')) {
+            $query->whereBetween('quotation_date', [
+                $request->start_date,
+                $request->end_date,
+            ]);
+        }
+
+        // Pagination
+        $quotations = $query->latest()->paginate(10)->appends($request->query());
 
         return view('crm.quotations.index', compact('quotations'));
     }

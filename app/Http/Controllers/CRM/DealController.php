@@ -15,11 +15,39 @@ use Illuminate\Http\Request;
 
 class DealController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $deals = Deal::with(['contact', 'stage'])
+        $query = Deal::with(['contact', 'stage']);
+
+        // 🔍 Pencarian umum
+        if ($search = $request->get('search')) {
+            $query->where(function ($q) use ($search) {
+                $q->where('title', 'like', "%{$search}%")
+                    ->orWhere('value', 'like', "%{$search}%")
+                    ->orWhereHas('contact', function ($q2) use ($search) {
+                        $q2->where('name', 'like', "%{$search}%")->orWhere('email', 'like', "%{$search}%");
+                    })
+                    ->orWhereHas('stage', function ($q3) use ($search) {
+                        $q3->where('name', 'like', "%{$search}%");
+                    });
+            });
+        }
+
+        // 📌 Filter berdasarkan stage
+        if ($stageId = $request->get('stage_id')) {
+            $query->where('pipeline_stage_id', $stageId);
+        }
+
+        // 📌 Filter berdasarkan contact
+        if ($contactId = $request->get('contact_id')) {
+            $query->where('contact_id', $contactId);
+        }
+
+        // 📌 Urutkan dari terbaru + pagination
+        $deals = $query
             ->latest()
-            ->get();
+            ->paginate(10)
+            ->appends(request()->query());
 
         return view('crm.deals.index', compact('deals'));
     }

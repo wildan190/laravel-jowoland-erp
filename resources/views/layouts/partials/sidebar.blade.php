@@ -329,6 +329,14 @@
                                 <i class="fa fa-layer-group me-2"></i> Pipeline Stages
                             </a>
                         </li>
+
+                        {{-- quotations --}}
+                        <li class="nav-item">
+                            <a class="nav-link text-white {{ request()->routeIs('crm.quotations.index') ? 'active' : '' }}"
+                                href="{{ route('crm.quotations.index') }}">
+                                <i class="fa fa-file-invoice me-2"></i> Quotation
+                            </a>
+                        </li>
                         {{-- upload file  --}}
                         <li class="nav-item">
                             <a class="nav-link text-white {{ request()->routeIs('crm.upload.index') ? 'active' : '' }}"
