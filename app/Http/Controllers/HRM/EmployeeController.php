@@ -7,14 +7,33 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\HRM\EmployeeRequest;
 use App\Models\Division;
 use App\Models\Employee;
+use Illuminate\Http\Request;
 
 class EmployeeController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $employees = Employee::with('division')->get();
+        $query = Employee::with('division');
 
-        return view('hrm.employees.index', compact('employees'));
+        // 🔍 Pencarian umum (nama, email, phone)
+        if ($search = $request->get('search')) {
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                    ->orWhere('email', 'like', "%{$search}%")
+                    ->orWhere('phone', 'like', "%{$search}%");
+            });
+        }
+
+        // 📌 Filter berdasarkan divisi
+        if ($division_id = $request->get('division_id')) {
+            $query->where('division_id', $division_id);
+        }
+
+        $employees = $query->orderBy('name')->paginate(10);
+
+        $divisions = Division::orderBy('name')->get();
+
+        return view('hrm.employees.index', compact('employees', 'divisions'));
     }
 
     public function create()
