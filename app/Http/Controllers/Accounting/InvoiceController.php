@@ -8,9 +8,31 @@ use Illuminate\Http\Request;
 
 class InvoiceController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $invoices = Invoice::with('project.contact')->latest()->get();
+        $query = Invoice::with('project.contact');
+
+        // Filter nomor invoice
+        if ($request->filled('invoice_number')) {
+            $query->where('invoice_number', 'like', '%'.$request->invoice_number.'%');
+        }
+
+        // Filter nama proyek / client
+        if ($request->filled('project_name')) {
+            $query->whereHas('project', function ($q) use ($request) {
+                $q->where('name', 'like', '%'.$request->project_name.'%')->orWhereHas('contact', function ($q2) use ($request) {
+                    $q2->where('name', 'like', '%'.$request->project_name.'%');
+                });
+            });
+        }
+
+        // Filter tanggal jatuh tempo
+        if ($request->filled('due_date')) {
+            $query->whereDate('due_date', $request->due_date);
+        }
+
+        // Ambil hasil akhir
+        $invoices = $query->latest()->get();
 
         return view('accounting.invoices.index', compact('invoices'));
     }
@@ -46,7 +68,6 @@ class InvoiceController extends Controller
 
     public function updateStatus(Request $request, Invoice $invoice)
     {
-
         if ($invoice->is_pending === false) {
             return redirect()->back()->with('error', 'Invoice sudah Paid dan tidak bisa diubah lagi.');
         }
