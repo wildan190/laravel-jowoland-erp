@@ -11,9 +11,10 @@ class Quotation extends Model
 {
     use HasFactory;
 
-    protected $fillable = [
-        'contact_id', 'category', 'quotation_number', 'quotation_date',
-        'subtotal', 'ppn', 'total',
+    protected $fillable = ['contact_id', 'category', 'quotation_number', 'quotation_date', 'subtotal', 'ppn', 'total'];
+
+    protected $casts = [
+        'quotation_date' => 'date',
     ];
 
     public function contact()

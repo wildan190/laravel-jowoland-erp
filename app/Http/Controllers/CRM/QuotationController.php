@@ -19,10 +19,9 @@ class QuotationController extends Controller
         // 🔍 Search umum (quotation number, contact name)
         if ($search = $request->get('search')) {
             $query->where(function ($q) use ($search) {
-                $q->where('quotation_number', 'like', "%{$search}%")
-                    ->orWhereHas('contact', function ($q2) use ($search) {
-                        $q2->where('name', 'like', "%{$search}%");
-                    });
+                $q->where('quotation_number', 'like', "%{$search}%")->orWhereHas('contact', function ($q2) use ($search) {
+                    $q2->where('name', 'like', "%{$search}%");
+                });
             });
         }
 
@@ -33,10 +32,7 @@ class QuotationController extends Controller
 
         // 📌 Filter by date range
         if ($request->filled('start_date') && $request->filled('end_date')) {
-            $query->whereBetween('quotation_date', [
-                $request->start_date,
-                $request->end_date,
-            ]);
+            $query->whereBetween('quotation_date', [$request->start_date, $request->end_date]);
         }
 
         // Pagination
@@ -107,6 +103,63 @@ class QuotationController extends Controller
             ->with('success', "Quotation {$quotationNumber} created successfully");
     }
 
+    public function edit(Quotation $quotation)
+    {
+        $contacts = Contact::all();
+
+        return view('crm.quotations.edit', compact('quotation', 'contacts'));
+    }
+
+    public function update(StoreQuotationRequest $request, Quotation $quotation)
+    {
+        // Map kategori ke kode
+        $categoryMap = [
+            'hydraulic' => 'PHR',
+            'mini_crane' => 'PHM',
+            'strauss' => 'PHS',
+        ];
+        $categoryCode = $categoryMap[$request->category] ?? 'PHM';
+
+        // Hitung subtotal dari items
+        $subtotal = collect($request->items)->sum(function ($item) {
+            return ($item['qty'] ?? 0) * ($item['price'] ?? 0);
+        });
+
+        $ppn = $subtotal * 0.11;
+        $total = $subtotal + $ppn;
+
+        // Update quotation utama
+        $quotation->update([
+            'contact_id' => $request->contact_id,
+            'category' => $request->category,
+            'subtotal' => $subtotal,
+            'ppn' => $ppn,
+            'total' => $total,
+            // nomor quotation tetap tidak berubah, jika ingin regenerasi bisa uncomment:
+            // 'quotation_number' => GenerateQuotationNumber::handle($categoryCode),
+            // 'quotation_date' => now(),
+        ]);
+
+        // Hapus item lama dan buat ulang
+        $quotation->items()->delete();
+
+        foreach ($request->items as $item) {
+            if (! empty($item['item']) && ($item['qty'] ?? 0) > 0) {
+                $quotation->items()->create([
+                    'item' => $item['item'],
+                    'description' => $item['description'] ?? '',
+                    'qty' => $item['qty'] ?? 1,
+                    'price' => $item['price'] ?? 0,
+                    'total' => ($item['qty'] ?? 0) * ($item['price'] ?? 0),
+                ]);
+            }
+        }
+
+        return redirect()
+            ->route('crm.quotations.index')
+            ->with('success', "Quotation {$quotation->quotation_number} updated successfully");
+    }
+
     public function destroy(Quotation $quotation)
     {
         $quotation->items()->delete(); // hapus detail dulu
@@ -131,20 +184,14 @@ class QuotationController extends Controller
 
         // Encode logo ke base64
         $logoPath = public_path('assets/img/logo.png');
-        $logoBase64 = file_exists($logoPath)
-            ? 'data:image/'.pathinfo($logoPath, PATHINFO_EXTENSION).';base64,'.base64_encode(file_get_contents($logoPath))
-            : null;
+        $logoBase64 = file_exists($logoPath) ? 'data:image/'.pathinfo($logoPath, PATHINFO_EXTENSION).';base64,'.base64_encode(file_get_contents($logoPath)) : null;
 
         // Encode stample dan signature ke base64
         $stamplePath = public_path('assets/img/stample.png');
-        $stampleBase64 = file_exists($stamplePath)
-            ? 'data:image/'.pathinfo($stamplePath, PATHINFO_EXTENSION).';base64,'.base64_encode(file_get_contents($stamplePath))
-            : null;
+        $stampleBase64 = file_exists($stamplePath) ? 'data:image/'.pathinfo($stamplePath, PATHINFO_EXTENSION).';base64,'.base64_encode(file_get_contents($stamplePath)) : null;
 
         $signaturePath = public_path('assets/img/signature.png');
-        $signatureBase64 = file_exists($signaturePath)
-            ? 'data:image/'.pathinfo($signaturePath, PATHINFO_EXTENSION).';base64,'.base64_encode(file_get_contents($signaturePath))
-            : null;
+        $signatureBase64 = file_exists($signaturePath) ? 'data:image/'.pathinfo($signaturePath, PATHINFO_EXTENSION).';base64,'.base64_encode(file_get_contents($signaturePath)) : null;
 
         // Generate PDF
         $pdf = PDF::loadView('crm.quotations.pdf', [
