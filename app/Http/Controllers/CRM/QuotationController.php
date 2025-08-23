@@ -131,12 +131,27 @@ class QuotationController extends Controller
 
         // Encode logo ke base64
         $logoPath = public_path('assets/img/logo.png');
-        $logoBase64 = file_exists($logoPath) ? 'data:image/'.pathinfo($logoPath, PATHINFO_EXTENSION).';base64,'.base64_encode(file_get_contents($logoPath)) : null;
+        $logoBase64 = file_exists($logoPath)
+            ? 'data:image/'.pathinfo($logoPath, PATHINFO_EXTENSION).';base64,'.base64_encode(file_get_contents($logoPath))
+            : null;
+
+        // Encode stample dan signature ke base64
+        $stamplePath = public_path('assets/img/stample.png');
+        $stampleBase64 = file_exists($stamplePath)
+            ? 'data:image/'.pathinfo($stamplePath, PATHINFO_EXTENSION).';base64,'.base64_encode(file_get_contents($stamplePath))
+            : null;
+
+        $signaturePath = public_path('assets/img/signature.png');
+        $signatureBase64 = file_exists($signaturePath)
+            ? 'data:image/'.pathinfo($signaturePath, PATHINFO_EXTENSION).';base64,'.base64_encode(file_get_contents($signaturePath))
+            : null;
 
         // Generate PDF
         $pdf = PDF::loadView('crm.quotations.pdf', [
             'quotation' => $quotation,
             'logoBase64' => $logoBase64,
+            'stampleBase64' => $stampleBase64,
+            'signatureBase64' => $signatureBase64,
             'subtotal' => $subtotal,
             'ppn' => $ppn,
             'grandTotal' => $grandTotal,

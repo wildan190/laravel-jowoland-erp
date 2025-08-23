@@ -173,7 +173,8 @@
             margin: 5px 0;
         }
 
-        .terms-section p, .terms-section ul {
+        .terms-section p,
+        .terms-section ul {
             margin: 3px 0;
             font-size: 11px;
         }
@@ -282,12 +283,34 @@
             <td style="text-align:right;"><strong>{{ number_format($grandTotal, 0, ',', '.') }}</strong></td>
         </tr>
     </table>
-
     {{-- SIGNATURE --}}
-    <div class="signature">
-        Grobogan, {{ date('d/m/Y') }}<br><br>
-        <strong>Direktur</strong><br><br><br>
-        <u>Andi Pratama</u>
+    <div class="signature" style="position: relative; width: 100%; margin-top: 50px; height: 150px;">
+        <div style="position: absolute; right: 0; text-align: center;">
+            Grobogan, {{ date('d/m/Y') }}<br><br>
+            <strong>Direktur</strong><br><br>
+            <div style="position: relative; display: inline-block; width: 150px; height: auto;">
+                {{-- Signature --}}
+                @if ($signatureBase64)
+                    <img src="{{ $signatureBase64 }}" alt="Signature"
+                        style="width: 150px; height: auto; display: block;">
+                @endif
+
+                {{-- Stample menimpa signature dengan transparansi --}}
+                @if ($stampleBase64)
+                    <img src="{{ $stampleBase64 }}" alt="Stample"
+                        style="width: 180px; /* lebih lebar agar menutupi */
+                            height: auto; 
+                            position: absolute; 
+                            top: -15px; /* geser ke atas */
+                            left: -15px; /* geser ke kiri */
+                            z-index: 10;
+                            opacity: 0.4;">
+                    <!-- Transparansi realistis -->
+                @endif
+            </div>
+            <br>
+            <u>Hadiwijaya</u>
+        </div>
     </div>
 
     {{-- FOOTER --}}
@@ -297,7 +320,7 @@
 
     {{-- Halaman 2: Term of Payment dan Catatan --}}
     <div class="page-break"></div>
-    
+
     {{-- HEADER untuk halaman 2 --}}
     <div class="header">
         <div class="logo">
@@ -343,9 +366,13 @@
         <div class="terms-section">
             <h4>Term Of Payment :</h4>
             <ul>
-                <li><strong>Termin 1:</strong> Sebesar 30% dari nilai estimasi, dibayarkan ketika pekerja mulai mengerjakan.</li>
-                <li><strong>Termin 2:</strong> Sebesar 40% dari opname lapangan ketika pekerjaan mencapai progress 70%.</li>
-                <li><strong>Termin 3:</strong> Sebesar 30% dari nilai opname (dihitung 200m¹ per unit mesin, apabila pekerjaan kurang dari minimum charge tersebut) dibayarkan paling lambat 5 hari kalender setelah pekerjaan selesai 100%.</li>
+                <li><strong>Termin 1:</strong> Sebesar 30% dari nilai estimasi, dibayarkan ketika pekerja mulai
+                    mengerjakan.</li>
+                <li><strong>Termin 2:</strong> Sebesar 40% dari opname lapangan ketika pekerjaan mencapai progress 70%.
+                </li>
+                <li><strong>Termin 3:</strong> Sebesar 30% dari nilai opname (dihitung 200m¹ per unit mesin, apabila
+                    pekerjaan kurang dari minimum charge tersebut) dibayarkan paling lambat 5 hari kalender setelah
+                    pekerjaan selesai 100%.</li>
             </ul>
         </div>
 
@@ -355,8 +382,10 @@
                 <li>Penawaran harga belum termasuk PPH</li>
                 <li>Penawaran Unit Fixed Price</li>
                 <li>Pengeboran dihitung dari muka tanah asal</li>
-                <li>Upah mengeboran yang ditawarkan adalah pengeboran dengan struktur tanah lempung/clay/dibawah NSPT 50 apabila ditemukan batu (tanah keras) pekerjaan akan dihentikan</li>
-                <li>Apabila ada penambahan unit untuk penunjang percepatan akan dikenakan biaya mob dan demobilisasi kembali</li>
+                <li>Upah mengeboran yang ditawarkan adalah pengeboran dengan struktur tanah lempung/clay/dibawah NSPT 50
+                    apabila ditemukan batu (tanah keras) pekerjaan akan dihentikan</li>
+                <li>Apabila ada penambahan unit untuk penunjang percepatan akan dikenakan biaya mob dan demobilisasi
+                    kembali</li>
                 <li>Air Kerja by Pemberi Kerja</li>
                 <li>Listrik Kerja by Pemberi Kerja</li>
                 <li>Buang limbah bor keluar lokasi proyek by Pemberi Kerja</li>
@@ -364,21 +393,47 @@
                 <li>Apabila ada kerja tambah akan dibuatkan addendum yang akan di hitung sesuai volume lapangan</li>
                 <li>Apabila pekerjaan selesai 100% pelunasan dalam mundur 5 hari kalender</li>
                 <li>Keamanan internal / external by pemberi Kerja</li>
-                <li>Penundaan pekerjaan akibat dari keterlambatan pengadaan material, perubahan spek, gambar, dan penundaan lainnya akan dikenakan denda idle time Rp 500.000,- per hari</li>
+                <li>Penundaan pekerjaan akibat dari keterlambatan pengadaan material, perubahan spek, gambar, dan
+                    penundaan lainnya akan dikenakan denda idle time Rp 500.000,- per hari</li>
             </ul>
         </div>
 
         <div class="terms-section">
-            <p>Demikian penawaran harga yang kami ajukan, besar harapan kami dapat terjalin hubungan baik, atas perhatian dan kerjasamanya kami ucapkan terima kasih.</p>
+            <p>Demikian penawaran harga yang kami ajukan, besar harapan kami dapat terjalin hubungan baik, atas
+                perhatian dan kerjasamanya kami ucapkan terima kasih.</p>
         </div>
     </div>
 
-    {{-- SIGNATURE untuk halaman 2 --}}
-    <div class="signature">
-        Grobogan, {{ date('d/m/Y') }}<br><br>
-        <strong>Direktur</strong><br><br><br>
-        <u>Hadiwijaya</u>
+    {{-- SIGNATURE --}}
+    <div class="signature" style="position: relative; width: 100%; margin-top: 50px; height: 150px;">
+        <div style="position: absolute; right: 0; text-align: center;">
+            Grobogan, {{ date('d/m/Y') }}<br><br>
+            <strong>Direktur</strong><br><br>
+            <div style="position: relative; display: inline-block; width: 150px; height: auto;">
+                {{-- Signature --}}
+                @if ($signatureBase64)
+                    <img src="{{ $signatureBase64 }}" alt="Signature"
+                        style="width: 150px; height: auto; display: block;">
+                @endif
+
+                {{-- Stample menimpa signature dengan transparansi --}}
+                @if ($stampleBase64)
+                    <img src="{{ $stampleBase64 }}" alt="Stample"
+                        style="width: 180px; /* lebih lebar agar menutupi */
+                            height: auto; 
+                            position: absolute; 
+                            top: -15px; /* geser ke atas */
+                            left: -15px; /* geser ke kiri */
+                            z-index: 10;
+                            opacity: 0.4;">
+                    <!-- Transparansi realistis -->
+                @endif
+            </div>
+            <br>
+            <u>Hadiwijaya</u>
+        </div>
     </div>
+
 
     {{-- FOOTER untuk halaman 2 --}}
     <div class="footer">
