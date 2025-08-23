@@ -145,10 +145,51 @@
             text-align: center;
             color: #333;
         }
+
+        /* PAGE BREAK */
+        .page-break {
+            page-break-before: always;
+        }
+
+        /* TERMS AND CONDITIONS */
+        .terms-container {
+            margin-top: 20px;
+        }
+
+        .terms-title {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            text-decoration: underline;
+        }
+
+        .terms-section {
+            margin-bottom: 15px;
+        }
+
+        .terms-section h4 {
+            font-size: 12px;
+            font-weight: 600;
+            margin: 5px 0;
+        }
+
+        .terms-section p, .terms-section ul {
+            margin: 3px 0;
+            font-size: 11px;
+        }
+
+        .terms-section ul {
+            padding-left: 15px;
+        }
+
+        .terms-section li {
+            margin-bottom: 5px;
+        }
     </style>
 </head>
 
 <body>
+    {{-- Halaman 1: Quotation --}}
     {{-- HEADER --}}
     <div class="header">
         <div class="logo">
@@ -250,6 +291,96 @@
     </div>
 
     {{-- FOOTER --}}
+    <div class="footer">
+        Ketitang, Godong, Grobogan, Jawa Tengah | 0852-8074-9218 | info@jowolandborepile.com | www.jowolandborepile.com
+    </div>
+
+    {{-- Halaman 2: Term of Payment dan Catatan --}}
+    <div class="page-break"></div>
+    
+    {{-- HEADER untuk halaman 2 --}}
+    <div class="header">
+        <div class="logo">
+            @if ($logoBase64)
+                <img src="{{ $logoBase64 }}" alt="Logo Perusahaan">
+            @endif
+        </div>
+        <div class="company-info">
+            <h1>PT. Jowoland Construction</h1>
+            <p>Ketitang, Godong, Grobogan, Jawa Tengah</p>
+            <p>Telp: 0852-8074-9218 | Email: info@jowolandborepile.com</p>
+        </div>
+    </div>
+
+    {{-- QUOTATION INFO untuk halaman 2 --}}
+    <div class="quotation-info">
+        <div class="from">
+            <h3>Dari:</h3>
+            <p><strong>PT. Jowoland Construction</strong></p>
+            <p>Ketitang, Godong, Grobogan, Jawa Tengah</p>
+            <p>Telp: 0852-8074-9218</p>
+        </div>
+        <div class="to">
+            <h3>Kepada:</h3>
+            <p><strong>{{ $quotation->contact->name }}</strong></p>
+            <p>{{ $quotation->contact->company ?? '-' }}</p>
+        </div>
+    </div>
+
+    {{-- QUOTATION DETAIL untuk halaman 2 --}}
+    <h2 class="quotation-title">SYARAT DAN KETENTUAN</h2>
+    <table>
+        <tr>
+            <td>Nomor Quotation</td>
+            <td>: {{ $quotation->quotation_number }}</td>
+            <td>Tanggal</td>
+            <td>: {{ \Carbon\Carbon::parse($quotation->quotation_date)->format('d/m/Y') }}</td>
+        </tr>
+    </table>
+
+    {{-- TERM OF PAYMENT --}}
+    <div class="terms-container">
+        <div class="terms-section">
+            <h4>Term Of Payment :</h4>
+            <ul>
+                <li><strong>Termin 1:</strong> Sebesar 30% dari nilai estimasi, dibayarkan ketika pekerja mulai mengerjakan.</li>
+                <li><strong>Termin 2:</strong> Sebesar 40% dari opname lapangan ketika pekerjaan mencapai progress 70%.</li>
+                <li><strong>Termin 3:</strong> Sebesar 30% dari nilai opname (dihitung 200m¹ per unit mesin, apabila pekerjaan kurang dari minimum charge tersebut) dibayarkan paling lambat 5 hari kalender setelah pekerjaan selesai 100%.</li>
+            </ul>
+        </div>
+
+        <div class="terms-section">
+            <h4>Catatan :</h4>
+            <ul>
+                <li>Penawaran harga belum termasuk PPH</li>
+                <li>Penawaran Unit Fixed Price</li>
+                <li>Pengeboran dihitung dari muka tanah asal</li>
+                <li>Upah mengeboran yang ditawarkan adalah pengeboran dengan struktur tanah lempung/clay/dibawah NSPT 50 apabila ditemukan batu (tanah keras) pekerjaan akan dihentikan</li>
+                <li>Apabila ada penambahan unit untuk penunjang percepatan akan dikenakan biaya mob dan demobilisasi kembali</li>
+                <li>Air Kerja by Pemberi Kerja</li>
+                <li>Listrik Kerja by Pemberi Kerja</li>
+                <li>Buang limbah bor keluar lokasi proyek by Pemberi Kerja</li>
+                <li>Material (Besi dan Beton) By Pemberi Kerja</li>
+                <li>Apabila ada kerja tambah akan dibuatkan addendum yang akan di hitung sesuai volume lapangan</li>
+                <li>Apabila pekerjaan selesai 100% pelunasan dalam mundur 5 hari kalender</li>
+                <li>Keamanan internal / external by pemberi Kerja</li>
+                <li>Penundaan pekerjaan akibat dari keterlambatan pengadaan material, perubahan spek, gambar, dan penundaan lainnya akan dikenakan denda idle time Rp 500.000,- per hari</li>
+            </ul>
+        </div>
+
+        <div class="terms-section">
+            <p>Demikian penawaran harga yang kami ajukan, besar harapan kami dapat terjalin hubungan baik, atas perhatian dan kerjasamanya kami ucapkan terima kasih.</p>
+        </div>
+    </div>
+
+    {{-- SIGNATURE untuk halaman 2 --}}
+    <div class="signature">
+        Grobogan, {{ date('d/m/Y') }}<br><br>
+        <strong>Direktur</strong><br><br><br>
+        <u>Hadiwijaya</u>
+    </div>
+
+    {{-- FOOTER untuk halaman 2 --}}
     <div class="footer">
         Ketitang, Godong, Grobogan, Jawa Tengah | 0852-8074-9218 | info@jowolandborepile.com | www.jowolandborepile.com
     </div>

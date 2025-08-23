@@ -33,4 +33,9 @@ class Receipt extends Model
 
         return $prefix.str_pad($number, 4, '0', STR_PAD_LEFT);
     }
+
+    public function contact()
+    {
+        return $this->belongsTo(Contact::class);
+    }
 }
