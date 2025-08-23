@@ -14,14 +14,14 @@ class InvoiceController extends Controller
 
         // Filter nomor invoice
         if ($request->filled('invoice_number')) {
-            $query->where('invoice_number', 'like', '%'.$request->invoice_number.'%');
+            $query->where('invoice_number', 'like', '%' . $request->invoice_number . '%');
         }
 
         // Filter nama proyek / client
         if ($request->filled('project_name')) {
             $query->whereHas('project', function ($q) use ($request) {
-                $q->where('name', 'like', '%'.$request->project_name.'%')->orWhereHas('contact', function ($q2) use ($request) {
-                    $q2->where('name', 'like', '%'.$request->project_name.'%');
+                $q->where('name', 'like', '%' . $request->project_name . '%')->orWhereHas('contact', function ($q2) use ($request) {
+                    $q2->where('name', 'like', '%' . $request->project_name . '%');
                 });
             });
         }
@@ -94,11 +94,23 @@ class InvoiceController extends Controller
             'email' => 'info@perusahaan.com',
             'npwp' => '01.234.567.8-999.000',
             'logo' => null,
+            'stample' => null,
+            'signature' => null,
         ];
 
         $logoPath = public_path('assets/img/logo.png');
         if (file_exists($logoPath)) {
-            $company['logo'] = 'data:image/png;base64,'.base64_encode(file_get_contents($logoPath));
+            $company['logo'] = 'data:image/png;base64,' . base64_encode(file_get_contents($logoPath));
+        }
+
+        $stamplePath = public_path('assets/img/stample.png');
+        if (file_exists($stamplePath)) {
+            $company['stample'] = 'data:image/png;base64,' . base64_encode(file_get_contents($stamplePath));
+        }
+
+        $signaturePath = public_path('assets/img/signature.png');
+        if (file_exists($signaturePath)) {
+            $company['signature'] = 'data:image/png;base64,' . base64_encode(file_get_contents($signaturePath));
         }
 
         $subtotal = $invoice->project_amount + $invoice->items->sum('price');

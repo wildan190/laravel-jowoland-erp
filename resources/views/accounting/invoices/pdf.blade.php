@@ -13,14 +13,13 @@
         body {
             font-family: 'Arial', sans-serif;
             font-size: 12px;
-            color: #000000;
+            color: #000;
             margin: 0;
             padding: 0;
             line-height: 1.5;
-            background-color: #ffffff;
+            background-color: #fff;
         }
 
-        /* HEADER */
         .header {
             display: table;
             width: 100%;
@@ -52,16 +51,15 @@
             margin: 0;
             font-size: 20px;
             font-weight: 700;
-            color: #000000;
+            color: #000;
         }
 
         .header .company-info p {
             margin: 2px 0;
             font-size: 11px;
-            color: #333333;
+            color: #333;
         }
 
-        /* INVOICE INFO */
         .invoice-info {
             display: table;
             width: 100%;
@@ -79,30 +77,28 @@
             margin: 0 0 5px 0;
             font-size: 14px;
             font-weight: 600;
-            color: #000000;
+            color: #000;
             border-bottom: 1px solid #FFD700;
         }
 
         .invoice-info p {
             margin: 2px 0;
             font-size: 11px;
-            color: #333333;
+            color: #333;
         }
 
-        /* INVOICE TITLE */
         .invoice-title {
             text-align: center;
             margin-bottom: 10px;
             font-size: 18px;
             font-weight: 700;
-            color: #000000;
+            color: #000;
             background: linear-gradient(180deg, #FFD700, #FFC107);
             padding: 8px;
             border-radius: 4px;
             text-transform: uppercase;
         }
 
-        /* TABLE */
         table {
             width: 100%;
             border-collapse: collapse;
@@ -112,14 +108,14 @@
 
         th,
         td {
-            border: 1px solid #000000;
+            border: 1px solid #000;
             padding: 6px;
             font-size: 11px;
         }
 
         th {
             background-color: #FFD700;
-            color: #000000;
+            color: #000;
             text-align: left;
             font-weight: 600;
         }
@@ -137,36 +133,26 @@
             font-weight: 600;
         }
 
-        /* SIGNATURE */
-        .signature {
-            margin-top: 40px;
-            text-align: right;
-            font-size: 11px;
-            color: #000000;
+        .signature-container {
+            width: 300px;
+            float: right;
+            text-align: center;
+            margin-top: 50px;
         }
 
-        /* FOOTER */
+        .signature-container img {
+            display: block;
+            margin: 0 auto;
+        }
+
         .footer {
             border-top: 2px solid #FFD700;
             margin-top: 30px;
             padding-top: 10px;
             font-size: 10px;
             text-align: center;
-            color: #333333;
+            color: #333;
             background-color: #fff;
-        }
-
-        /* Responsive Design */
-        @media print {
-            body {
-                margin: 0;
-                padding: 0;
-            }
-
-            .header,
-            table {
-                box-shadow: none;
-            }
         }
     </style>
 </head>
@@ -268,22 +254,58 @@
         </tfoot>
     </table>
 
-    <!-- SIGNATURE -->
-    <div class="signature">
-        Jakarta, {{ date('d/m/Y') }}<br>
-        <strong>Direktur</strong><br><br><br>
-        <u>Andi Pratama</u>
+    <!-- SIGNATURE BLOCK -->
+    <div style="position: relative; width: 300px; margin-left: auto; margin-top: 50px; text-align: center;">
+
+        <!-- Tanggal & Kota tepat di atas ttd -->
+        <div style="font-size:12px; margin-bottom:5px;">
+            Grobogan, {{ date('d/m/Y') }}
+        </div>
+
+        @php
+            $stamplePath = public_path('assets/img/stample.png');
+            $stampleBase64 = file_exists($stamplePath)
+                ? 'data:image/' .
+                    pathinfo($stamplePath, PATHINFO_EXTENSION) .
+                    ';base64,' .
+                    base64_encode(file_get_contents($stamplePath))
+                : null;
+
+            $signaturePath = public_path('assets/img/signature.png');
+            $signatureBase64 = file_exists($signaturePath)
+                ? 'data:image/' .
+                    pathinfo($signaturePath, PATHINFO_EXTENSION) .
+                    ';base64,' .
+                    base64_encode(file_get_contents($signaturePath))
+                : null;
+        @endphp
+
+        <!-- Signature -->
+        @if ($signatureBase64)
+            <img src="{{ $signatureBase64 }}" alt="Signature" style="width:150px; display:block; margin:0 auto;">
+        @else
+            <u style="font-size:14px;">Hadiwijaya</u>
+        @endif
+
+        <!-- Stample menimpa signature -->
+        @if ($stampleBase64)
+            <img src="{{ $stampleBase64 }}" alt="Stample"
+                style="width:100px; position:absolute; top:0; left:50%; transform: translateX(-50%); opacity:0.8;">
+        @endif
+
+        <!-- Nama & Jabatan -->
+        <div style="margin-top:5px; font-weight:bold;">Hadiwijaya</div>
+        <div>Direktur</div>
     </div>
 
+
     <!-- FOOTER -->
-    <div class="footer"
-        style="border-top:2px solid #000; margin-top:30px; padding-top:10px; font-size:10px; text-align:center; color:#555;">
+    <div class="footer">
         <span style="margin-right:15px;">Ketitang, Godong, Grobogan, Jawa Tengah</span>
         <span style="margin-right:15px;">0852-8074-9218</span>
         <span style="margin-right:15px;">info@jowolandborepile.com</span>
         <span>www.jowolandborepile.com</span>
     </div>
-
 </body>
 
 </html>
