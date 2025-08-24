@@ -28,7 +28,8 @@ class PayrollController extends Controller
     {
         $data = $request->validated();
 
-        new CreatePayrollAction()->execute($data); // ✅ Benar
+        $action = new CreatePayrollAction();
+        $action->execute($data);
 
         return redirect()->route('payrolls.index')->with('success', 'Penggajian berhasil ditambahkan.');
     }
