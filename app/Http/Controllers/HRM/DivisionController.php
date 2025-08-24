@@ -12,7 +12,7 @@ class DivisionController extends Controller
     {
         $divisions = Division::latest()->get();
 
-        return view('HRM.divisions.index', compact('divisions'));
+        return view('hrm.divisions.index', compact('divisions'));
     }
 
     public function create()
