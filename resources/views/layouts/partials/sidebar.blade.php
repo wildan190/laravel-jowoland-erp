@@ -249,270 +249,335 @@
         <h6 class="text-warning mb-4">MENU</h6>
         <ul class="nav flex-column" id="mainMenu">
 
-            <li class="nav-item mb-2">
-                <a class="nav-link text-white dropdown-toggle {{ request()->is('marketing*') || request()->routeIs('marketing.*') ? 'text-warning' : '' }}"
-                    data-bs-toggle="collapse" href="#marketingMenu" role="button"
-                    aria-expanded="{{ request()->is('marketing*') || request()->routeIs('marketing.*') ? 'true' : 'false' }}"
-                    aria-controls="marketingMenu">
-                    <i class="fa fa-bullhorn me-2"></i> Marketing Strategy
-                </a>
-                <div class="collapse {{ request()->is('marketing*') || request()->routeIs('marketing.*') ? 'show' : '' }}"
-                    id="marketingMenu" data-bs-parent="#mainMenu">
-                    <ul class="nav flex-column ms-3">
-                        {{-- Kanban --}}
-                        <li class="nav-item">
-                            <a class="nav-link text-white {{ request()->routeIs('marketing.kanban') ? 'active' : '' }}"
-                                href="{{ route('marketing.kanban') }}">
-                                <i class="fa fa-tasks me-2"></i> Kanban
-                            </a>
-                        </li>
+            {{-- Dropdown: Marketing Strategy --}}
+            @if (Auth::user()->hasRole('Admin') || Auth::user()->hasRole('Master Admin') || Auth::user()->hasRole('Marketing'))
+                <li class="nav-item mb-2">
+                    <a class="nav-link text-white dropdown-toggle {{ request()->is('marketing*') || request()->routeIs('marketing.*') ? 'text-warning' : '' }}"
+                        data-bs-toggle="collapse" href="#marketingMenu" role="button"
+                        aria-expanded="{{ request()->is('marketing*') || request()->routeIs('marketing.*') ? 'true' : 'false' }}"
+                        aria-controls="marketingMenu">
+                        <i class="fa fa-bullhorn me-2"></i> Marketing Strategy
+                    </a>
+                    <div class="collapse {{ request()->is('marketing*') || request()->routeIs('marketing.*') ? 'show' : '' }}"
+                        id="marketingMenu" data-bs-parent="#mainMenu">
+                        <ul class="nav flex-column ms-3">
+                            {{-- Kanban --}}
+                            <li class="nav-item">
+                                <a class="nav-link text-white {{ request()->routeIs('marketing.kanban') ? 'active' : '' }}"
+                                    href="{{ route('marketing.kanban') }}">
+                                    <i class="fa fa-tasks me-2"></i> Kanban
+                                </a>
+                            </li>
 
-                        {{-- Mindmap --}}
-                        <li class="nav-item">
-                            <a class="nav-link text-white {{ request()->routeIs('marketing.mindmap') ? 'active' : '' }}"
-                                href="{{ route('marketing.mindmap') }}">
-                                <i class="fa fa-sitemap me-2"></i> Mindmap
-                            </a>
-                        </li>
+                            {{-- Mindmap --}}
+                            <li class="nav-item">
+                                <a class="nav-link text-white {{ request()->routeIs('marketing.mindmap') ? 'active' : '' }}"
+                                    href="{{ route('marketing.mindmap') }}">
+                                    <i class="fa fa-sitemap me-2"></i> Mindmap
+                                </a>
+                            </li>
 
-                        {{-- Strategy --}}
-                        <li class="nav-item">
-                            <a class="nav-link text-white {{ request()->routeIs('marketing.strategy') ? 'active' : '' }}"
-                                href="{{ route('marketing.strategy') }}">
-                                <i class="fa fa-chess me-2"></i> Strategi
-                            </a>
-                        </li>
+                            {{-- Strategy --}}
+                            <li class="nav-item">
+                                <a class="nav-link text-white {{ request()->routeIs('marketing.strategy') ? 'active' : '' }}"
+                                    href="{{ route('marketing.strategy') }}">
+                                    <i class="fa fa-chess me-2"></i> Strategi
+                                </a>
+                            </li>
 
-                        {{-- Social --}}
-                        <li class="nav-item">
-                            <a class="nav-link text-white {{ request()->routeIs('marketing.social') ? 'active' : '' }}"
-                                href="{{ route('marketing.social') }}">
-                                <i class="fa fa-share-alt me-2"></i> Sosial
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-            </li>
+                            {{-- Social --}}
+                            <li class="nav-item">
+                                <a class="nav-link text-white {{ request()->routeIs('marketing.social') ? 'active' : '' }}"
+                                    href="{{ route('marketing.social') }}">
+                                    <i class="fa fa-share-alt me-2"></i> Sosial
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+            @endif
 
             {{-- Dropdown: CRM --}}
-            <li class="nav-item mb-2">
-                <a class="nav-link text-white dropdown-toggle {{ request()->routeIs('contacts.*') || request()->routeIs('deal.*') || request()->routeIs('pipeline.*') ? 'text-warning' : '' }}"
-                    data-bs-toggle="collapse" href="#crmMenu" role="button"
-                    aria-expanded="{{ request()->routeIs('contacts.*') || request()->routeIs('deal.*') || request()->routeIs('pipeline.*') ? 'true' : 'false' }}"
-                    aria-controls="crmMenu">
-                    <i class="fa fa-building me-2"></i> CRM
-                </a>
-                <div class="collapse {{ request()->routeIs('contacts.*') || request()->routeIs('deal.*') || request()->routeIs('pipeline.*') ? 'show' : '' }}"
-                    id="crmMenu" data-bs-parent="#mainMenu">
-                    <ul class="nav flex-column ms-3">
-                        <li class="nav-item">
-                            <a class="nav-link text-white {{ request()->routeIs('contacts.index') ? 'active' : '' }}"
-                                href="{{ route('contacts.index') }}">
-                                <i class="fa fa-address-book me-2"></i> Contacts
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-white {{ request()->routeIs('deal.index') ? 'active' : '' }}"
-                                href="{{ route('deal.index') }}">
-                                <i class="fa fa-handshake me-2"></i> Deals
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-white {{ request()->routeIs('deal.kanban') ? 'active' : '' }}"
-                                href="{{ route('deal.kanban') }}">
-                                <i class="fa fa-columns me-2"></i> Kanban Pipeline
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-white {{ request()->routeIs('pipeline.index') ? 'active' : '' }}"
-                                href="{{ route('pipeline.index') }}">
-                                <i class="fa fa-layer-group me-2"></i> Pipeline Stages
-                            </a>
-                        </li>
+            @if (Auth::user()->hasRole('Admin') || Auth::user()->hasRole('Master Admin') || Auth::user()->hasRole('Marketing'))
+                <li class="nav-item mb-2">
+                    <a class="nav-link text-white dropdown-toggle {{ request()->routeIs('contacts.*') || request()->routeIs('deal.*') || request()->routeIs('pipeline.*') ? 'text-warning' : '' }}"
+                        data-bs-toggle="collapse" href="#crmMenu" role="button"
+                        aria-expanded="{{ request()->routeIs('contacts.*') || request()->routeIs('deal.*') || request()->routeIs('pipeline.*') ? 'true' : 'false' }}"
+                        aria-controls="crmMenu">
+                        <i class="fa fa-building me-2"></i> CRM
+                    </a>
+                    <div class="collapse {{ request()->routeIs('contacts.*') || request()->routeIs('deal.*') || request()->routeIs('pipeline.*') ? 'show' : '' }}"
+                        id="crmMenu" data-bs-parent="#mainMenu">
+                        <ul class="nav flex-column ms-3">
+                            <li class="nav-item">
+                                <a class="nav-link text-white {{ request()->routeIs('contacts.index') ? 'active' : '' }}"
+                                    href="{{ route('contacts.index') }}">
+                                    <i class="fa fa-address-book me-2"></i> Contacts
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-white {{ request()->routeIs('deal.index') ? 'active' : '' }}"
+                                    href="{{ route('deal.index') }}">
+                                    <i class="fa fa-handshake me-2"></i> Deals
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-white {{ request()->routeIs('deal.kanban') ? 'active' : '' }}"
+                                    href="{{ route('deal.kanban') }}">
+                                    <i class="fa fa-columns me-2"></i> Kanban Pipeline
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-white {{ request()->routeIs('pipeline.index') ? 'active' : '' }}"
+                                    href="{{ route('pipeline.index') }}">
+                                    <i class="fa fa-layer-group me-2"></i> Pipeline Stages
+                                </a>
+                            </li>
 
-                        {{-- quotations --}}
-                        <li class="nav-item">
-                            <a class="nav-link text-white {{ request()->routeIs('crm.quotations.index') ? 'active' : '' }}"
-                                href="{{ route('crm.quotations.index') }}">
-                                <i class="fa fa-file-invoice me-2"></i> Quotation
-                            </a>
-                        </li>
-                        {{-- upload file  --}}
-                        <li class="nav-item">
-                            <a class="nav-link text-white {{ request()->routeIs('crm.upload.index') ? 'active' : '' }}"
-                                href="{{ route('crm.upload.index') }}">
-                                <i class="fa fa-file-upload me-2"></i> Upload Recommendations
-                            </a>
-                        </li>
+                            {{-- quotations --}}
+                            <li class="nav-item">
+                                <a class="nav-link text-white {{ request()->routeIs('crm.quotations.index') ? 'active' : '' }}"
+                                    href="{{ route('crm.quotations.index') }}">
+                                    <i class="fa fa-file-invoice me-2"></i> Quotation
+                                </a>
+                            </li>
+                            {{-- upload file  --}}
+                            <li class="nav-item">
+                                <a class="nav-link text-white {{ request()->routeIs('crm.upload.index') ? 'active' : '' }}"
+                                    href="{{ route('crm.upload.index') }}">
+                                    <i class="fa fa-file-upload me-2"></i> Upload Recommendations
+                                </a>
+                            </li>
 
-                        {{-- ads --}}
-                        <li class="nav-item">
-                            <a class="nav-link text-white {{ request()->routeIs('crm.ads_plans.index') ? 'active' : '' }}"
-                                href="{{ route('crm.ads_plans.index') }}">
-                                <i class="fa fa-bullhorn me-2"></i> Ads Plans
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-            </li>
+                            {{-- ads --}}
+                            <li class="nav-item">
+                                <a class="nav-link text-white {{ request()->routeIs('crm.ads_plans.index') ? 'active' : '' }}"
+                                    href="{{ route('crm.ads_plans.index') }}">
+                                    <i class="fa fa-bullhorn me-2"></i> Ads Plans
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+            @endif
 
             {{-- Dropdown: Project Management --}}
-            <li class="nav-item mb-2">
-                <a class="nav-link text-white dropdown-toggle {{ request()->is('projects*') || request()->routeIs('projects.*') ? 'text-warning' : '' }}"
-                    data-bs-toggle="collapse" href="#projectMenu" role="button"
-                    aria-expanded="{{ request()->is('projects*') || request()->routeIs('projects.*') ? 'true' : 'false' }}"
-                    aria-controls="projectMenu">
-                    <i class="fa fa-project-diagram me-2"></i> Project Management
-                </a>
-                <div class="collapse {{ request()->is('projects*') || request()->routeIs('projects.*') ? 'show' : '' }}"
-                    id="projectMenu" data-bs-parent="#mainMenu">
-                    <ul class="nav flex-column ms-3">
-                        <li class="nav-item">
-                            <a class="nav-link text-white {{ request()->routeIs('projects.index') ? 'active' : '' }}"
-                                href="{{ route('projects.index') }}">
-                                <i class="fa fa-list me-2"></i> Daftar Proyek
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-white {{ request()->routeIs('projects.create') ? 'active' : '' }}"
-                                href="{{ route('projects.create') }}">
-                                <i class="fa fa-plus me-2"></i> Tambah Proyek
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-            </li>
+            @if (Auth::user()->hasRole('Admin') || Auth::user()->hasRole('Master Admin') || Auth::user()->hasRole('Project Manager'))
+                <li class="nav-item mb-2">
+                    <a class="nav-link text-white dropdown-toggle {{ request()->is('projects*') || request()->routeIs('projects.*') ? 'text-warning' : '' }}"
+                        data-bs-toggle="collapse" href="#projectMenu" role="button"
+                        aria-expanded="{{ request()->is('projects*') || request()->routeIs('projects.*') ? 'true' : 'false' }}"
+                        aria-controls="projectMenu">
+                        <i class="fa fa-project-diagram me-2"></i> Project Management
+                    </a>
+                    <div class="collapse {{ request()->is('projects*') || request()->routeIs('projects.*') ? 'show' : '' }}"
+                        id="projectMenu" data-bs-parent="#mainMenu">
+                        <ul class="nav flex-column ms-3">
+                            <li class="nav-item">
+                                <a class="nav-link text-white {{ request()->routeIs('projects.index') ? 'active' : '' }}"
+                                    href="{{ route('projects.index') }}">
+                                    <i class="fa fa-list me-2"></i> Daftar Proyek
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-white {{ request()->routeIs('projects.create') ? 'active' : '' }}"
+                                    href="{{ route('projects.create') }}">
+                                    <i class="fa fa-plus me-2"></i> Tambah Proyek
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+            @endif
 
             {{-- Dropdown: HR Management --}}
+            @if (Auth::user()->hasRole('Admin') || Auth::user()->hasRole('Master Admin') || Auth::user()->hasRole('HR'))
+                <li class="nav-item mb-2">
+                    <a class="nav-link text-white dropdown-toggle {{ request()->is('employees*') || request()->is('divisions*') || request()->is('payrolls*') || request()->routeIs('employees.*') || request()->routeIs('divisions.*') || request()->routeIs('payrolls.*') ? 'text-warning' : '' }}"
+                        data-bs-toggle="collapse" href="#hrmMenu" role="button"
+                        aria-expanded="{{ request()->is('employees*') || request()->is('divisions*') || request()->is('payrolls*') || request()->routeIs('employees.*') || request()->routeIs('divisions.*') || request()->routeIs('payrolls.*') ? 'true' : 'false' }}"
+                        aria-controls="hrmMenu">
+                        <i class="fa fa-users-cog me-2"></i> HR Management
+                    </a>
+                    <div class="collapse {{ request()->is('employees*') || request()->is('divisions*') || request()->is('payrolls*') || request()->routeIs('employees.*') || request()->routeIs('divisions.*') || request()->routeIs('payrolls.*') ? 'show' : '' }}"
+                        id="hrmMenu" data-bs-parent="#mainMenu">
+                        <ul class="nav flex-column ms-3">
+                            {{-- Employees --}}
+                            <li class="nav-item">
+                                <a class="nav-link text-white {{ request()->routeIs('employees.index') ? 'active' : '' }}"
+                                    href="{{ route('employees.index') }}">
+                                    <i class="fa fa-user me-2"></i> Manajemen Karyawan
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-white {{ request()->routeIs('employees.create') ? 'active' : '' }}"
+                                    href="{{ route('employees.create') }}">
+                                    <i class="fa fa-user-plus me-2"></i> Tambah Karyawan
+                                </a>
+                            </li>
+
+                            {{-- Divisions --}}
+                            <li class="nav-item">
+                                <a class="nav-link text-white {{ request()->routeIs('divisions.index') ? 'active' : '' }}"
+                                    href="{{ route('divisions.index') }}">
+                                    <i class="fa fa-sitemap me-2"></i> Divisi
+                                </a>
+                            </li>
+
+                            {{-- Payroll --}}
+                            <li class="nav-item">
+                                <a class="nav-link text-white {{ request()->routeIs('payrolls.index') ? 'active' : '' }}"
+                                    href="{{ route('payrolls.index') }}">
+                                    <i class="fa fa-money-bill me-2"></i> Penggajian
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-white {{ request()->routeIs('payrolls.create') ? 'active' : '' }}"
+                                    href="{{ route('payrolls.create') }}">
+                                    <i class="fa fa-plus me-2"></i> Tambah Gaji
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+            @endif
+
+            {{-- Dropdown: Accounting --}}
+            @if (Auth::user()->hasRole('Admin') || Auth::user()->hasRole('Master Admin') || Auth::user()->hasRole('Finance') || Auth::user()->hasRole('Purchasing'))
+                <li class="nav-item mb-2">
+                    <a class="nav-link text-white dropdown-toggle {{ request()->is('accounting*') || request()->routeIs('accounting.*') ? 'text-warning' : '' }}"
+                        data-bs-toggle="collapse" href="#accountingMenu" role="button"
+                        aria-expanded="{{ request()->is('accounting*') || request()->routeIs('accounting.*') ? 'true' : 'false' }}"
+                        aria-controls="accountingMenu">
+                        <i class="fa fa-calculator me-2"></i> Accounting
+                    </a>
+                    <div class="collapse {{ request()->is('accounting*') || request()->routeIs('accounting.*') ? 'show' : '' }}"
+                        id="accountingMenu" data-bs-parent="#mainMenu">
+                        <ul class="nav flex-column ms-3">
+                            {{-- Incomes --}}
+                            <li class="nav-item">
+                                <a class="nav-link text-white {{ request()->routeIs('accounting.incomes.index') ? 'active' : '' }}"
+                                    href="{{ route('accounting.incomes.index') }}">
+                                    <i class="fa fa-arrow-up me-2"></i> Manajemen Pendapatan
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-white {{ request()->routeIs('accounting.incomes.create') ? 'active' : '' }}"
+                                    href="{{ route('accounting.incomes.create') }}">
+                                    <i class="fa fa-plus me-2"></i> Tambah Pendapatan
+                                </a>
+                            </li>
+
+                            {{-- Purchasings --}}
+                            <li class="nav-item">
+                                <a class="nav-link text-white {{ request()->routeIs('accounting.purchasings.index') ? 'active' : '' }}"
+                                    href="{{ route('accounting.purchasings.index') }}">
+                                    <i class="fa fa-shopping-cart me-2"></i> Pembelian
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-white {{ request()->routeIs('accounting.purchasings.create') ? 'active' : '' }}"
+                                    href="{{ route('accounting.purchasings.create') }}">
+                                    <i class="fa fa-cart-plus me-2"></i> Tambah Pembelian
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-white {{ request()->routeIs('accounting.loans.index') ? 'active' : '' }}"
+                                    href="{{ route('accounting.loans.index') }}">
+                                    <i class="fa fa-credit-card me-2"></i> Kredit
+                                </a>
+                            </li>
+
+                            {{-- Reports --}}
+                            <li class="nav-item">
+                                <a class="nav-link text-white {{ request()->routeIs('accounting.reports.index') ? 'active' : '' }}"
+                                    href="{{ route('accounting.reports.index') }}">
+                                    <i class="fa fa-chart-bar me-2"></i> Laporan
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-white {{ request()->routeIs('accounting.reports.annual') ? 'active' : '' }}"
+                                    href="{{ route('accounting.reports.annual') }}">
+                                    <i class="fa fa-chart-bar me-2"></i> Annual Report
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-white {{ request()->routeIs('accounting.tax.index') ? 'active' : '' }}"
+                                    href="{{ route('accounting.tax.index') }}">
+                                    <i class="fa fa-chart-bar me-2"></i> Tax Report
+                                </a>
+                            </li>
+                            {{-- invoices --}}
+                            <li class="nav-item">
+                                <a class="nav-link text-white {{ request()->routeIs('accounting.invoices.index') ? 'active' : '' }}"
+                                    href="{{ route('accounting.invoices.index') }}">
+                                    <i class="fa fa-file-invoice me-2"></i> Invoices
+                                </a>
+                            </li>
+                            {{-- recepits --}}
+                            <li class="nav-item">
+                                <a class="nav-link text-white {{ request()->routeIs('accounting.receipts.index') ? 'active' : '' }}"
+                                    href="{{ route('accounting.receipts.index') }}">
+                                    <i class="fa fa-receipt me-2"></i> Receipts
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+            @endif
+
+            {{-- Dropdown: RBAC --}}
+            @if (Auth::user()->hasRole('Master Admin'))
             <li class="nav-item mb-2">
-                <a class="nav-link text-white dropdown-toggle {{ request()->is('employees*') || request()->is('divisions*') || request()->is('payrolls*') || request()->routeIs('employees.*') || request()->routeIs('divisions.*') || request()->routeIs('payrolls.*') ? 'text-warning' : '' }}"
-                    data-bs-toggle="collapse" href="#hrmMenu" role="button"
-                    aria-expanded="{{ request()->is('employees*') || request()->is('divisions*') || request()->is('payrolls*') || request()->routeIs('employees.*') || request()->routeIs('divisions.*') || request()->routeIs('payrolls.*') ? 'true' : 'false' }}"
-                    aria-controls="hrmMenu">
-                    <i class="fa fa-users-cog me-2"></i> HR Management
+                <a class="nav-link text-white dropdown-toggle {{ request()->is('rbac*') || request()->routeIs('roles.*') || request()->routeIs('permissions.*') ? 'text-warning' : '' }}"
+                    data-bs-toggle="collapse" href="#rbacMenu" role="button"
+                    aria-expanded="{{ request()->is('rbac*') || request()->routeIs('roles.*') || request()->routeIs('permissions.*') ? 'true' : 'false' }}"
+                    aria-controls="rbacMenu">
+                    <i class="fa fa-user-shield me-2"></i> RBAC
                 </a>
-                <div class="collapse {{ request()->is('employees*') || request()->is('divisions*') || request()->is('payrolls*') || request()->routeIs('employees.*') || request()->routeIs('divisions.*') || request()->routeIs('payrolls.*') ? 'show' : '' }}"
-                    id="hrmMenu" data-bs-parent="#mainMenu">
+                <div class="collapse {{ request()->is('rbac*') || request()->routeIs('roles.*') || request()->routeIs('permissions.*') ? 'show' : '' }}"
+                    id="rbacMenu" data-bs-parent="#mainMenu">
                     <ul class="nav flex-column ms-3">
-                        {{-- Employees --}}
+
+                        {{-- Roles --}}
                         <li class="nav-item">
-                            <a class="nav-link text-white {{ request()->routeIs('employees.index') ? 'active' : '' }}"
-                                href="{{ route('employees.index') }}">
-                                <i class="fa fa-user me-2"></i> Manajemen Karyawan
+                            <a class="nav-link text-white {{ request()->routeIs('roles.index') ? 'active' : '' }}"
+                                href="{{ route('roles.index') }}">
+                                <i class="fa fa-user-tag me-2"></i> Roles
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-white {{ request()->routeIs('employees.create') ? 'active' : '' }}"
-                                href="{{ route('employees.create') }}">
-                                <i class="fa fa-user-plus me-2"></i> Tambah Karyawan
+                            <a class="nav-link text-white {{ request()->routeIs('roles.create') ? 'active' : '' }}"
+                                href="{{ route('roles.index') }}"> {{-- Roles create biasanya masuk halaman index --}}
+                                <i class="fa fa-plus me-2"></i> Tambah Role
                             </a>
                         </li>
 
-                        {{-- Divisions --}}
+                        {{-- Permissions --}}
                         <li class="nav-item">
-                            <a class="nav-link text-white {{ request()->routeIs('divisions.index') ? 'active' : '' }}"
-                                href="{{ route('divisions.index') }}">
-                                <i class="fa fa-sitemap me-2"></i> Divisi
-                            </a>
-                        </li>
-
-                        {{-- Payroll --}}
-                        <li class="nav-item">
-                            <a class="nav-link text-white {{ request()->routeIs('payrolls.index') ? 'active' : '' }}"
-                                href="{{ route('payrolls.index') }}">
-                                <i class="fa fa-money-bill me-2"></i> Penggajian
+                            <a class="nav-link text-white {{ request()->routeIs('permissions.index') ? 'active' : '' }}"
+                                href="{{ route('permissions.index') }}">
+                                <i class="fa fa-key me-2"></i> Permissions
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-white {{ request()->routeIs('payrolls.create') ? 'active' : '' }}"
-                                href="{{ route('payrolls.create') }}">
-                                <i class="fa fa-plus me-2"></i> Tambah Gaji
+                            <a class="nav-link text-white {{ request()->routeIs('permissions.create') ? 'active' : '' }}"
+                                href="{{ route('permissions.index') }}"> {{-- Permissions create masuk halaman index --}}
+                                <i class="fa fa-plus me-2"></i> Tambah Permission
+                            </a>
+                        </li>
+                        {{-- tambah user --}}
+                        <li class="nav-item">
+                            <a class="nav-link text-white {{ request()->routeIs('users.index') ? 'active' : '' }}"
+                                href="{{ route('users.index') }}">
+                                <i class="fa fa-users me-2"></i> Users
                             </a>
                         </li>
                     </ul>
                 </div>
             </li>
+            @endif
 
-            <li class="nav-item mb-2">
-                <a class="nav-link text-white dropdown-toggle {{ request()->is('accounting*') || request()->routeIs('accounting.*') ? 'text-warning' : '' }}"
-                    data-bs-toggle="collapse" href="#accountingMenu" role="button"
-                    aria-expanded="{{ request()->is('accounting*') || request()->routeIs('accounting.*') ? 'true' : 'false' }}"
-                    aria-controls="accountingMenu">
-                    <i class="fa fa-calculator me-2"></i> Accounting
-                </a>
-                <div class="collapse {{ request()->is('accounting*') || request()->routeIs('accounting.*') ? 'show' : '' }}"
-                    id="accountingMenu" data-bs-parent="#mainMenu">
-                    <ul class="nav flex-column ms-3">
-                        {{-- Incomes --}}
-                        <li class="nav-item">
-                            <a class="nav-link text-white {{ request()->routeIs('accounting.incomes.index') ? 'active' : '' }}"
-                                href="{{ route('accounting.incomes.index') }}">
-                                <i class="fa fa-arrow-up me-2"></i> Manajemen Pendapatan
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-white {{ request()->routeIs('accounting.incomes.create') ? 'active' : '' }}"
-                                href="{{ route('accounting.incomes.create') }}">
-                                <i class="fa fa-plus me-2"></i> Tambah Pendapatan
-                            </a>
-                        </li>
-
-                        {{-- Purchasings --}}
-                        <li class="nav-item">
-                            <a class="nav-link text-white {{ request()->routeIs('accounting.purchasings.index') ? 'active' : '' }}"
-                                href="{{ route('accounting.purchasings.index') }}">
-                                <i class="fa fa-shopping-cart me-2"></i> Pembelian
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-white {{ request()->routeIs('accounting.purchasings.create') ? 'active' : '' }}"
-                                href="{{ route('accounting.purchasings.create') }}">
-                                <i class="fa fa-cart-plus me-2"></i> Tambah Pembelian
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-white {{ request()->routeIs('accounting.loans.index') ? 'active' : '' }}"
-                                href="{{ route('accounting.loans.index') }}">
-                                <i class="fa fa-credit-card me-2"></i> Kredit
-                            </a>
-                        </li>
-
-                        {{-- Reports --}}
-                        <li class="nav-item">
-                            <a class="nav-link text-white {{ request()->routeIs('accounting.reports.index') ? 'active' : '' }}"
-                                href="{{ route('accounting.reports.index') }}">
-                                <i class="fa fa-chart-bar me-2"></i> Laporan
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-white {{ request()->routeIs('accounting.reports.annual') ? 'active' : '' }}"
-                                href="{{ route('accounting.reports.annual') }}">
-                                <i class="fa fa-chart-bar me-2"></i> Annual Report
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-white {{ request()->routeIs('accounting.tax.index') ? 'active' : '' }}"
-                                href="{{ route('accounting.tax.index') }}">
-                                <i class="fa fa-chart-bar me-2"></i> Tax Report
-                            </a>
-                        </li>
-                        {{-- invoices --}}
-                        <li class="nav-item">
-                            <a class="nav-link text-white {{ request()->routeIs('accounting.invoices.index') ? 'active' : '' }}"
-                                href="{{ route('accounting.invoices.index') }}">
-                                <i class="fa fa-file-invoice me-2"></i> Invoices
-                            </a>
-                        </li>
-                        {{-- recepits --}}
-                        <li class="nav-item">
-                            <a class="nav-link text-white {{ request()->routeIs('accounting.receipts.index') ? 'active' : '' }}"
-                                href="{{ route('accounting.receipts.index') }}">
-                                <i class="fa fa-receipt me-2"></i> Receipts
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-            </li>
         </ul>
     </div>
 

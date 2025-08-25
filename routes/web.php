@@ -20,6 +20,9 @@ use App\Http\Controllers\HRM\EmployeeController;
 use App\Http\Controllers\HRM\PayrollController;
 use App\Http\Controllers\Marketing\MarketingController;
 use App\Http\Controllers\ProjectManagement\ProjectController;
+use App\Http\Controllers\RBAC\PermissionController;
+use App\Http\Controllers\RBAC\RoleController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 // Guest routes
@@ -191,6 +194,41 @@ Route::middleware(['auth'])
 
             Route::get('/social', [MarketingController::class, 'social'])->name('marketing.social');
             Route::post('/social', [MarketingController::class, 'storeSocial']);
+        });
+
+        Route::prefix('rbac')->group(function () {
+            Route::get('roles', [RoleController::class, 'index'])
+                ->name('roles.index')
+                ->middleware('role:Master Admin');
+            Route::post('roles', [RoleController::class, 'store'])
+                ->name('roles.store')
+                ->middleware('role:Master Admin');
+            Route::post('roles/{role}/update-permissions', [RoleController::class, 'updatePermissions'])
+                ->name('roles.update.permissions')
+                ->middleware('role:Master Admin');
+            Route::post('roles/{role}/assign-users', [RoleController::class, 'assignUsers'])
+                ->name('roles.assign.users')
+                ->middleware('role:Master Admin');
+            Route::delete('roles/{role}', [RoleController::class, 'destroy'])
+                ->name('roles.destroy')
+                ->middleware('role:Master Admin');
+            // Permission Routes
+            Route::get('permissions', [PermissionController::class, 'index'])
+                ->name('permissions.index')
+                ->middleware('role:Master Admin');
+            Route::post('permissions', [PermissionController::class, 'store'])
+                ->name('permissions.store')
+                ->middleware('role:Master Admin');
+            Route::post('permissions/{permission}/update', [PermissionController::class, 'update'])
+                ->name('permissions.update')
+                ->middleware('role:Master Admin');
+            Route::delete('permissions/{permission}', [PermissionController::class, 'destroy'])
+                ->name('permissions.destroy')
+                ->middleware('role:Master Admin');
+
+            Route::get('users', [UserController::class, 'index'])->name('users.index');
+            Route::post('users', [UserController::class, 'store'])->name('users.store');
+            Route::delete('users/{user}', [UserController::class, 'destroy'])->name('users.destroy');
         });
     });
 

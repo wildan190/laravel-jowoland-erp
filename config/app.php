@@ -187,6 +187,9 @@ return [
         // 'Example' => App\Facades\Example::class,
         'PDF' => Barryvdh\DomPDF\Facade\Pdf::class,
         'Excel' => Maatwebsite\Excel\Facades\Excel::class,
+        // === Tambahan Spatie RBAC Middleware ===
+        'role' => \App\Http\Middleware\CheckRole::class,
+        'permission' => \App\Http\Middleware\CheckPermission::class,
 
     ])->toArray(),
 

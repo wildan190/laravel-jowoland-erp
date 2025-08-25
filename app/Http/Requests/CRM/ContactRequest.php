@@ -10,7 +10,7 @@ class ContactRequest extends FormRequest
     {
         return [
             'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:contacts,email,'.$this->contact?->id,
+            'email' => 'nullable|email|unique:contacts,email,'.$this->contact?->id,
             'phone' => 'nullable|string|max:20',
             'notes' => 'nullable|string',
             'address' => 'nullable|string|max:255',
