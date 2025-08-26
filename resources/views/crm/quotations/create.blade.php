@@ -22,6 +22,16 @@
                 <form method="POST" action="{{ route('crm.quotations.store') }}">
                     @csrf
 
+                    @if ($errors->any())
+                        <div class="alert alert-danger">
+                            <ul class="mb-0">
+                                @foreach ($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    @endif
+
                     {{-- Header Info --}}
                     <div class="row mb-3">
                         <div class="col-md-3">
