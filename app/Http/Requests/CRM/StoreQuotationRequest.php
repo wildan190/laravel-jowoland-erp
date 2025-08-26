@@ -13,8 +13,11 @@ class StoreQuotationRequest extends FormRequest
             'items' => 'required|array|min:1',
             'items.*.item' => 'required|string',
             'items.*.description' => 'nullable|string',
-            'items.*.qty' => 'required|integer|min:1',
+            'items.*.qty' => 'required|integer|min:0',
+            'items.*.satuan' => 'required|string',
             'items.*.price' => 'required|numeric|min:0',
+            'items.*.total' => 'required_if:items.*.qty,0|numeric|min:0',
+            'items.*.terms' => 'nullable|string',
         ];
     }
 }

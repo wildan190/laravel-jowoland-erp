@@ -66,6 +66,7 @@
                                     <th style="width: 20%">Layanan</th>
                                     <th style="width: 25%">Deskripsi</th>
                                     <th style="width: 10%">Qty</th>
+                                    <th style="width: 10%">Satuan</th>
                                     <th style="width: 15%">Harga</th>
                                     <th style="width: 15%">Jumlah</th>
                                     <th style="width: 5%"></th>
@@ -86,7 +87,12 @@
                                     <td>
                                         <input type="number" name="items[0][qty]"
                                                class="form-control form-control-sm qty text-end"
-                                               value="1" min="1">
+                                               value="1" min="0">
+                                    </td>
+                                    <td>
+                                        <input type="text" name="items[0][satuan]"
+                                               class="form-control form-control-sm satuan text-end"
+                                               placeholder="Unit">
                                     </td>
                                     <td>
                                         <input type="number" step="0.01" name="items[0][price]"
@@ -94,8 +100,9 @@
                                                placeholder="0">
                                     </td>
                                     <td>
-                                        <input type="text" class="form-control form-control-sm lineTotal text-end"
-                                               readonly value="0">
+                                        <input type="number" step="0.01" name="items[0][total]"
+                                               class="form-control form-control-sm lineTotal text-end"
+                                               value="0" readonly>
                                     </td>
                                     <td class="text-center">
                                         <button type="button" class="btn btn-sm btn-outline-danger removeRow">
@@ -111,6 +118,17 @@
                         </div>
                     </div>
 
+                    {{-- Terms Editor --}}
+                    <div class="card mb-3 shadow-sm">
+                        <div class="card-header bg-light fw-bold">
+                            <i class="fa fa-file-text me-1"></i> Syarat dan Ketentuan
+                        </div>
+                        <div class="card-body">
+                            <div id="termsEditor" style="height: 200px;"></div>
+                            <input type="hidden" name="items[0][terms]" id="termsInput">
+                        </div>
+                    </div>
+
                     {{-- Summary --}}
                     <div class="card shadow-sm">
                         <div class="card-header bg-light fw-bold">
@@ -123,8 +141,12 @@
                                     <span id="subtotalText">0</span>
                                     <input type="hidden" name="subtotal" id="subtotalInput">
                                 </div>
-                                <div class="mb-2 d-flex justify-content-between">
+                                <div class="mb-2 d-flex justify-content-between align-items-center">
                                     <span>PPN (11%)</span>
+                                    <div>
+                                        <input type="checkbox" id="includePpn" name="include_ppn" checked>
+                                        <label for="includePpn" class="ms-2">Include PPN</label>
+                                    </div>
                                     <span id="ppnText">0</span>
                                     <input type="hidden" name="ppn" id="ppnInput">
                                 </div>
@@ -151,21 +173,63 @@
         </div>
     </div>
 
+    <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+    <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
     <script>
         let row = 1;
+
+        // Initialize Quill editor
+        const quill = new Quill('#termsEditor', {
+            theme: 'snow',
+            modules: {
+                toolbar: [
+                    [{ 'header': [1, 2, false] }],
+                    ['bold', 'italic', 'underline'],
+                    [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                    ['clean']
+                ]
+            }
+        });
+
+        // Update hidden input with Quill content
+        quill.on('text-change', function() {
+            document.getElementById('termsInput').value = quill.root.innerHTML;
+        });
+
+        // --- Toggle readonly state of lineTotal based on qty ---
+        function toggleLineTotalReadonly(tr) {
+            const qtyInput = tr.querySelector('.qty');
+            const lineTotalInput = tr.querySelector('.lineTotal');
+            if (parseFloat(qtyInput.value) === 0) {
+                lineTotalInput.removeAttribute('readonly');
+            } else {
+                lineTotalInput.setAttribute('readonly', true);
+            }
+        }
 
         // --- Perhitungan Total ---
         function calculateTotals() {
             let subtotal = 0;
             document.querySelectorAll('#itemsTable tbody tr').forEach(tr => {
-                let qty = parseFloat(tr.querySelector('.qty')?.value) || 0;
-                let price = parseFloat(tr.querySelector('.price')?.value) || 0;
-                let lineTotal = qty * price;
-                tr.querySelector('.lineTotal').value = lineTotal.toFixed(2);
+                const qty = parseFloat(tr.querySelector('.qty')?.value) || 0;
+                const price = parseFloat(tr.querySelector('.price')?.value) || 0;
+                const lineTotalInput = tr.querySelector('.lineTotal');
+                let lineTotal;
+
+                if (qty === 0) {
+                    lineTotal = parseFloat(lineTotalInput.value) || 0;
+                } else {
+                    lineTotal = qty * price;
+                    lineTotalInput.value = lineTotal.toFixed(2);
+                }
+
                 subtotal += lineTotal;
             });
 
-            let ppn = subtotal * 0.11;
+            let ppn = 0;
+            if (document.getElementById('includePpn').checked) {
+                ppn = subtotal * 0.11;
+            }
             let total = subtotal + ppn;
 
             document.getElementById('subtotalText').innerText = subtotal.toLocaleString();
@@ -195,7 +259,12 @@
                 <td>
                     <input type="number" name="items[${row}][qty]" 
                            class="form-control form-control-sm qty text-end" 
-                           value="1" min="1">
+                           value="1" min="0">
+                </td>
+                <td>
+                    <input type="text" name="items[${row}][satuan]" 
+                           class="form-control form-control-sm satuan text-end" 
+                           placeholder="Unit">
                 </td>
                 <td>
                     <input type="number" step="0.01" name="items[${row}][price]" 
@@ -203,8 +272,9 @@
                            placeholder="0">
                 </td>
                 <td>
-                    <input type="text" class="form-control form-control-sm lineTotal text-end" 
-                           readonly value="0">
+                    <input type="number" step="0.01" name="items[${row}][total]" 
+                           class="form-control form-control-sm lineTotal text-end" 
+                           value="0" readonly>
                 </td>
                 <td class="text-center">
                     <button type="button" class="btn btn-sm btn-outline-danger removeRow">
@@ -213,12 +283,20 @@
                 </td>
             `;
             tbody.appendChild(tr);
+            toggleLineTotalReadonly(tr);
             row++;
         });
 
         // --- Event Handler ---
         document.addEventListener('input', function (e) {
-            if (e.target.classList.contains('qty') || e.target.classList.contains('price')) {
+            if (e.target.classList.contains('qty') || 
+                e.target.classList.contains('price') || 
+                e.target.classList.contains('lineTotal') || 
+                e.target.id === 'includePpn') {
+                const tr = e.target.closest('tr');
+                if (tr && e.target.classList.contains('qty')) {
+                    toggleLineTotalReadonly(tr);
+                }
                 calculateTotals();
             }
         });
@@ -245,9 +323,8 @@
             let today = new Date();
             let day = today.getDate().toString().padStart(2, '0');
             let monthRoman = toRoman(today.getMonth() + 1);
-            let year = 2025; // sesuai requirement fix
+            let year = 2025;
 
-            // Preview format dengan placeholder "XXX"
             let preview = `BOQ-XXX/${day}/${code}/JLC/${monthRoman}/${year}`;
             document.getElementById('quotationNumber').value = preview;
         });

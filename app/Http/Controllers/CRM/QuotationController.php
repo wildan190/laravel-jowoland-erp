@@ -16,26 +16,23 @@ class QuotationController extends Controller
     {
         $query = Quotation::with('contact');
 
-        // 🔍 Search umum (quotation number, contact name)
         if ($search = $request->get('search')) {
             $query->where(function ($q) use ($search) {
-                $q->where('quotation_number', 'like', "%{$search}%")->orWhereHas('contact', function ($q2) use ($search) {
-                    $q2->where('name', 'like', "%{$search}%");
-                });
+                $q->where('quotation_number', 'like', "%{$search}%")
+                  ->orWhereHas('contact', function ($q2) use ($search) {
+                      $q2->where('name', 'like', "%{$search}%");
+                  });
             });
         }
 
-        // 📌 Filter kategori
         if ($category = $request->get('category')) {
             $query->where('category', $category);
         }
 
-        // 📌 Filter by date range
         if ($request->filled('start_date') && $request->filled('end_date')) {
             $query->whereBetween('quotation_date', [$request->start_date, $request->end_date]);
         }
 
-        // Pagination
         $quotations = $query->latest()->paginate(10)->appends($request->query());
 
         return view('crm.quotations.index', compact('quotations'));
@@ -44,8 +41,6 @@ class QuotationController extends Controller
     public function create()
     {
         $contacts = Contact::all();
-
-        // Default kategori mini_crane
         $quotationNumber = GenerateQuotationNumber::handle('PHM');
         $quotationDate = now()->format('Y-m-d');
 
@@ -54,7 +49,6 @@ class QuotationController extends Controller
 
     public function store(StoreQuotationRequest $request)
     {
-        // Map kategori ke kode
         $categoryMap = [
             'hydraulic' => 'PHR',
             'mini_crane' => 'PHM',
@@ -65,16 +59,18 @@ class QuotationController extends Controller
 
         // Hitung subtotal dari items
         $subtotal = collect($request->items)->sum(function ($item) {
-            return ($item['qty'] ?? 0) * ($item['price'] ?? 0);
+            $qty = $item['qty'] ?? 0;
+            return $qty == 0 ? ($item['total'] ?? 0) : ($qty * ($item['price'] ?? 0));
         });
 
-        $ppn = $subtotal * 0.11;
+        // Tentukan PPN berdasarkan include_ppn
+        $ppn = $request->include_ppn ? ($subtotal * 0.11) : 0;
         $total = $subtotal + $ppn;
 
-        // Generate nomor quotation dengan kategori
+        // Generate nomor quotation
         $quotationNumber = GenerateQuotationNumber::handle($categoryCode);
 
-        // Simpan quotation utama
+        // Simpan quotation
         $quotation = Quotation::create([
             'contact_id' => $request->contact_id,
             'category' => $request->category,
@@ -83,17 +79,21 @@ class QuotationController extends Controller
             'subtotal' => $subtotal,
             'ppn' => $ppn,
             'total' => $total,
+            'include_ppn' => $request->include_ppn ?? false,
         ]);
 
-        // Simpan item–item detail
+        // Simpan item
         foreach ($request->items as $item) {
-            if (! empty($item['item']) && ($item['qty'] ?? 0) > 0) {
+            if (!empty($item['item']) && isset($item['qty'])) {
+                $qty = $item['qty'] ?? 0;
                 $quotation->items()->create([
                     'item' => $item['item'],
                     'description' => $item['description'] ?? '',
-                    'qty' => $item['qty'] ?? 1,
+                    'qty' => $qty,
+                    'satuan' => $item['satuan'] ?? '',
                     'price' => $item['price'] ?? 0,
-                    'total' => ($item['qty'] ?? 0) * ($item['price'] ?? 0),
+                    'total' => $qty == 0 ? ($item['total'] ?? 0) : ($qty * ($item['price'] ?? 0)),
+                    'terms' => $item['terms'] ?? '',
                 ]);
             }
         }
@@ -112,7 +112,6 @@ class QuotationController extends Controller
 
     public function update(StoreQuotationRequest $request, Quotation $quotation)
     {
-        // Map kategori ke kode
         $categoryMap = [
             'hydraulic' => 'PHR',
             'mini_crane' => 'PHM',
@@ -120,37 +119,40 @@ class QuotationController extends Controller
         ];
         $categoryCode = $categoryMap[$request->category] ?? 'PHM';
 
-        // Hitung subtotal dari items
+        // Hitung subtotal
         $subtotal = collect($request->items)->sum(function ($item) {
-            return ($item['qty'] ?? 0) * ($item['price'] ?? 0);
+            $qty = $item['qty'] ?? 0;
+            return $qty == 0 ? ($item['total'] ?? 0) : ($qty * ($item['price'] ?? 0));
         });
 
-        $ppn = $subtotal * 0.11;
+        // Tentukan PPN berdasarkan include_ppn
+        $ppn = $request->include_ppn ? ($subtotal * 0.11) : 0;
         $total = $subtotal + $ppn;
 
-        // Update quotation utama
+        // Update quotation
         $quotation->update([
             'contact_id' => $request->contact_id,
             'category' => $request->category,
             'subtotal' => $subtotal,
             'ppn' => $ppn,
             'total' => $total,
-            // nomor quotation tetap tidak berubah, jika ingin regenerasi bisa uncomment:
-            // 'quotation_number' => GenerateQuotationNumber::handle($categoryCode),
-            // 'quotation_date' => now(),
+            'include_ppn' => $request->include_ppn ?? false,
         ]);
 
-        // Hapus item lama dan buat ulang
+        // Hapus item lama dan simpan ulang
         $quotation->items()->delete();
 
         foreach ($request->items as $item) {
-            if (! empty($item['item']) && ($item['qty'] ?? 0) > 0) {
+            if (!empty($item['item']) && isset($item['qty'])) {
+                $qty = $item['qty'] ?? 0;
                 $quotation->items()->create([
                     'item' => $item['item'],
                     'description' => $item['description'] ?? '',
-                    'qty' => $item['qty'] ?? 1,
+                    'qty' => $qty,
+                    'satuan' => $item['satuan'] ?? '',
                     'price' => $item['price'] ?? 0,
-                    'total' => ($item['qty'] ?? 0) * ($item['price'] ?? 0),
+                    'total' => $qty == 0 ? ($item['total'] ?? 0) : ($qty * ($item['price'] ?? 0)),
+                    'terms' => $item['terms'] ?? '',
                 ]);
             }
         }
@@ -162,7 +164,7 @@ class QuotationController extends Controller
 
     public function destroy(Quotation $quotation)
     {
-        $quotation->items()->delete(); // hapus detail dulu
+        $quotation->items()->delete();
         $quotation->delete();
 
         return redirect()
@@ -174,12 +176,9 @@ class QuotationController extends Controller
     {
         $quotation->load('contact', 'items');
 
-        // Hitung subtotal dari items
-        $subtotal = $quotation->items->sum(function ($item) {
-            return ($item->qty ?? 0) * ($item->price ?? 0);
-        });
-
-        $ppn = $subtotal * 0.11;
+        // Gunakan data dari database
+        $subtotal = $quotation->subtotal;
+        $ppn = $quotation->include_ppn ? $quotation->ppn : 0;
         $grandTotal = $subtotal + $ppn;
 
         // Encode logo ke base64
@@ -204,7 +203,6 @@ class QuotationController extends Controller
             'grandTotal' => $grandTotal,
         ])->setPaper('a4', 'portrait');
 
-        // Bersihkan nama file (hilangkan "/" atau "\")
         $safeFileName = str_replace(['/', '\\'], '-', $quotation->quotation_number);
 
         return $pdf->download("Quotation-{$safeFileName}.pdf");

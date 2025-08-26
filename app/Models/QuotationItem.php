@@ -11,7 +11,7 @@ class QuotationItem extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['quotation_id', 'item', 'description', 'qty', 'price', 'total'];
+    protected $fillable = ['quotation_id', 'item', 'description', 'qty', 'satuan', 'price', 'total', 'terms'];
 
     public function quotation()
     {

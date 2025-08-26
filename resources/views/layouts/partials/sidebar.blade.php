@@ -391,7 +391,7 @@
             @endif
 
             {{-- Dropdown: HR Management --}}
-            @if (Auth::user()->hasRole('Admin') || Auth::user()->hasRole('Master Admin') || Auth::user()->hasRole('HR'))
+            @if (Auth::user()->hasRole('Master Admin') || Auth::user()->hasRole('HRM'))
                 <li class="nav-item mb-2">
                     <a class="nav-link text-white dropdown-toggle {{ request()->is('employees*') || request()->is('divisions*') || request()->is('payrolls*') || request()->routeIs('employees.*') || request()->routeIs('divisions.*') || request()->routeIs('payrolls.*') ? 'text-warning' : '' }}"
                         data-bs-toggle="collapse" href="#hrmMenu" role="button"
@@ -443,7 +443,7 @@
             @endif
 
             {{-- Dropdown: Accounting --}}
-            @if (Auth::user()->hasRole('Admin') || Auth::user()->hasRole('Master Admin') || Auth::user()->hasRole('Finance') || Auth::user()->hasRole('Purchasing'))
+            @if (Auth::user()->hasRole('Master Admin') || Auth::user()->hasRole('Finance') || Auth::user()->hasRole('Purchasing'))
                 <li class="nav-item mb-2">
                     <a class="nav-link text-white dropdown-toggle {{ request()->is('accounting*') || request()->routeIs('accounting.*') ? 'text-warning' : '' }}"
                         data-bs-toggle="collapse" href="#accountingMenu" role="button"
@@ -528,54 +528,54 @@
 
             {{-- Dropdown: RBAC --}}
             @if (Auth::user()->hasRole('Master Admin'))
-            <li class="nav-item mb-2">
-                <a class="nav-link text-white dropdown-toggle {{ request()->is('rbac*') || request()->routeIs('roles.*') || request()->routeIs('permissions.*') ? 'text-warning' : '' }}"
-                    data-bs-toggle="collapse" href="#rbacMenu" role="button"
-                    aria-expanded="{{ request()->is('rbac*') || request()->routeIs('roles.*') || request()->routeIs('permissions.*') ? 'true' : 'false' }}"
-                    aria-controls="rbacMenu">
-                    <i class="fa fa-user-shield me-2"></i> RBAC
-                </a>
-                <div class="collapse {{ request()->is('rbac*') || request()->routeIs('roles.*') || request()->routeIs('permissions.*') ? 'show' : '' }}"
-                    id="rbacMenu" data-bs-parent="#mainMenu">
-                    <ul class="nav flex-column ms-3">
+                <li class="nav-item mb-2">
+                    <a class="nav-link text-white dropdown-toggle {{ request()->is('rbac*') || request()->routeIs('roles.*') || request()->routeIs('permissions.*') ? 'text-warning' : '' }}"
+                        data-bs-toggle="collapse" href="#rbacMenu" role="button"
+                        aria-expanded="{{ request()->is('rbac*') || request()->routeIs('roles.*') || request()->routeIs('permissions.*') ? 'true' : 'false' }}"
+                        aria-controls="rbacMenu">
+                        <i class="fa fa-user-shield me-2"></i> RBAC
+                    </a>
+                    <div class="collapse {{ request()->is('rbac*') || request()->routeIs('roles.*') || request()->routeIs('permissions.*') ? 'show' : '' }}"
+                        id="rbacMenu" data-bs-parent="#mainMenu">
+                        <ul class="nav flex-column ms-3">
 
-                        {{-- Roles --}}
-                        <li class="nav-item">
-                            <a class="nav-link text-white {{ request()->routeIs('roles.index') ? 'active' : '' }}"
-                                href="{{ route('roles.index') }}">
-                                <i class="fa fa-user-tag me-2"></i> Roles
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-white {{ request()->routeIs('roles.create') ? 'active' : '' }}"
-                                href="{{ route('roles.index') }}"> {{-- Roles create biasanya masuk halaman index --}}
-                                <i class="fa fa-plus me-2"></i> Tambah Role
-                            </a>
-                        </li>
+                            {{-- Roles --}}
+                            <li class="nav-item">
+                                <a class="nav-link text-white {{ request()->routeIs('roles.index') ? 'active' : '' }}"
+                                    href="{{ route('roles.index') }}">
+                                    <i class="fa fa-user-tag me-2"></i> Roles
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-white {{ request()->routeIs('roles.create') ? 'active' : '' }}"
+                                    href="{{ route('roles.index') }}"> {{-- Roles create biasanya masuk halaman index --}}
+                                    <i class="fa fa-plus me-2"></i> Tambah Role
+                                </a>
+                            </li>
 
-                        {{-- Permissions --}}
-                        <li class="nav-item">
-                            <a class="nav-link text-white {{ request()->routeIs('permissions.index') ? 'active' : '' }}"
-                                href="{{ route('permissions.index') }}">
-                                <i class="fa fa-key me-2"></i> Permissions
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-white {{ request()->routeIs('permissions.create') ? 'active' : '' }}"
-                                href="{{ route('permissions.index') }}"> {{-- Permissions create masuk halaman index --}}
-                                <i class="fa fa-plus me-2"></i> Tambah Permission
-                            </a>
-                        </li>
-                        {{-- tambah user --}}
-                        <li class="nav-item">
-                            <a class="nav-link text-white {{ request()->routeIs('users.index') ? 'active' : '' }}"
-                                href="{{ route('users.index') }}">
-                                <i class="fa fa-users me-2"></i> Users
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-            </li>
+                            {{-- Permissions --}}
+                            <li class="nav-item">
+                                <a class="nav-link text-white {{ request()->routeIs('permissions.index') ? 'active' : '' }}"
+                                    href="{{ route('permissions.index') }}">
+                                    <i class="fa fa-key me-2"></i> Permissions
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-white {{ request()->routeIs('permissions.create') ? 'active' : '' }}"
+                                    href="{{ route('permissions.index') }}"> {{-- Permissions create masuk halaman index --}}
+                                    <i class="fa fa-plus me-2"></i> Tambah Permission
+                                </a>
+                            </li>
+                            {{-- tambah user --}}
+                            <li class="nav-item">
+                                <a class="nav-link text-white {{ request()->routeIs('users.index') ? 'active' : '' }}"
+                                    href="{{ route('users.index') }}">
+                                    <i class="fa fa-users me-2"></i> Users
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
             @endif
 
         </ul>
