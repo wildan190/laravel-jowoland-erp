@@ -178,7 +178,6 @@
             <h1>PT. Jowoland Construction</h1>
             <p>Ketitang, Godong, Grobogan, Jawa Tengah</p>
             <p>Telp: 0852-8074-9218 | Email: info@jowolandborepile.com</p>
-            <p>NPWP: 01.234.567.8-999.000</p>
         </div>
     </div>
 
@@ -284,7 +283,7 @@
         @if ($signatureBase64)
             <img src="{{ $signatureBase64 }}" alt="Signature" style="width:150px; display:block; margin:0 auto;">
         @else
-            <u style="font-size:14px;">Hadiwijaya</u>
+            <u style="font-size:14px;">Achmad Fikri Ibnu Hadi</u>
         @endif
 
         <!-- Stample menimpa signature -->
@@ -294,7 +293,7 @@
         @endif
 
         <!-- Nama & Jabatan -->
-        <div style="margin-top:5px; font-weight:bold;">Hadiwijaya</div>
+        <div style="margin-top:5px; font-weight:bold;">Achmad Fikri Ibnu Hadi</div>
         <div>Direktur</div>
     </div>
 

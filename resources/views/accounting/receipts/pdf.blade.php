@@ -198,7 +198,7 @@
                                 <img style="max-height: 50px;" src="data:image/png;base64,{{ $signature }}" alt="Signature">
                             </div>
                             <div style="width: 80%; border-top: 1px solid #4a5568; margin: 8px auto;"></div>
-                            <div style="font-weight: 500; font-size: 11px;">Hadiwijaya</div>
+                            <div style="font-weight: 500; font-size: 11px;">Achmad Fikri Ibnu Hadi</div>
                             <div style="font-size: 10px; color: #718096;">Finance Manager</div>
                         </td>
                         <td style="width: 50%; padding: 10px; text-align: center; vertical-align: top;">

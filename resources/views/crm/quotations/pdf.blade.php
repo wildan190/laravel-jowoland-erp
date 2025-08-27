@@ -228,7 +228,6 @@
             <h1>PT. Jowo Land Construction</h1>
             <p>Ketitang, Godong, Grobogan, Jawa Tengah</p>
             <p>Telp: 0852-8074-9218 | Email: info@jowolandborepile.com</p>
-            <p>NPWP: 01.234.567.8-999.000</p>
         </div>
     </div>
 
@@ -321,7 +320,7 @@
                 @endif
             </div>
             <br>
-            <u>Hadiwijaya</u>
+            <u>Achmad Fikri Ibnu Hadi</u>
         </div>
     </div>
 
@@ -402,7 +401,7 @@
                 @endif
             </div>
             <br>
-            <u>Hadiwijaya</u>
+            <u>Achmad Fikri Ibnu Hadi</u>
         </div>
     </div>
 
