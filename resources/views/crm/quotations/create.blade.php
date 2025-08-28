@@ -107,7 +107,7 @@
                                     <td>
                                         <input type="number" step="0.01" name="items[0][price]"
                                                class="form-control form-control-sm price text-end"
-                                               placeholder="0">
+                                               placeholder="0" min="1000" required>
                                     </td>
                                     <td>
                                         <input type="number" step="0.01" name="items[0][total]"
@@ -279,7 +279,7 @@
                 <td>
                     <input type="number" step="0.01" name="items[${row}][price]" 
                            class="form-control form-control-sm price text-end" 
-                           placeholder="0">
+                           placeholder="0" min="1000" required>
                 </td>
                 <td>
                     <input type="number" step="0.01" name="items[${row}][total]" 
