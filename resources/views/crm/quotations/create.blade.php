@@ -102,7 +102,7 @@
                                     <td>
                                         <input type="text" name="items[0][satuan]"
                                                class="form-control form-control-sm satuan text-end"
-                                               placeholder="Unit">
+                                               placeholder="Unit" required>
                                     </td>
                                     <td>
                                         <input type="number" step="0.01" name="items[0][price]"
@@ -274,7 +274,7 @@
                 <td>
                     <input type="text" name="items[${row}][satuan]" 
                            class="form-control form-control-sm satuan text-end" 
-                           placeholder="Unit">
+                           placeholder="Unit" required>
                 </td>
                 <td>
                     <input type="number" step="0.01" name="items[${row}][price]" 

@@ -266,24 +266,24 @@
     <table>
         <thead>
             <tr>
-                <th style="width:5%">No</th>
-                <th style="width:10%">Layanan</th>
-                <th style="width:55%">Deskripsi</th>
-                <th style="width:10%" class="right">Qty</th>
-                <th style="width:10%" class="right">Satuan</th>
-                <th style="width:15%" class="right">Harga Satuan</th>
+            <th style="width:5%">No</th>
+            <th style="width:45%">Layanan</th>
+            <th style="width:20%">Deskripsi</th>
+            <th style="width:10%" class="right">Qty</th>
+            <th style="width:10%" class="right">Satuan</th>
+            <th style="width:15%" class="right">Harga Satuan</th>
             </tr>
         </thead>
         <tbody>
             @foreach ($quotation->items as $item)
-                <tr>
-                    <td class="right">{{ $loop->iteration }}</td>
-                    <td>{{ $item->item }}</td>
-                    <td>{{ $item->description }}</td>
-                    <td class="right">{{ $item->qty }}</td>
-                    <td class="right">{{ $item->satuan }}</td>
-                    <td class="right">{{ number_format($item->price, 0, ',', '.') }}</td>
-                </tr>
+            <tr>
+                <td class="right">{{ $loop->iteration }}</td>
+                <td>{{ $item->item }}</td>
+                <td>{{ $item->description }}</td>
+                <td class="right">{{ $item->qty }}</td>
+                <td class="right">{{ $item->satuan }}</td>
+                <td class="right">{{ number_format($item->price, 0, ',', '.') }}</td>
+            </tr>
             @endforeach
         </tbody>
     </table>
